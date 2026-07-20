@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using AnSinhSo.Shared.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Serilog.Context;
@@ -12,7 +13,6 @@ namespace AnSinhSo.API.Middlewares
     public class CorrelationIdMiddleware
     {
         private readonly RequestDelegate _next;
-        private const string CorrelationIdHeaderKey = "X-Correlation-ID";
 
         /// <summary>
         /// Khởi tạo CorrelationIdMiddleware.
@@ -27,7 +27,7 @@ namespace AnSinhSo.API.Middlewares
         /// </summary>
         public async Task InvokeAsync(HttpContext context)
         {
-            if (!context.Request.Headers.TryGetValue(CorrelationIdHeaderKey, out StringValues correlationIdValues))
+            if (!context.Request.Headers.TryGetValue(CorrelationConstants.CorrelationIdHeaderName, out StringValues correlationIdValues))
             {
                 correlationIdValues = Guid.NewGuid().ToString();
             }
@@ -40,9 +40,9 @@ namespace AnSinhSo.API.Middlewares
             // Thêm Correlation ID vào response headers
             context.Response.OnStarting(() =>
             {
-                if (!context.Response.Headers.ContainsKey(CorrelationIdHeaderKey))
+                if (!context.Response.Headers.ContainsKey(CorrelationConstants.CorrelationIdHeaderName))
                 {
-                    context.Response.Headers.Append(CorrelationIdHeaderKey, correlationId);
+                    context.Response.Headers.Append(CorrelationConstants.CorrelationIdHeaderName, correlationId);
                 }
                 return Task.CompletedTask;
             });

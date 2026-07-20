@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -26,21 +28,30 @@ namespace AnSinhSo.API.Middlewares
         /// </summary>
         public async Task InvokeAsync(HttpContext context)
         {
+            var sw = Stopwatch.StartNew();
             var request = context.Request;
-
-            _logger.LogInformation("HTTP Request: {Method} {Path}{QueryString} | ClientIP: {IP} | UserAgent: {UserAgent}",
-                request.Method,
-                request.Path,
-                request.QueryString.HasValue ? request.QueryString.Value : string.Empty,
-                context.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
-                request.Headers.UserAgent.ToString());
 
             await _next(context);
 
-            _logger.LogInformation("HTTP Response: {Method} {Path} status resolved to {StatusCode}",
+            sw.Stop();
+
+            var correlationId = context.Items["CorrelationId"]?.ToString() ?? string.Empty;
+            var ip = context.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+            var userAgent = request.Headers.UserAgent.ToString();
+            var userId = context.User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "Anonymous";
+            var requestId = context.TraceIdentifier;
+
+            _logger.LogInformation(
+                "HTTP Request Completed: {Method} {Path} | StatusCode: {StatusCode} | ElapsedTime: {ElapsedMs}ms | CorrelationId: {CorrelationId} | IP: {IP} | UserAgent: {UserAgent} | UserId: {UserId} | RequestId: {RequestId}",
                 request.Method,
                 request.Path,
-                context.Response.StatusCode);
+                context.Response.StatusCode,
+                sw.ElapsedMilliseconds,
+                correlationId,
+                ip,
+                userAgent,
+                userId,
+                requestId);
         }
     }
 }

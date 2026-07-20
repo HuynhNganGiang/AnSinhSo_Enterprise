@@ -36,11 +36,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseSerilogRequestLogging();
+app.UseMiddleware<AnSinhSo.API.Middlewares.CorrelationIdMiddleware>();
+app.UseMiddleware<AnSinhSo.API.Middlewares.RequestLoggingMiddleware>();
+app.UseMiddleware<AnSinhSo.API.Middlewares.RequestTimingMiddleware>();
+app.UseMiddleware<AnSinhSo.API.Middlewares.GlobalExceptionMiddleware>();
+app.UseMiddleware<AnSinhSo.API.Middlewares.SecurityHeadersMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<AnSinhSo.API.Middlewares.ResponseWrapperMiddleware>();
 
 app.MapControllers();
 

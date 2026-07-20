@@ -53,24 +53,46 @@ namespace AnSinhSo.API.Middlewares
             // Lấy Trace ID từ Correlation ID đã được thiết lập ở CorrelationIdMiddleware
             string traceId = context.Items["CorrelationId"]?.ToString() ?? Guid.NewGuid().ToString();
 
-            if (exception is AppException appEx)
+            var exceptionName = exception.GetType().Name;
+
+            switch (exceptionName)
             {
-                statusCode = appEx.StatusCode;
-                message = appEx.Message;
-                _logger.LogWarning(exception, "AppException caught [TraceId: {TraceId}]: {Message}", traceId, exception.Message);
+                case "ValidationException":
+                    statusCode = StatusCodes.Status400BadRequest;
+                    message = exception.Message;
+                    break;
+                case "UnauthorizedException":
+                    statusCode = StatusCodes.Status401Unauthorized;
+                    message = exception.Message;
+                    break;
+                case "ForbiddenException":
+                    statusCode = StatusCodes.Status403Forbidden;
+                    message = exception.Message;
+                    break;
+                case "NotFoundException":
+                    statusCode = StatusCodes.Status404NotFound;
+                    message = exception.Message;
+                    break;
+                case "ConflictException":
+                    statusCode = StatusCodes.Status409Conflict;
+                    message = exception.Message;
+                    break;
+                default:
+                    if (exception is AppException appEx)
+                    {
+                        statusCode = appEx.StatusCode;
+                        message = appEx.Message;
+                    }
+                    break;
             }
-            else
+
+            if (statusCode == StatusCodes.Status500InternalServerError)
             {
                 _logger.LogError(exception, "Unhandled exception caught [TraceId: {TraceId}]: {Message}", traceId, exception.Message);
             }
-
-            if (_env.IsDevelopment())
+            else
             {
-                errors.Add(exception.Message);
-                if (exception.StackTrace != null)
-                {
-                    errors.Add(exception.StackTrace);
-                }
+                _logger.LogWarning(exception, "{ExceptionType} caught [TraceId: {TraceId}]: {Message}", exceptionName, traceId, exception.Message);
             }
 
             context.Response.ContentType = "application/json";

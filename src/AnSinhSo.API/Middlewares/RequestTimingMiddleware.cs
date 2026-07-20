@@ -40,10 +40,20 @@ namespace AnSinhSo.API.Middlewares
                     context.Response.Headers.Append(ResponseTimeHeaderKey, elapsedMilliseconds.ToString());
                 }
 
-                _logger.LogInformation("HTTP {Method} {Path} responded in {ElapsedMs} ms",
-                    context.Request.Method,
-                    context.Request.Path,
-                    elapsedMilliseconds);
+                if (elapsedMilliseconds > 5000)
+                {
+                    _logger.LogError("HTTP {Method} {Path} took too long to respond ({ElapsedMs} ms)",
+                        context.Request.Method,
+                        context.Request.Path,
+                        elapsedMilliseconds);
+                }
+                else if (elapsedMilliseconds > 2000)
+                {
+                    _logger.LogWarning("HTTP {Method} {Path} responded slowly ({ElapsedMs} ms)",
+                        context.Request.Method,
+                        context.Request.Path,
+                        elapsedMilliseconds);
+                }
 
                 return Task.CompletedTask;
             });
