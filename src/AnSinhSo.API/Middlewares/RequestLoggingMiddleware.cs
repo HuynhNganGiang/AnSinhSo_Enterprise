@@ -27,7 +27,7 @@ namespace AnSinhSo.API.Middlewares
         public async Task InvokeAsync(HttpContext context)
         {
             var request = context.Request;
-            
+
             _logger.LogInformation("HTTP Request: {Method} {Path}{QueryString} | ClientIP: {IP} | UserAgent: {UserAgent}",
                 request.Method,
                 request.Path,

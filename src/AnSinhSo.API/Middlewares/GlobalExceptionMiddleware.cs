@@ -77,7 +77,7 @@ namespace AnSinhSo.API.Middlewares
             context.Response.StatusCode = statusCode;
 
             var result = ApiResult.FailureResult(errors, message, traceId);
-            
+
             var options = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

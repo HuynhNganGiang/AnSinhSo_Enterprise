@@ -62,7 +62,7 @@ namespace AnSinhSo.API.Middlewares
                     // Thử parse để kiểm tra xem đã được bọc chưa
                     using var doc = JsonDocument.Parse(responseBody);
                     var root = doc.RootElement;
-                    
+
                     if (root.ValueKind == JsonValueKind.Object &&
                         root.TryGetProperty("success", out _) &&
                         root.TryGetProperty("message", out _) &&
@@ -84,7 +84,7 @@ namespace AnSinhSo.API.Middlewares
                 if (!isAlreadyWrapped)
                 {
                     var wrappedResult = ApiResult<object>.SuccessResult(data!, "Yêu cầu xử lý thành công.", traceId);
-                    
+
                     var options = new JsonSerializerOptions
                     {
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

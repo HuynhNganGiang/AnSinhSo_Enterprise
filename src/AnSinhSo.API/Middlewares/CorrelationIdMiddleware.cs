@@ -33,7 +33,7 @@ namespace AnSinhSo.API.Middlewares
             }
 
             string correlationId = correlationIdValues.ToString();
-            
+
             // Lưu vào HttpContext.Items để có thể dùng lại dễ dàng ở các vị trí khác
             context.Items["CorrelationId"] = correlationId;
 

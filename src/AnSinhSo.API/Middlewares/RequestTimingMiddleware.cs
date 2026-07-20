@@ -34,7 +34,7 @@ namespace AnSinhSo.API.Middlewares
             {
                 stopwatch.Stop();
                 long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-                
+
                 if (!context.Response.Headers.ContainsKey(ResponseTimeHeaderKey))
                 {
                     context.Response.Headers.Append(ResponseTimeHeaderKey, elapsedMilliseconds.ToString());
