@@ -38,4 +38,25 @@ public abstract class BaseEntity : IAuditable, IHasDomainEvents
     {
         _domainEvents.Clear();
     }
+
+    /// <summary>
+    /// Kiểm tra quy tắc nghiệp vụ. Ném ngoại lệ nếu vi phạm.
+    /// </summary>
+    /// <param name="rule">Quy tắc nghiệp vụ cần kiểm tra.</param>
+    protected static void CheckRule(AnSinhSo.Domain.SeedWork.Exceptions.IBusinessRule rule)
+    {
+        if (rule.IsBroken())
+        {
+            throw new AnSinhSo.Domain.SeedWork.Exceptions.BusinessRuleValidationException(rule);
+        }
+    }
+
+    /// <summary>
+    /// Phát sinh sự kiện miền.
+    /// </summary>
+    /// <param name="domainEvent">Sự kiện miền.</param>
+    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+    {
+        AddDomainEvent(domainEvent);
+    }
 }
