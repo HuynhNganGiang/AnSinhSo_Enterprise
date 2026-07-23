@@ -6,7 +6,7 @@ using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using AnSinhSo.Domain.ValueObjects;
 using AnSinhSo.Application.Abstractions.Persistence;
-using AnSinhSo.Domain.SeedWork.Errors;
+using AnSinhSo.Application.Common.Errors;
 
 namespace AnSinhSo.Application.Citizens.Commands.ChangeCitizenPhone;
 

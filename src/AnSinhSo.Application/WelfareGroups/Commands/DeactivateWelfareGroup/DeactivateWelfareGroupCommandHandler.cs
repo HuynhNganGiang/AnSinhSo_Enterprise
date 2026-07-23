@@ -4,7 +4,7 @@ using MediatR;
 using AnSinhSo.Application.Abstractions.Persistence;
 using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
-using AnSinhSo.Domain.SeedWork.Errors;
+using AnSinhSo.Application.Common.Errors;
 
 namespace AnSinhSo.Application.WelfareGroups.Commands.DeactivateWelfareGroup;
 

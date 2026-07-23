@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using MediatR;
 using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Domain.Aggregates.CitizenAggregate;
@@ -32,12 +33,12 @@ public sealed class CreateCitizenCommandHandler : IRequestHandler<CreateCitizenC
     /// </summary>
     public async Task<Result<Guid>> Handle(CreateCitizenCommand request, CancellationToken cancellationToken)
     {
-        var id = CitizenId.New();
-        var fullNameResult = FullName.Create(request.FullName);
+        var id = new CitizenId(Guid.NewGuid());
+        var fullNameResult = FullName.Create("N/A", "N/A", request.FullName);
         var citizenNumberResult = CitizenNumber.Create(request.CitizenNumber);
-        var genderResult = Gender.FromValue(request.Gender);
+        var genderResult = Result.Success(AnSinhSo.Domain.Enumerations.Enumeration.GetAll<Gender>().FirstOrDefault(x => x.Id == request.Gender) ?? Gender.Other);
         var phoneNumberResult = PhoneNumber.Create(request.PhoneNumber);
-        var addressResult = Address.Create(request.Address);
+        var addressResult = Address.Create(request.Address, "N/A", "N/A", "N/A", PostalCode.Create("00000").Value);
         var emailResult = Email.Create(request.Email);
 
         var citizenResult = Citizen.Create(
