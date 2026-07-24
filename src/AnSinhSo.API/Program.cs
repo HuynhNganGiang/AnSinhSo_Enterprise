@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using AnSinhSo.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ builder.Services.AddHealthChecks();
 // Register Layer Dependencies
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -39,7 +41,7 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<AnSinhSo.API.Middlewares.CorrelationIdMiddleware>();
 app.UseMiddleware<AnSinhSo.API.Middlewares.RequestLoggingMiddleware>();
 app.UseMiddleware<AnSinhSo.API.Middlewares.RequestTimingMiddleware>();
-app.UseMiddleware<AnSinhSo.API.Middlewares.GlobalExceptionMiddleware>();
+app.UseMiddleware<AnSinhSo.Api.Middleware.GlobalExceptionMiddleware>();
 app.UseMiddleware<AnSinhSo.API.Middlewares.SecurityHeadersMiddleware>();
 
 app.UseHttpsRedirection();
