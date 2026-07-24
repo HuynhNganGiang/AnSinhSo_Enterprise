@@ -1,17 +1,18 @@
 using System;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using AnSinhSo.Application.Payments.Commands.CreatePayment;
-using AnSinhSo.Application.Payments.Commands.ClosePayment;
+using AnSinhSo.Application.Payments.Commands.AddPaymentDetail;
 using AnSinhSo.Application.Payments.Commands.CancelPayment;
+using AnSinhSo.Application.Payments.Commands.ClosePayment;
+using AnSinhSo.Application.Payments.Commands.CreatePayment;
 using AnSinhSo.Application.Payments.Queries.GetPaymentById;
 using AnSinhSo.Application.Payments.Queries.GetPaymentList;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AnSinhSo.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/payments")]
 public class PaymentsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -22,37 +23,48 @@ public class PaymentsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPaymentList([FromQuery] GetPaymentListQuery query)
+    public async Task<IActionResult> GetList([FromQuery] GetPaymentListQuery query)
     {
         var result = await _mediator.Send(query);
         return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetPaymentById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
-        var result = await _mediator.Send(new GetPaymentByIdQuery(id));
+        var query = new GetPaymentByIdQuery(id);
+        var result = await _mediator.Send(query);
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentCommand command)
+    public async Task<IActionResult> Create([FromBody] CreatePaymentCommand command)
     {
         var result = await _mediator.Send(command);
         return Ok(result);
     }
 
-    [HttpPut("{id}/close")]
-    public async Task<IActionResult> ClosePayment(Guid id)
+    [HttpPost("{id}/details")]
+    public async Task<IActionResult> AddDetail(Guid id, [FromBody] AddPaymentDetailCommand command)
     {
-        var result = await _mediator.Send(new ClosePaymentCommand(id));
+        var request = command with { PaymentId = id };
+        var result = await _mediator.Send(request);
         return Ok(result);
     }
 
-    [HttpPut("{id}/cancel")]
-    public async Task<IActionResult> CancelPayment(Guid id)
+    [HttpPost("{id}/cancel")]
+    public async Task<IActionResult> Cancel(Guid id)
     {
-        var result = await _mediator.Send(new CancelPaymentCommand(id));
+        var command = new CancelPaymentCommand(id);
+        var result = await _mediator.Send(command);
+        return Ok(result);
+    }
+
+    [HttpPost("{id}/close")]
+    public async Task<IActionResult> Close(Guid id)
+    {
+        var command = new ClosePaymentCommand(id);
+        var result = await _mediator.Send(command);
         return Ok(result);
     }
 }
