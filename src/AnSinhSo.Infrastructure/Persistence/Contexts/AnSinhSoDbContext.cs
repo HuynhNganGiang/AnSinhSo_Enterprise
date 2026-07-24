@@ -3,11 +3,14 @@ using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
 using AnSinhSo.Domain.Aggregates.PaymentAggregate;
 using AnSinhSo.Domain.Aggregates.PolicyAggregate;
 using AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
+using AnSinhSo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AnSinhSo.Infrastructure.Persistence.Contexts;
 
-public class AnSinhSoDbContext : DbContext
+public class AnSinhSoDbContext : DbContext, IUnitOfWork
 {
     public DbSet<Citizen> Citizens { get; set; }
     public DbSet<Household> Households { get; set; }
@@ -24,5 +27,10 @@ public class AnSinhSoDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AnSinhSoDbContext).Assembly);
+    }
+
+    async Task IUnitOfWork.SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        await base.SaveChangesAsync(cancellationToken);
     }
 }
