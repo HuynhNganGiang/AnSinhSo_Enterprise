@@ -7,10 +7,12 @@ using AnSinhSo.Application.Payments.Commands.CreatePayment;
 using AnSinhSo.Application.Payments.Queries.GetPaymentById;
 using AnSinhSo.Application.Payments.Queries.GetPaymentList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnSinhSo.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/payments")]
 public class PaymentsController : ControllerBase

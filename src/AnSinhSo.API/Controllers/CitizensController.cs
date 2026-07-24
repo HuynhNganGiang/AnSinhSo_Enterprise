@@ -8,10 +8,12 @@ using AnSinhSo.Application.Citizens.Commands.DeactivateCitizen;
 using AnSinhSo.Application.Citizens.Queries.GetCitizenById;
 using AnSinhSo.Application.Citizens.Queries.GetCitizenList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnSinhSo.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/citizens")]
 public class CitizensController : ControllerBase

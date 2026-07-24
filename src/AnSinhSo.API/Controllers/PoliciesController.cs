@@ -7,10 +7,12 @@ using AnSinhSo.Application.Policies.Commands.UpdatePolicyAmount;
 using AnSinhSo.Application.Policies.Queries.GetPolicyById;
 using AnSinhSo.Application.Policies.Queries.GetPolicyList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnSinhSo.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/policies")]
 public class PoliciesController : ControllerBase

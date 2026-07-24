@@ -9,10 +9,12 @@ using AnSinhSo.Application.Households.Commands.RemoveHouseholdMember;
 using AnSinhSo.Application.Households.Queries.GetHouseholdById;
 using AnSinhSo.Application.Households.Queries.GetHouseholdList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnSinhSo.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/households")]
 public class HouseholdsController : ControllerBase

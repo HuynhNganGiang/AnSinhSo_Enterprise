@@ -7,10 +7,12 @@ using AnSinhSo.Application.WelfareGroups.Commands.DeactivateWelfareGroup;
 using AnSinhSo.Application.WelfareGroups.Queries.GetWelfareGroupById;
 using AnSinhSo.Application.WelfareGroups.Queries.GetWelfareGroupList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnSinhSo.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/welfare-groups")]
 public class WelfareGroupsController : ControllerBase
