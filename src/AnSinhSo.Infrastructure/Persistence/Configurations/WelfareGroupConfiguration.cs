@@ -11,6 +11,11 @@ public class WelfareGroupConfiguration : IEntityTypeConfiguration<WelfareGroup>
         builder.ToTable("WelfareGroups");
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+               .HasConversion(
+                   id => id.Value,
+                   value => new WelfareGroupId(value));
+
         builder.Property(x => x.Name);
         builder.Property(x => x.Description);
         builder.Property(x => x.IsActive);

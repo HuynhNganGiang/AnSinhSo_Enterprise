@@ -11,6 +11,11 @@ public class HouseholdConfiguration : IEntityTypeConfiguration<Household>
         builder.ToTable("Households");
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+               .HasConversion(
+                   id => id.Value,
+                   value => new HouseholdId(value));
+
         builder.Property(x => x.Status);
 
         builder.OwnsOne(x => x.Address, b =>

@@ -11,6 +11,11 @@ public class CitizenConfiguration : IEntityTypeConfiguration<Citizen>
         builder.ToTable("Citizens");
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+               .HasConversion(
+                   id => id.Value,
+                   value => new CitizenId(value));
+
         builder.Property(x => x.BirthDate);
         builder.Property(x => x.Gender);
         builder.Property(x => x.Status);

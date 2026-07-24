@@ -11,6 +11,16 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.ToTable("Payments");
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+               .HasConversion(
+                   id => id.Value,
+                   value => new PaymentId(value));
+
+        builder.Property(x => x.PolicyId)
+               .HasConversion(
+                   id => id.Value,
+                   value => new AnSinhSo.Domain.Aggregates.PolicyAggregate.PolicyId(value));
+
         builder.Property(x => x.Status);
     }
 }

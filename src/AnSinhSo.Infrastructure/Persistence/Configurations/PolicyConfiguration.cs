@@ -11,6 +11,11 @@ public class PolicyConfiguration : IEntityTypeConfiguration<Policy>
         builder.ToTable("Policies");
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id)
+               .HasConversion(
+                   id => id.Value,
+                   value => new PolicyId(value));
+
         builder.Property(x => x.Name);
         builder.Property(x => x.Description);
         builder.Property(x => x.Status);
