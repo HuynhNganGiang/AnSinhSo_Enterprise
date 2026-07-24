@@ -26,7 +26,7 @@ builder.Services.AddHealthChecks();
 
 // Register Layer Dependencies
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApiAuthorization();
 
