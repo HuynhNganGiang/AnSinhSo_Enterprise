@@ -19,7 +19,7 @@ builder.Services.AddControllers();
 
 // Configure Basic Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGenWithAuth();
 
 // Configure Basic Health Checks
 builder.Services.AddHealthChecks();
