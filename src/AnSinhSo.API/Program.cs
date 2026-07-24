@@ -28,6 +28,7 @@ builder.Services.AddHealthChecks();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddApiAuthorization();
 
 var app = builder.Build();
 
