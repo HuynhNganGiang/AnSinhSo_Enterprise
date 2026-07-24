@@ -40,18 +40,21 @@ public class Repository<TAggregate, TId> : IRepository<TAggregate, TId>
         _dbSet.Remove(entity);
     }
 
-    public virtual Task<TAggregate?> FirstOrDefaultAsync(ISpecification<TAggregate> specification, CancellationToken cancellationToken = default)
+    public virtual async Task<TAggregate?> FirstOrDefaultAsync(ISpecification<TAggregate> specification, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (specification == null) throw new ArgumentNullException(nameof(specification));
+        return await _dbSet.Where(specification.ToExpression()).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public virtual Task<IReadOnlyList<TAggregate>> ListAsync(ISpecification<TAggregate> specification, CancellationToken cancellationToken = default)
+    public virtual async Task<IReadOnlyList<TAggregate>> ListAsync(ISpecification<TAggregate> specification, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (specification == null) throw new ArgumentNullException(nameof(specification));
+        return await _dbSet.Where(specification.ToExpression()).ToListAsync(cancellationToken);
     }
 
-    public virtual Task<int> CountAsync(ISpecification<TAggregate> specification, CancellationToken cancellationToken = default)
+    public virtual async Task<int> CountAsync(ISpecification<TAggregate> specification, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (specification == null) throw new ArgumentNullException(nameof(specification));
+        return await _dbSet.Where(specification.ToExpression()).CountAsync(cancellationToken);
     }
 }
