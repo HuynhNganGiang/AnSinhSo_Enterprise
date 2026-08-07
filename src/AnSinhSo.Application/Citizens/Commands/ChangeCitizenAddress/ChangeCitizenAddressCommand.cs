@@ -1,3 +1,4 @@
+using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using System;
 using MediatR;
 using AnSinhSo.Domain.SeedWork.Results;

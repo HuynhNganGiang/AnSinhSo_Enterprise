@@ -1,32 +1,32 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using AnSinhSo.Application.Abstractions.Persistence;
+using AnSinhSo.Application.Citizens.DTOs;
+using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using AnSinhSo.Domain.SeedWork.Results;
+using AutoMapper;
+using MediatR;
+using System.Linq;
 
 namespace AnSinhSo.Application.Citizens.Queries.GetCitizenList;
 
-/// <summary>
-/// Handler xử lý truy vấn danh sách công dân.
-/// </summary>
-public sealed class GetCitizenListQueryHandler : IRequestHandler<GetCitizenListQuery, Result>
+public class GetCitizenListQueryHandler : IRequestHandler<GetCitizenListQuery, Result<IReadOnlyList<CitizenSummaryDto>>>
 {
     private readonly ICitizenRepository _citizenRepository;
+    private readonly IMapper _mapper;
 
-    /// <summary>
-    /// Khởi tạo GetCitizenListQueryHandler.
-    /// </summary>
-    public GetCitizenListQueryHandler(ICitizenRepository citizenRepository)
+    public GetCitizenListQueryHandler(ICitizenRepository citizenRepository, IMapper mapper)
     {
         _citizenRepository = citizenRepository;
+        _mapper = mapper;
     }
 
-    /// <summary>
-    /// Xử lý truy vấn danh sách công dân.
-    /// </summary>
-    public async Task<Result> Handle(GetCitizenListQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<CitizenSummaryDto>>> Handle(GetCitizenListQuery request, CancellationToken cancellationToken)
     {
-        // TODO Step 17: Repository call and Mapping to DTO
-        return await Task.FromResult(Result.Success());
+        var citizens = await _citizenRepository.ListAsync(new AllCitizensSpecification(), cancellationToken);
+
+        var dtos = _mapper.Map<List<CitizenSummaryDto>>(citizens.ToList());
+
+        return Result.Success<IReadOnlyList<CitizenSummaryDto>>(dtos);
     }
 }

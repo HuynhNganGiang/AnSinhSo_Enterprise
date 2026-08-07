@@ -13,9 +13,13 @@ public static class ApplicationDependencyInjection
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(assembly);
+            cfg.AddOpenBehavior(typeof(AnSinhSo.Application.Common.Behaviors.UnhandledExceptionBehavior<,>));
+            cfg.AddOpenBehavior(typeof(AnSinhSo.Application.Common.Behaviors.LoggingBehavior<,>));
+            cfg.AddOpenBehavior(typeof(AnSinhSo.Application.Common.Behaviors.ValidationBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(assembly);
+        services.AddAutoMapper(cfg => cfg.AddProfile<AnSinhSo.Application.Common.Mappings.MappingProfile>());
 
         return services;
     }

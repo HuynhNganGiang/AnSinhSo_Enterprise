@@ -1,8 +1,9 @@
+using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using AnSinhSo.Application.Abstractions.Persistence;
+using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Application.Households.DTOs;
 

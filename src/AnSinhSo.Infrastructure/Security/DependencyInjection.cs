@@ -1,0 +1,33 @@
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using AnSinhSo.Application.Common.Security;
+using AnSinhSo.Infrastructure.Security.Authentication;
+using AnSinhSo.Infrastructure.Security.Identity;
+using System;
+
+namespace AnSinhSo.Infrastructure;
+
+public static class SecurityDependencyInjection
+{
+    public static IServiceCollection AddSecurityInfrastructure(this IServiceCollection services)
+    {
+        // 1. Core Services
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddSingleton<IJwtProvider, JwtProvider>();
+        services.AddSingleton<IRefreshTokenGenerator, RefreshTokenGenerator>();
+        services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
+
+        // 2. HttpContext Accessor (required for CurrentUserProvider)
+        services.AddHttpContextAccessor();
+
+        // 3. Options
+        services.ConfigureOptions<JwtOptionsSetup>();
+        services.AddOptions<JwtOptions>()
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+        return services;
+    }
+}

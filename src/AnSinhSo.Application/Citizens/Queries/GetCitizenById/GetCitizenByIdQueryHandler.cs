@@ -1,44 +1,35 @@
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using AnSinhSo.Application.Abstractions.Persistence;
-using AnSinhSo.Domain.SeedWork.Results;
+using AnSinhSo.Application.Citizens.DTOs;
 using AnSinhSo.Domain.Aggregates.CitizenAggregate;
-using AnSinhSo.Application.Common.Errors;
+using AnSinhSo.Domain.SeedWork.Results;
+using AutoMapper;
+using MediatR;
 
 namespace AnSinhSo.Application.Citizens.Queries.GetCitizenById;
 
-/// <summary>
-/// Handler xử lý truy vấn lấy thông tin chi tiết công dân theo ID.
-/// </summary>
-public sealed class GetCitizenByIdQueryHandler : IRequestHandler<GetCitizenByIdQuery, Result>
+public class GetCitizenByIdQueryHandler : IRequestHandler<GetCitizenByIdQuery, Result<CitizenDto>>
 {
     private readonly ICitizenRepository _citizenRepository;
+    private readonly IMapper _mapper;
 
-    /// <summary>
-    /// Khởi tạo GetCitizenByIdQueryHandler.
-    /// </summary>
-    public GetCitizenByIdQueryHandler(ICitizenRepository citizenRepository)
+    public GetCitizenByIdQueryHandler(ICitizenRepository citizenRepository, IMapper mapper)
     {
         _citizenRepository = citizenRepository;
+        _mapper = mapper;
     }
 
-    /// <summary>
-    /// Xử lý truy vấn thông tin chi tiết công dân.
-    /// </summary>
-    public async Task<Result> Handle(GetCitizenByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<CitizenDto>> Handle(GetCitizenByIdQuery request, CancellationToken cancellationToken)
     {
-        var citizenId = new CitizenId(request.CitizenId);
-
-        var citizen = await _citizenRepository.GetByIdAsync(citizenId, cancellationToken);
+        var citizen = await _citizenRepository.GetByIdAsync(new CitizenId(request.CitizenId), cancellationToken);
 
         if (citizen is null)
         {
-            return Result.Failure(DomainErrors.NotFound(nameof(Citizen), request.CitizenId));
+            return Result.Failure<CitizenDto>(Error.NotFound("Citizen.NotFound", "Citizen not found."));
         }
 
-        // TODO Step 17: Return DTO
+        var dto = _mapper.Map<CitizenDto>(citizen);
 
-        return Result.Success();
+        return Result.Success(dto);
     }
 }

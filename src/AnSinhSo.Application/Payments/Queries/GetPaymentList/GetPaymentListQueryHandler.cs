@@ -1,7 +1,8 @@
+using AnSinhSo.Domain.Aggregates.PaymentAggregate;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using AnSinhSo.Application.Abstractions.Persistence;
+using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Domain.SeedWork.Results;
 
 namespace AnSinhSo.Application.Payments.Queries.GetPaymentList;

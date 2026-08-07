@@ -1,3 +1,4 @@
+using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
 using FluentValidation;
 
 namespace AnSinhSo.Application.Households.Commands.DeactivateHousehold;

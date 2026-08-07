@@ -1,3 +1,4 @@
+using AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
 using FluentValidation;
 
 namespace AnSinhSo.Application.WelfareGroups.Commands.DeactivateWelfareGroup;

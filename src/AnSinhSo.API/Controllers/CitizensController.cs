@@ -7,6 +7,7 @@ using AnSinhSo.Application.Citizens.Commands.CreateCitizen;
 using AnSinhSo.Application.Citizens.Commands.DeactivateCitizen;
 using AnSinhSo.Application.Citizens.Queries.GetCitizenById;
 using AnSinhSo.Application.Citizens.Queries.GetCitizenList;
+using AnSinhSo.Application.Citizens.Queries.SearchCitizen;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,13 @@ public class CitizensController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var query = new GetCitizenByIdQuery(id);
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] SearchCitizenQuery query)
+    {
         var result = await _mediator.Send(query);
         return Ok(result);
     }

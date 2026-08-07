@@ -1,6 +1,8 @@
 using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using AnSinhSo.Infrastructure.Persistence.Converters;
+using AnSinhSo.Domain.Aggregates.HouseholdAggregate.Enumerations;
 
 namespace AnSinhSo.Infrastructure.Persistence.Configurations;
 
@@ -16,7 +18,9 @@ public class HouseholdConfiguration : IEntityTypeConfiguration<Household>
                    id => id.Value,
                    value => new HouseholdId(value));
 
-        builder.Property(x => x.Status);
+        builder.Property(x => x.Status)
+               .HasConversion(new EnumerationValueConverter<HouseholdStatus>())
+               .IsRequired();
 
         builder.OwnsOne(x => x.Address, b =>
         {
@@ -29,5 +33,13 @@ public class HouseholdConfiguration : IEntityTypeConfiguration<Household>
                 pc.Property(p => p.Value).HasColumnName("PostalCode").HasMaxLength(20).IsRequired();
             });
         });
+
+        builder.HasMany(x => x.Members)
+               .WithOne()
+               .HasForeignKey("HouseholdId")
+               .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(x => x.Members)
+               .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

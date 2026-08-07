@@ -34,6 +34,13 @@ public sealed class Address : ValueObject
     /// </summary>
     public PostalCode PostalCode { get; }
 
+#pragma warning disable CS8618
+    /// <summary>
+    /// Constructor rỗng dành riêng cho EF Core.
+    /// </summary>
+    private Address() { }
+#pragma warning restore CS8618
+
     private Address(string street, string ward, string district, string province, PostalCode postalCode)
     {
         Street = street;

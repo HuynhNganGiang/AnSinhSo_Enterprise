@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using AnSinhSo.Application.Abstractions.Persistence;
+using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
 
@@ -40,7 +40,7 @@ public sealed class CreateWelfareGroupCommandHandler : IRequestHandler<CreateWel
             return Result.Failure<Guid>(result.Error);
         }
 
-        await _welfareGroupRepository.AddAsync(result.Value, cancellationToken);
+        _welfareGroupRepository.Add(result.Value);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(id.Value);

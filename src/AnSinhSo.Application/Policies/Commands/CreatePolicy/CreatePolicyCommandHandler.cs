@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using AnSinhSo.Application.Abstractions.Persistence;
+using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Domain.Aggregates.PolicyAggregate;
 using AnSinhSo.Domain.ValueObjects;
@@ -45,7 +45,7 @@ public sealed class CreatePolicyCommandHandler : IRequestHandler<CreatePolicyCom
             return Result.Failure<Guid>(policyResult.Error);
         }
 
-        await _policyRepository.AddAsync(policyResult.Value, cancellationToken);
+        _policyRepository.Add(policyResult.Value);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(policyResult.Value.Id.Value);

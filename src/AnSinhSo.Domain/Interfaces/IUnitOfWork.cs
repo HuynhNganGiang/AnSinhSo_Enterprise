@@ -13,6 +13,6 @@ public interface IUnitOfWork
     /// Lưu tất cả thay đổi trên bối cảnh hiện tại xuống cơ sở dữ liệu.
     /// </summary>
     /// <param name="cancellationToken">Token hủy tác vụ bất đồng bộ.</param>
-    /// <returns>Task đại diện cho hành động lưu trữ.</returns>
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
+    /// <returns>Số lượng bản ghi bị ảnh hưởng.</returns>
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

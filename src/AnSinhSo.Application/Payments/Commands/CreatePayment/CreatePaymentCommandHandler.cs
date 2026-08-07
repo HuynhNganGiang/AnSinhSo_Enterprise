@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using AnSinhSo.Application.Abstractions.Persistence;
+using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Application.Common.Errors;
 using AnSinhSo.Domain.Aggregates.PaymentAggregate;
 using AnSinhSo.Domain.Aggregates.PolicyAggregate;
@@ -34,7 +34,7 @@ public sealed class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentC
             return Result.Failure<Guid>(paymentResult.Error);
         }
 
-        await _paymentRepository.AddAsync(paymentResult.Value, cancellationToken);
+        _paymentRepository.Add(paymentResult.Value);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(paymentResult.Value.Id.Value);

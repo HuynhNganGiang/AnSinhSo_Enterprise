@@ -1,3 +1,4 @@
+using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using FluentValidation;
 
 namespace AnSinhSo.Application.Citizens.Commands.CreateCitizen;

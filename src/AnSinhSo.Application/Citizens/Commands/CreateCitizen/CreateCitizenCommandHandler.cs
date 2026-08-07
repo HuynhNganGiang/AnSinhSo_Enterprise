@@ -7,7 +7,7 @@ using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using AnSinhSo.Domain.Aggregates.CitizenAggregate.Enumerations;
 using AnSinhSo.Domain.ValueObjects;
-using AnSinhSo.Application.Abstractions.Persistence;
+using AnSinhSo.Domain.Interfaces;
 
 namespace AnSinhSo.Application.Citizens.Commands.CreateCitizen;
 
@@ -56,7 +56,7 @@ public sealed class CreateCitizenCommandHandler : IRequestHandler<CreateCitizenC
             return Result.Failure<Guid>(citizenResult.Error);
         }
 
-        await _citizenRepository.AddAsync(citizenResult.Value, cancellationToken);
+        _citizenRepository.Add(citizenResult.Value);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(citizenResult.Value.Id.Value);

@@ -29,8 +29,4 @@ public class AnSinhSoDbContext : DbContext, IUnitOfWork
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AnSinhSoDbContext).Assembly);
     }
 
-    async Task IUnitOfWork.SaveChangesAsync(CancellationToken cancellationToken)
-    {
-        await base.SaveChangesAsync(cancellationToken);
-    }
 }

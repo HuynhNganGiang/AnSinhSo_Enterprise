@@ -1,3 +1,4 @@
+using AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
 using MediatR;
 using AnSinhSo.Domain.SeedWork.Results;
 
