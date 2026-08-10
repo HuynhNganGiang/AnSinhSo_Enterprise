@@ -16,6 +16,11 @@ using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using AnSinhSo.Domain.Aggregates.PolicyAggregate;
 using AnSinhSo.Domain.Aggregates.PaymentAggregate;
 using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
+using AnSinhSo.Domain.Interfaces;
+using AnSinhSo.Infrastructure.DataImport.Options;
+using AnSinhSo.Infrastructure.DataImport.Cache;
+using Microsoft.Extensions.Options;
+using System.Diagnostics;
 
 namespace AnSinhSo.Infrastructure.DataImport;
 
@@ -23,11 +28,24 @@ public class DataImportService : IDataImportService
 {
     private readonly ILogger<DataImportService> _logger;
     private readonly ICsvStringNormalizer _normalizer;
+    
+    // Mappers
     private readonly IWelfareGroupMapper _welfareGroupMapper;
     private readonly ICitizenMapper _citizenMapper;
     private readonly IHouseholdMapper _householdMapper;
     private readonly IPolicyMapper _policyMapper;
     private readonly IPaymentMapper _paymentMapper;
+
+    // Repositories & UoW
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly ICitizenRepository _citizenRepository;
+    private readonly IHouseholdRepository _householdRepository;
+    private readonly IWelfareGroupRepository _welfareGroupRepository;
+    private readonly IPolicyRepository _policyRepository;
+    private readonly IPaymentRepository _paymentRepository;
+
+    private readonly ImportOptions _options;
+    private readonly ILookupCacheService _lookupCache;
 
     public DataImportService(
         ILogger<DataImportService> logger,
@@ -36,7 +54,15 @@ public class DataImportService : IDataImportService
         ICitizenMapper citizenMapper,
         IHouseholdMapper householdMapper,
         IPolicyMapper policyMapper,
-        IPaymentMapper paymentMapper)
+        IPaymentMapper paymentMapper,
+        IUnitOfWork unitOfWork,
+        ICitizenRepository citizenRepository,
+        IHouseholdRepository householdRepository,
+        IWelfareGroupRepository welfareGroupRepository,
+        IPolicyRepository policyRepository,
+        IPaymentRepository paymentRepository,
+        IOptions<ImportOptions> options,
+        ILookupCacheService lookupCache)
     {
         _logger = logger;
         _normalizer = normalizer;
@@ -45,6 +71,14 @@ public class DataImportService : IDataImportService
         _householdMapper = householdMapper;
         _policyMapper = policyMapper;
         _paymentMapper = paymentMapper;
+        _unitOfWork = unitOfWork;
+        _citizenRepository = citizenRepository;
+        _householdRepository = householdRepository;
+        _welfareGroupRepository = welfareGroupRepository;
+        _policyRepository = policyRepository;
+        _paymentRepository = paymentRepository;
+        _options = options.Value;
+        _lookupCache = lookupCache;
     }
 
     public async Task ExecuteImportAsync(CancellationToken cancellationToken = default)
@@ -75,12 +109,14 @@ public class DataImportService : IDataImportService
             importId, correlationId, startedAt,
             Path.Combine(dataFolder, "Stg_NhomDoiTuong.csv"), 
             _welfareGroupMapper, 
+            _welfareGroupRepository.Add,
+            r => r.MaNhom,
             cancellationToken);
         
         // 5, 6, 7 (Skipped mapping temporarily until full mappers implemented, falling back to parse-only)
-        await ProcessCsvFileAsync<Stg_ChinhSachTroCapRecord, Policy>(importId, correlationId, startedAt, Path.Combine(dataFolder, "Stg_ChinhSachTroCap.csv"), _policyMapper, cancellationToken);
-        await ProcessCsvFileAsync<Stg_DotChiTraRecord, Payment>(importId, correlationId, startedAt, Path.Combine(dataFolder, "Stg_DotChiTra.csv"), _paymentMapper, cancellationToken);
-        await ProcessCsvFileAsync<Stg_HoGiaDinhRecord, Household>(importId, correlationId, startedAt, Path.Combine(dataFolder, "Stg_HoGiaDinh.csv"), _householdMapper, cancellationToken);
+        await ProcessCsvFileAsync<Stg_ChinhSachTroCapRecord, Policy>(importId, correlationId, startedAt, Path.Combine(dataFolder, "Stg_ChinhSachTroCap.csv"), _policyMapper, _policyRepository.Add, r => r.MaChinhSach, cancellationToken);
+        await ProcessCsvFileAsync<Stg_DotChiTraRecord, Payment>(importId, correlationId, startedAt, Path.Combine(dataFolder, "Stg_DotChiTra.csv"), _paymentMapper, _paymentRepository.Add, r => r.MaDotChiTra, cancellationToken);
+        await ProcessCsvFileAsync<Stg_HoGiaDinhRecord, Household>(importId, correlationId, startedAt, Path.Combine(dataFolder, "Stg_HoGiaDinh.csv"), _householdMapper, _householdRepository.Add, r => r.MaHo, cancellationToken);
         
         // 8, 9 (No aggregate mapping logic yet)
         await ProcessCsvFileAsync<Stg_ThanhVienHoGiaDinhRecord>(importId, correlationId, startedAt, Path.Combine(dataFolder, "Stg_ThanhVienHoGiaDinh.csv"), cancellationToken);
@@ -93,6 +129,8 @@ public class DataImportService : IDataImportService
             importId, correlationId, startedAt,
             Path.Combine(dataFolder, "Stg_DoiTuongAnSinh.csv"), 
             _citizenMapper, 
+            _citizenRepository.Add,
+            r => r.MaDoiTuong,
             cancellationToken);
         
         // 11. Stg_ChiTraTroCap.csv
@@ -138,59 +176,146 @@ public class DataImportService : IDataImportService
         DateTime startedAt, 
         string filePath, 
         IDataMapper<TDto, TEntity> mapper, 
+        Action<TEntity>? addToRepository,
+        Func<TDto, string?>? cacheKeySelector,
         CancellationToken cancellationToken)
     {
         var fileName = Path.GetFileName(filePath);
         _logger.LogInformation($"Reading and Mapping {fileName}");
         
+        var summary = new ImportSummary { FileName = fileName };
+        var sw = Stopwatch.StartNew();
+        long memBefore = GC.GetTotalMemory(false);
+
         if (!File.Exists(filePath))
         {
             _logger.LogWarning($"File not found: {filePath}");
             return;
         }
 
-        int count = 0;
-        int successCount = 0;
-        int failCount = 0;
-        int deferredCount = 0;
+        int currentBatchCount = 0;
+        int batchSize = _options.BatchSize;
 
-        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
+        try
         {
-            HasHeaderRecord = true,
-            MissingFieldFound = null,
-            BadDataFound = null,
-            HeaderValidated = null
-        };
-
-        using var reader = new StreamReader(filePath);
-        using var csv = new CsvReader(reader, config);
-
-        await foreach (var record in csv.GetRecordsAsync<TDto>(cancellationToken))
-        {
-            count++;
-            var context = new ImportContext(importId, correlationId, fileName, count, startedAt);
-            
-            // Normalize DTO fields here before mapping using reflection or manual mapping
-            NormalizeDtoProperties(record);
-
-            var mapResult = mapper.Map(context, record);
-
-            switch (mapResult.Status)
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                case ImportStatus.Imported:
-                    successCount++;
-                    break;
-                case ImportStatus.Failed:
-                    failCount++;
-                    _logger.LogWarning($"[Failed] Line {count}: {mapResult.ErrorCode} - {mapResult.ErrorMessage}");
-                    break;
-                case ImportStatus.Deferred:
-                    deferredCount++;
-                    break;
+                HasHeaderRecord = true,
+                MissingFieldFound = null,
+                BadDataFound = null,
+                HeaderValidated = null
+            };
+
+            using var reader = new StreamReader(filePath);
+            using var csv = new CsvReader(reader, config);
+
+            await foreach (var record in csv.GetRecordsAsync<TDto>(cancellationToken))
+            {
+                summary.TotalRecords++;
+                var context = new ImportContext(importId, correlationId, fileName, summary.TotalRecords, startedAt);
+                
+                NormalizeDtoProperties(record);
+                var mapResult = mapper.Map(context, record);
+
+                switch (mapResult.Status)
+                {
+                    case ImportStatus.Imported:
+                        summary.Imported++;
+                        if (mapResult.Entity != null)
+                        {
+                            addToRepository?.Invoke(mapResult.Entity);
+                            currentBatchCount++;
+
+                            // Extract Id to cache
+                            if (cacheKeySelector != null)
+                            {
+                                var key = cacheKeySelector(record);
+                                if (!string.IsNullOrEmpty(key))
+                                {
+                                    CacheEntityId(mapResult.Entity, key);
+                                }
+                            }
+                        }
+                        break;
+                    case ImportStatus.Failed:
+                        summary.Failed++;
+                        if (mapResult.ErrorCode == ImportErrorCode.DOMAIN_RULE || mapResult.ErrorCode == ImportErrorCode.INVALID_CCCD || mapResult.ErrorCode == ImportErrorCode.INVALID_DATE || mapResult.ErrorCode == ImportErrorCode.DATA_TYPE_MISMATCH || mapResult.ErrorCode == ImportErrorCode.MISSING_REQUIRED_FIELD)
+                        {
+                            summary.ValidationFailed++;
+                        }
+                        else
+                        {
+                            summary.MappingFailed++;
+                        }
+                        _logger.LogWarning($"[Failed] Line {summary.TotalRecords}: {mapResult.ErrorCode} - {mapResult.ErrorMessage}");
+                        break;
+                    case ImportStatus.Deferred:
+                        summary.Deferred++;
+                        break;
+                    case ImportStatus.Skipped:
+                        summary.Skipped++;
+                        break;
+                }
+
+                if (currentBatchCount >= batchSize)
+                {
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    _unitOfWork.ClearChangeTracker();
+                    currentBatchCount = 0;
+                }
+            }
+
+            if (currentBatchCount > 0)
+            {
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                _unitOfWork.ClearChangeTracker();
+            }
+
+            await _unitOfWork.CommitTransactionAsync(cancellationToken);
+            
+            sw.Stop();
+            summary.Duration = sw.Elapsed;
+            long memAfter = GC.GetTotalMemory(false);
+            summary.MemoryUsageBytes = memAfter - memBefore;
+
+            _logger.LogInformation($"Mapping completed for {fileName}. " +
+                                   $"Total: {summary.TotalRecords}, " +
+                                   $"Imported: {summary.Imported}, " +
+                                   $"Failed: {summary.Failed} (Val: {summary.ValidationFailed}, Map: {summary.MappingFailed}), " +
+                                   $"Deferred: {summary.Deferred}, " +
+                                   $"Skipped: {summary.Skipped}. " +
+                                   $"Duration: {summary.Duration.TotalMilliseconds}ms, " +
+                                   $"Rate: {summary.RecordsPerSecond:F2} rec/sec, " +
+                                   $"Memory Diff: {summary.MemoryUsageBytes / 1024.0 / 1024.0:F2} MB");
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackTransactionAsync(cancellationToken);
+            _logger.LogError(ex, $"Error processing {fileName}. Transaction rolled back.");
+        }
+    }
+
+    private void CacheEntityId<TEntity>(TEntity entity, string key)
+    {
+        try
+        {
+            var idProp = typeof(TEntity).GetProperty("Id");
+            if (idProp != null)
+            {
+                var idObj = idProp.GetValue(entity);
+                if (idObj != null)
+                {
+                    var valueProp = idObj.GetType().GetProperty("Value");
+                    if (valueProp != null && valueProp.GetValue(idObj) is Guid guidValue)
+                    {
+                        _lookupCache.Set<TEntity>(key, guidValue);
+                    }
+                }
             }
         }
-
-        _logger.LogInformation($"Mapping completed. Total: {count}, Success: {successCount}, Failed: {failCount}, Deferred: {deferredCount}.");
+        catch { /* Ignore reflection errors */ }
     }
 
     private void NormalizeDtoProperties<TDto>(TDto dto)

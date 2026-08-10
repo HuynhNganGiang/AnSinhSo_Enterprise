@@ -1,5 +1,6 @@
 using AnSinhSo.Infrastructure.Persistence.Contexts;
 using AnSinhSo.Infrastructure.Persistence.Repositories;
+using AnSinhSo.Infrastructure.DataImport.Cache;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ public static class InfrastructureDependencyInjection
 
         // Specialized Repositories (Domain)
         services.AddScoped<AnSinhSo.Domain.Aggregates.CitizenAggregate.ICitizenRepository, CitizenRepository>();
+        services.AddScoped<AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ICitizenIdentityRepository, CitizenIdentityRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.HouseholdAggregate.IHouseholdRepository, HouseholdRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.PaymentAggregate.IPaymentRepository, PaymentRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.PolicyAggregate.IPolicyRepository, PolicyRepository>();
@@ -30,6 +32,7 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserSessionRepository, UserSessionRepository>();
 
         // Data Import Pipeline
+        services.AddScoped<ILookupCacheService, LookupCacheService>();
         services.AddScoped<AnSinhSo.Application.DataImport.IDataImportService, AnSinhSo.Infrastructure.DataImport.DataImportService>();
         services.AddSingleton<AnSinhSo.Infrastructure.DataImport.Normalization.ICsvStringNormalizer, AnSinhSo.Infrastructure.DataImport.Normalization.CsvStringNormalizer>();
         services.AddScoped<AnSinhSo.Infrastructure.DataImport.Mappers.IWelfareGroupMapper, AnSinhSo.Infrastructure.DataImport.Mappers.WelfareGroupMapper>();

@@ -15,4 +15,10 @@ public interface IUnitOfWork
     /// <param name="cancellationToken">Token hủy tác vụ bất đồng bộ.</param>
     /// <returns>Số lượng bản ghi bị ảnh hưởng.</returns>
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    
+    Task BeginTransactionAsync(CancellationToken cancellationToken = default);
+    Task CommitTransactionAsync(CancellationToken cancellationToken = default);
+    Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
+
+    void ClearChangeTracker();
 }

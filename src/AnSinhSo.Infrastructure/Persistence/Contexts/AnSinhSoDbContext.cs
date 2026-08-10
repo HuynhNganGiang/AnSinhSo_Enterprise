@@ -4,6 +4,7 @@ using AnSinhSo.Domain.Aggregates.PaymentAggregate;
 using AnSinhSo.Domain.Aggregates.PolicyAggregate;
 using AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
 using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
+using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
 using AnSinhSo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace AnSinhSo.Infrastructure.Persistence.Contexts;
 
-public class AnSinhSoDbContext : DbContext, IUnitOfWork
+public class AnSinhSoDbContext : DbContext
 {
     public DbSet<Citizen> Citizens { get; set; }
     public DbSet<Household> Households { get; set; }
@@ -20,7 +21,7 @@ public class AnSinhSoDbContext : DbContext, IUnitOfWork
     public DbSet<WelfareGroup> WelfareGroups { get; set; }
     public DbSet<AnSinhSo.Domain.Aggregates.UserAggregate.User> Users { get; set; }
     public DbSet<UserSession> UserSessions { get; set; }
-
+    public DbSet<CitizenIdentity> CitizenIdentities { get; set; }
     public AnSinhSoDbContext(DbContextOptions<AnSinhSoDbContext> options) : base(options)
     {
     }
