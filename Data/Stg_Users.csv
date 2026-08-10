@@ -1,0 +1,5 @@
+﻿Username,PasswordHash,HoTen,Email,MaRole,TrangThai,GhiChu
+ngangiang,HASH_ADMIN_123,Huỳnh Ngân Giang,,ADMIN,Hoạt động,Demo; backend cần thay bằng hash thật
+canboxa,HASH_CANBOXA_123,Cán bộ xã,,CANBOXA,Hoạt động,Demo; backend cần thay bằng hash thật
+maitram,HASH_MAITRAM_123,Mai Trâm,,LANHDAO,Hoạt động,Demo; backend cần thay bằng hash thật
+nguoidan,HASH_NGUOIDAN_123,Người dân demo,,NGUOIDAN,Hoạt động,Demo; backend cần thay bằng hash thật

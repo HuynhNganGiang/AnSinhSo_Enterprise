@@ -1,0 +1,401 @@
+﻿NguonFile,Bang,DongNguon,CotLoi,GiaTri,MoTaLoi,MucDo
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,4,CCCD,03810019377,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,7,CCCD,06031800224,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,17,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,17,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,22,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,22,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,25,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,25,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,28,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,28,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,38,CCCD,60184005187,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,39,CCCD,60309009090,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,42,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,42,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,46,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,48,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,48,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,70,CCCD,0600970113354,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,81,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,96,CCCD,60192005359,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,97,CCCD,60213002381,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,107,NgaySinh,03/12/ 2015,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,142,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,142,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,144,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,144,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,153,CCCD,60083010888,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,163,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,182,NgaySinh,04/24/1941,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,198,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,221,CCCD,0600690007746,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,223,CCCD,0601940131152,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,266,CCCD,02013006695,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,289,NgaySinh,20/10//1976,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,301,NgaySinh,16/'02/2008,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,316,CCCD,0601880161161,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,348,CCCD,06220005580,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,381,NgaySinh,01'01'2007,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,490,CCCD,06009515200,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,606,CCCD,260792229,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,665,CCCD,261320050,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,666,CCCD,261658076,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,692,CCCD,06008601155,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,706,CCCD,06009812956,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,3,CCCD,Dân tộc,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,3,NgaySinh,xã/ phường/ thị trấn,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,3,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,14,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,20,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,20,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,23,CCCD,60222008602,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,25,CCCD,06019000556,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,42,NgaySinh,17/7//2006,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,65,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,164,CCCD,06016606010,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,206,CCCD,0601760068862,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,227,CCCD,60317011269,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,267,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,272,CCCD,0602180011096,CCCD trống hoặc không đủ 12 số,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_ThanhVienHoGiaDinh,278,CCCD,0871950191158,CCCD trống hoặc không đủ 12 số,ERROR
+DANH SÁCH THOÁT HỘ CẬN NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,9,CCCD,Dân tộc,CCCD trống hoặc không đủ 12 số,ERROR
+DANH SÁCH THOÁT HỘ CẬN NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,9,NgaySinh,xã/ phường/ thị trấn,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DANH SÁCH THOÁT HỘ CẬN NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,9,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DANH SÁCH THOÁT HỘ CẬN NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,54,CCCD,06020600868644,CCCD trống hoặc không đủ 12 số,ERROR
+DANH SÁCH THOÁT HỘ NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,10,CCCD,Thôn,CCCD trống hoặc không đủ 12 số,ERROR
+DANH SÁCH THOÁT HỘ NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,10,NgaySinh,Huyện/ thị xã/ thành phố,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DANH SÁCH THOÁT HỘ NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,10,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+DANH SÁCH THOÁT HỘ NGHÈO CHUYỂN SANG CẬN NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,3,CCCD,Dân tộc,CCCD trống hoặc không đủ 12 số,ERROR
+DANH SÁCH THOÁT HỘ NGHÈO CHUYỂN SANG CẬN NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,3,NgaySinh,xã/ phường/ thị trấn,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DANH SÁCH THOÁT HỘ NGHÈO CHUYỂN SANG CẬN NGHÈO CUỐI NĂM 2025.txt,Stg_ThanhVienHoGiaDinh,3,TenDiaBan,,Thiếu thôn/địa bàn,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,6,CCCD,260026580,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,25,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,48,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,54,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,62,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,73,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,87,CCCD,385343156,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,151,CCCD,260322274,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,154,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,160,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,184,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,196,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,201,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,224,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,232,CCCD,261127752,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,257,CCCD,261325860,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,259,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,279,CCCD,260857092,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,285,CCCD,261418924,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,303,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,316,CCCD,260996714,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,321,CCCD,260494301,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,336,CCCD,260250322,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,353,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,366,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,440,CCCD,260322043,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,445,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,456,CCCD,261137990,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,464,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,482,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,498,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,499,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,527,CCCD,261410014,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,528,CCCD,261418954,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,557,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,563,CCCD,260789950,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,581,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,593,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,611,CCCD,261750321,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,612,CCCD,261321064,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,630,CCCD,261415806,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,655,CCCD,261268774,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,667,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,672,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,684,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,685,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,691,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,692,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,693,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,694,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,695,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,698,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,699,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,749,CCCD,269857061,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,758,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,782,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,798,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,800,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,853,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,854,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,859,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,866,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,873,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,883,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,886,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,888,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,893,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,902,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,906,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,915,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,916,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,920,CCCD,261419057,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,921,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,986,CCCD,261127745,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1002,CCCD,261634629,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1003,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1013,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1022,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1047,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1080,CCCD,261415799,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1087,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1143,CCCD,261412257,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1144,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1145,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1160,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1162,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1167,CCCD,260322452,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1170,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1176,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1258,CCCD,261127777,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1271,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1325,CCCD,261273865,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1342,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1343,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1346,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1350,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1383,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1391,CCCD,261370968,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1417,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1441,CCCD,261418899,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1460,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1461,CCCD,260534181,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1483,CCCD,341367089,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1535,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1556,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1557,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1572,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1573,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1594,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1597,CCCD,261420900,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1599,CCCD,260789945,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1603,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1610,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1619,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1624,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1634,CCCD,260996747,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1636,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1663,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1683,CCCD,261418771,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1684,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1697,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1706,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1761,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1806,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1940,CCCD,260649349,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1946,CCCD,260729361,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1957,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1959,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1969,CCCD,261412229,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1971,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1974,CCCD,260816517,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1976,CCCD,261531478,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1983,CCCD,260816867,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,1997,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2000,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2004,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2007,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2034,CCCD,261423531,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2039,CCCD,261638775,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2062,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2063,CCCD,261348328,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2109,CCCD,261269841,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2146,CCCD,260557618,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2147,CCCD,261626822,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2156,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2157,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2164,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2165,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2166,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2191,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2206,CCCD,260848949,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2217,CCCD,171748956,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2249,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2250,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2252,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2253,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2262,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2263,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2281,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2294,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2295,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2299,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2300,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2319,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2338,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2339,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2365,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2366,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2378,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2379,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2386,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2387,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2400,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2401,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2413,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2415,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2419,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2420,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2439,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2441,CCCD,260789718,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2468,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2495,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2496,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2512,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2520,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2533,CCCD,251081917,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2545,CCCD,260916483,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2566,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2567,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2568,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2584,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2586,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2694,CCCD,261424430,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2696,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2708,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2730,CCCD,021791107,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2736,CCCD,261343884,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2756,CCCD,260996363,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2757,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2759,CCCD,261495465,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2762,CCCD,260557143,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2780,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2781,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2782,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2790,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2791,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2795,CCCD,261329030,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2808,CCCD,261044934,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2819,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2820,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2837,CCCD,260650970,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2839,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2853,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2854,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2869,CCCD,261127591,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2870,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2881,CCCD,261343815,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2885,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2955,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2969,CCCD,260996381,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,2988,CCCD,260816706,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3004,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3029,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3033,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3034,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3035,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3036,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3038,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3039,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3040,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3041,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3042,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3045,CCCD,261002107,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3048,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3055,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3082,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3083,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3087,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3089,CCCD,261531628,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3094,CCCD,260998047,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3098,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3100,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3108,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3109,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3115,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3158,CCCD,261339441,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3217,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3221,CCCD,261201329,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3279,CCCD,260343190,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3280,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3281,CCCD,260816398,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3312,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3313,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3314,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3315,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3338,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3355,CCCD,251201496,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3366,CCCD,245381250,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3374,CCCD,260290617,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3375,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3418,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3426,CCCD,,CCCD trống hoặc không đủ 12 số,WARN
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3432,CCCD,261077622,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3506,CCCD,261080889,CCCD trống hoặc không đủ 12 số,ERROR
+Danh sách hộ gia đình.txt,Stg_ThanhVienHoGiaDinh,3508,CCCD,261127477,CCCD trống hoặc không đủ 12 số,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,45,CCCD,52147003306,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,154,CCCD,03/01/1947,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,155,CCCD,20/10/1946,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,161,NgaySinh,12//09/1950,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,169,NgaySinh,01/01/950,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,297,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,298,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,362,CCCD,04/06/1950,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,368,CCCD,31/8/1945,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,477,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,498,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,13,CCCD,60162003581,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,100,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,163,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,164,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,172,NgaySinh,20/01/951,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,322,CCCD,20/10/1949,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,341,NgaySinh,12/16/1950,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,345,NgaySinh,07/16/1950,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,347,NgaySinh,11/20/1950,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,373,CCCD,60050003005,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,436,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,436,NgaySinh,28/707/1969,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,464,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,538,CCCD,60150000768,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+DANH SÁCH THÁNG 06 PHAN TIẾN(CŨ).txt,Stg_DoiTuongAnSinh,27,NgaySinh,01/20/1950,Ngày sinh chưa chuyển được sang ISO yyyy-mm-dd,WARN
+DANH SÁCH THÁNG 06 PHAN TIẾN(CŨ).txt,Stg_DoiTuongAnSinh,48,CCCD,,Thiếu CCCD/Số định danh cá nhân,WARN
+DANH SÁCH THÁNG 06 PHAN TIẾN(CŨ).txt,Stg_DoiTuongAnSinh,89,CCCD,01/01/1950,CCCD không đủ 12 số hoặc có ký tự không phải số,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,4,CCCD,03810019377,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,7,CCCD,06031800224,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,38,CCCD,60184005187,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,39,CCCD,60309009090,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,70,CCCD,0600970113354,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,96,CCCD,60192005359,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,97,CCCD,60213002381,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,153,CCCD,60083010888,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,221,CCCD,0600690007746,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,223,CCCD,0601940131152,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,266,CCCD,02013006695,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,316,CCCD,0601880161161,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,348,CCCD,06220005580,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,490,CCCD,06009515200,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,606,CCCD,260792229,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,665,CCCD,261320050,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,666,CCCD,261658076,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,692,CCCD,06008601155,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU HỘ CẬN NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,706,CCCD,06009812956,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,3,CCCD,Dântộc,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,23,CCCD,60222008602,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,25,CCCD,06019000556,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,164,CCCD,06016606010,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,206,CCCD,0601760068862,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,227,CCCD,60317011269,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,272,CCCD,0602180011096,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DỮ LIỆU NGƯỜI THUỘC HỘ NGHÈO NĂM 2026.txt,Stg_DoiTuongAnSinh,278,CCCD,0871950191158,CCCD không hợp lệ sau chuẩn hóa,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,45,CCCD,52147003306,CCCD không hợp lệ sau chuẩn hóa,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,154,CCCD,03/01/1947,CCCD không hợp lệ sau chuẩn hóa,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,155,CCCD,20/10/1946,CCCD không hợp lệ sau chuẩn hóa,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,362,CCCD,04/06/1950,CCCD không hợp lệ sau chuẩn hóa,ERROR
+"DANH SÁCH ĐỐI TƯỢNG NHẬN TRỢ CẤP XÃ HỘI, TRỢ GIÚP XÃ HỘI HÀNG THÁNG.txt",Stg_DoiTuongAnSinh,368,CCCD,31/8/1945,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,13,CCCD,60162003581,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,322,CCCD,20/10/1949,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,373,CCCD,60050003005,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DANH SÁCH THÁNG 06 KHU VỰC SÔNG LŨY CŨ.txt,Stg_DoiTuongAnSinh,538,CCCD,60150000768,CCCD không hợp lệ sau chuẩn hóa,ERROR
+DANH SÁCH THÁNG 06 PHAN TIẾN(CŨ).txt,Stg_DoiTuongAnSinh,89,CCCD,01/01/1950,CCCD không hợp lệ sau chuẩn hóa,ERROR

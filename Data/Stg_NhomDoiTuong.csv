@@ -1,0 +1,21 @@
+﻿MaNhom,TenNhomDoiTuong,DiemUuTienAI,GhiChu
+NDT_ND176_NGUOI_TU_DU_70_TUO,"(NĐ176) Người từ đủ 70 tuổi đến dưới 75 tuổi thuộc hộ nghèo, hộ cận nghèo và không hưởng lương hưu hoặc trợ cấp bảo hiểm xã hội hằng tháng, hoặc đang hưởng lương hưu hoặc trợ cấp bảo hiểm xã hội hằng tháng thấp hơn mức trợ cấp hưu trí quy định.",80,Mã nhóm nguồn 5.3
+NDT_ND176_NGUOI_TU_DU_75_TUO,"(NĐ176) Người từ đủ 75 tuổi trở lên và không hưởng lương hưu hoặc trợ cấp bảo hiểm xã hội hằng tháng, hoặc đang hưởng lương hưu hoặc trợ cấp bảo hiểm xã hội hằng tháng thấp hơn mức trợ cấp hưu trí quy định",60,Mã nhóm nguồn 5.2
+NDT_ND176_NGUOI_TU_DU_75_TUO_E547,"(NĐ176) Người từ đủ 75 tuổi trở lên và không hưởng lương hưu hoặc trợ cấp bảo hiểm xã hội hằng tháng, hoặc đang hưởng lương hưu hoặc trợ cấp bảo hiểm xã hội hằng tháng thấp hơn mức trợ cấp hưu trí quy định.",60,Mã nhóm nguồn 5.2
+NDT_CHAM_SOC_NKT_DAC_BIET_NA,"Chăm sóc: NKT đặc biệt nặng được nuôi dưỡng trực tiếp, chăm sóc",75,Mã nhóm nguồn 7.7
+NDT_HO_CAN_NGHEO,Hộ cận nghèo,60,Nhóm từ dữ liệu hộ nghèo/cận nghèo
+NDT_HO_NGHEO,Hộ nghèo,80,Nhóm từ dữ liệu hộ nghèo/cận nghèo
+NDT_NKT_NANG_LA_NCT,NKT nặng là NCT,75,Mã nhóm nguồn 6.4
+NDT_NKT_NANG_LA_TRE_EM,NKT nặng là trẻ em,90,Mã nhóm nguồn 6.8
+NDT_NKT_NANG_TU_16_60_TUOI,NKT nặng từ 16-60 tuổi,75,Mã nhóm nguồn 6.3
+NDT_NKT_DAC_BIET_NANG_LA_NCT,NKT đặc biệt nặng là NCT,75,Mã nhóm nguồn 6.2
+NDT_NKT_DAC_BIET_NANG_LA_TRE,NKT đặc biệt nặng là trẻ em,90,Mã nhóm nguồn 6.7
+NDT_NKT_DAC_BIET_NANG_TU_16_,NKT đặc biệt nặng từ 16-60 tuổi,75,Mã nhóm nguồn 6.1
+NDT_NQ_05_TRE_EM_TU_3_16_TUO,"NQ 05. Trẻ em từ 3-16 tuổi không nguồn nuôi dưỡng ( mô côi cha/ mẹ hoặc bị mất tích/ chấp hành án và người còn lại là NKT nặng/ đặc biệt nặng, Cả cha/mẹ là NKT nặng/đặc biệt nặng )",90,Mã nhóm nguồn 1.6
+NDT_NQ_90_TRE_EM_DUOI_3_TUOI,NQ 90. Trẻ em dưới 3 tuổi thuộc diện hộ nghèo/cận nghèo,85,Mã nhóm nguồn 1.5
+NDT_NGUOI_TU_16_22_TUOI_DANG,Người từ 16-22 tuổi đang đi học không có nguồn nuôi dưỡng,50,Mã nhóm nguồn 2.0
+NDT_NGUOI_TU_DU_60_DEN_DUOI_,Người từ đủ 60 đến dưới 80 tuổi thuộc hộ nghèo không có người có nghĩa vụ và quyền phụng dưỡng,70,Mã nhóm nguồn 5.1
+NDT_NGUOI_DON_THAN_NGHEO_DAN,Người đơn thân nghèo đang nuôi 01 con,70,Mã nhóm nguồn 4.11
+NDT_NGUOI_DON_THAN_NGHEO_DAN_7491,Người đơn thân nghèo đang nuôi 02 con,70,Mã nhóm nguồn 4.12
+NDT_TRE_EM_DUOI_3_TUOI_THUOC,"Trẻ em dưới 3 tuổi thuộc diện hộ nghèo, hộ cận nghèo đang sống tại địa bàn các xã, thôn vùng đồng bào dân tộc thiểu số và miền núi đặc biệt khó khăn",85,Mã nhóm nguồn 1.3
+NDT_TRE_EM_TU_4_DEN_DUOI_16_,Trẻ em từ 4 đến dưới 16 tuổi không có nguồn nuôi dưỡng,65,Mã nhóm nguồn 1.2

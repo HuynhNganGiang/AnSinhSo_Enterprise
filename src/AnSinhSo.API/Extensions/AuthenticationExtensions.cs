@@ -10,9 +10,9 @@ public static class AuthenticationExtensions
 {
     public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtSettings = configuration.GetSection("JwtSettings");
-        var secret = jwtSettings["Secret"];
-
+        var jwtSettings = configuration.GetSection("Jwt");
+        var secret = jwtSettings["SecretKey"];
+        
         if (string.IsNullOrEmpty(secret))
         {
             throw new System.Exception("JWT Secret is missing in appsettings.json");

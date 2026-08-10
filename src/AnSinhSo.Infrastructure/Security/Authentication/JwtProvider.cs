@@ -35,7 +35,14 @@ public sealed class JwtProvider : IJwtProvider
         // claims.Add(new Claim(ClaimTypes.Role, "RoleName"));
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
-        var credentials = new SigningCredentials(securityKey, _options.SigningAlgorithm);
+        var signingAlgorithm = _options.SigningAlgorithm switch
+        {
+            "HS256" => SecurityAlgorithms.HmacSha256,
+            "HS384" => SecurityAlgorithms.HmacSha384,
+            "HS512" => SecurityAlgorithms.HmacSha512,
+            _ => throw new InvalidOperationException($"Invalid signing algorithm: {_options.SigningAlgorithm}")
+        };
+        var credentials = new SigningCredentials(securityKey, signingAlgorithm);
 
         var expires = _timeProvider.GetUtcNow().AddMinutes(_options.AccessTokenMinutes).UtcDateTime;
 

@@ -18,6 +18,7 @@ public static class SecurityDependencyInjection
         services.AddSingleton<IJwtProvider, JwtProvider>();
         services.AddSingleton<IRefreshTokenGenerator, RefreshTokenGenerator>();
         services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
+        services.AddScoped<IClientInfoProvider, ClientInfoProvider>();
 
         // 2. HttpContext Accessor (required for CurrentUserProvider)
         services.AddHttpContextAccessor();

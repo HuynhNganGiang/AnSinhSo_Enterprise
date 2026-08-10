@@ -6,6 +6,7 @@ using AnSinhSo.Contracts.Authentication;
 using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Domain.Aggregates.UserAggregate;
+using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
 using System;
 
 namespace AnSinhSo.Application.Authentication.Login;
@@ -19,6 +20,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<T
     private readonly IUnitOfWork _unitOfWork;
     private readonly TimeProvider _timeProvider;
     private readonly IClientInfoProvider _clientInfoProvider;
+    private readonly IUserSessionRepository _userSessionRepository;
 
     // Use a static dummy hash to avoid generating a new hash just to verify against it,
     // which would still be fast compared to verifying a real hash.
@@ -33,7 +35,8 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<T
         IRefreshTokenGenerator refreshTokenGenerator,
         IUnitOfWork unitOfWork,
         TimeProvider timeProvider,
-        IClientInfoProvider clientInfoProvider)
+        IClientInfoProvider clientInfoProvider,
+        IUserSessionRepository userSessionRepository)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
@@ -42,6 +45,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<T
         _unitOfWork = unitOfWork;
         _timeProvider = timeProvider;
         _clientInfoProvider = clientInfoProvider;
+        _userSessionRepository = userSessionRepository;
     }
 
     public async Task<Result<TokenResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -83,15 +87,18 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<T
         // 7. Hash Refresh Token
         string refreshTokenHash = _passwordHasher.Hash(plainRefreshToken);
 
-        // 8. User.IssueRefreshToken
-        user.IssueRefreshToken(
+        // 8. UserSession.Issue
+        var userSession = UserSession.Issue(
+            userId: user.Id.Value,
             tokenHash: refreshTokenHash,
             expiresAtUtc: _timeProvider.GetUtcNow().UtcDateTime.AddDays(tokenResult.RefreshTokenDays),
-            createdByIp: _clientInfoProvider.IpAddress,
+            securityStamp: user.SecurityStamp,
+            ipAddress: _clientInfoProvider.IpAddress,
             deviceName: _clientInfoProvider.DeviceName,
             userAgent: _clientInfoProvider.UserAgent,
-            jwtId: tokenResult.JwtId
+            now: _timeProvider.GetUtcNow().UtcDateTime
         );
+        _userSessionRepository.Add(userSession);
 
         _userRepository.Update(user);
 
