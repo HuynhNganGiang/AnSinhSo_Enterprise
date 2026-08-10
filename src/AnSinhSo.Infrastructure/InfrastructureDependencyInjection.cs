@@ -1,5 +1,7 @@
 using AnSinhSo.Infrastructure.Persistence.Contexts;
 using AnSinhSo.Infrastructure.Persistence.Repositories;
+using AnSinhSo.Infrastructure.Security;
+using AnSinhSo.Infrastructure.Notifications;
 using AnSinhSo.Infrastructure.DataImport.Cache;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,12 +26,18 @@ public static class InfrastructureDependencyInjection
         // Specialized Repositories (Domain)
         services.AddScoped<AnSinhSo.Domain.Aggregates.CitizenAggregate.ICitizenRepository, CitizenRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ICitizenIdentityRepository, CitizenIdentityRepository>();
+        services.AddScoped<AnSinhSo.Domain.Interfaces.IOtpVerificationRepository, OtpVerificationRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.HouseholdAggregate.IHouseholdRepository, HouseholdRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.PaymentAggregate.IPaymentRepository, PaymentRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.PolicyAggregate.IPolicyRepository, PolicyRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.WelfareGroupAggregate.IWelfareGroupRepository, WelfareGroupRepository>();
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserRepository, UserRepository>();
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserSessionRepository, UserSessionRepository>();
+
+        // OTP Security & Notifications
+        services.AddSingleton<AnSinhSo.Application.Abstractions.Security.IOtpGenerator, OtpGenerator>();
+        services.AddSingleton<AnSinhSo.Application.Abstractions.Security.IHashProvider, HashProvider>();
+        services.AddTransient<AnSinhSo.Application.Abstractions.Notifications.IOtpNotificationService, DummyOtpNotificationService>();
 
         // Data Import Pipeline
         services.AddScoped<ILookupCacheService, LookupCacheService>();

@@ -5,6 +5,7 @@ using AnSinhSo.Domain.Aggregates.PolicyAggregate;
 using AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
 using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
+using AnSinhSo.Domain.Aggregates.OtpVerificationAggregate;
 using AnSinhSo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -22,6 +23,7 @@ public class AnSinhSoDbContext : DbContext
     public DbSet<AnSinhSo.Domain.Aggregates.UserAggregate.User> Users { get; set; }
     public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<CitizenIdentity> CitizenIdentities { get; set; }
+    public DbSet<OtpVerification> OtpVerifications { get; set; }
     public AnSinhSoDbContext(DbContextOptions<AnSinhSoDbContext> options) : base(options)
     {
     }
