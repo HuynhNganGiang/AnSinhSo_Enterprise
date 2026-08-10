@@ -29,6 +29,9 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserRepository, UserRepository>();
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserSessionRepository, UserSessionRepository>();
 
+        // Data Import Pipeline
+        services.AddScoped<AnSinhSo.Application.DataImport.IDataImportService, AnSinhSo.Infrastructure.DataImport.DataImportService>();
+
         return services;
     }
 }

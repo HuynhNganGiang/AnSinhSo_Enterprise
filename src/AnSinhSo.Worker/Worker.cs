@@ -3,21 +3,39 @@ namespace AnSinhSo.Worker;
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-    public Worker(ILogger<Worker> logger)
+    public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider, IHostApplicationLifetime hostApplicationLifetime)
     {
         _logger = logger;
+        _serviceProvider = serviceProvider;
+        _hostApplicationLifetime = hostApplicationLifetime;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        try
         {
-            if (_logger.IsEnabled(LogLevel.Information))
+            _logger.LogInformation("Worker starting at: {time}", DateTimeOffset.Now);
+
+            try
             {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                using var scope = _serviceProvider.CreateScope();
+                var dataImportService = scope.ServiceProvider.GetRequiredService<AnSinhSo.Application.DataImport.IDataImportService>();
+                
+                await dataImportService.ExecuteImportAsync(stoppingToken);
             }
-            await Task.Delay(1000, stoppingToken);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during Data Import Pipeline execution.");
+            }
+
+            _logger.LogInformation("Worker finished at: {time}", DateTimeOffset.Now);
+        }
+        finally
+        {
+            _hostApplicationLifetime.StopApplication();
         }
     }
 }
