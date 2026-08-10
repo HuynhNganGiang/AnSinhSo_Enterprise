@@ -31,6 +31,12 @@ public static class InfrastructureDependencyInjection
 
         // Data Import Pipeline
         services.AddScoped<AnSinhSo.Application.DataImport.IDataImportService, AnSinhSo.Infrastructure.DataImport.DataImportService>();
+        services.AddSingleton<AnSinhSo.Infrastructure.DataImport.Normalization.ICsvStringNormalizer, AnSinhSo.Infrastructure.DataImport.Normalization.CsvStringNormalizer>();
+        services.AddScoped<AnSinhSo.Infrastructure.DataImport.Mappers.IWelfareGroupMapper, AnSinhSo.Infrastructure.DataImport.Mappers.WelfareGroupMapper>();
+        services.AddScoped<AnSinhSo.Infrastructure.DataImport.Mappers.ICitizenMapper, AnSinhSo.Infrastructure.DataImport.Mappers.CitizenMapper>();
+        services.AddScoped<AnSinhSo.Infrastructure.DataImport.Mappers.IHouseholdMapper, AnSinhSo.Infrastructure.DataImport.Mappers.HouseholdMapper>();
+        services.AddScoped<AnSinhSo.Infrastructure.DataImport.Mappers.IPolicyMapper, AnSinhSo.Infrastructure.DataImport.Mappers.PolicyMapper>();
+        services.AddScoped<AnSinhSo.Infrastructure.DataImport.Mappers.IPaymentMapper, AnSinhSo.Infrastructure.DataImport.Mappers.PaymentMapper>();
 
         return services;
     }
