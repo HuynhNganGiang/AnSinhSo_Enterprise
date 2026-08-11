@@ -30,10 +30,11 @@ public sealed class UnhandledExceptionBehavior<TRequest, TResponse> : IPipelineB
         }
         catch (Exception ex)
         {
+            Console.WriteLine("MEDIATR EXCEPTION: " + ex.ToString());
             var requestName = typeof(TRequest).Name;
             _logger.LogError(ex, "Unhandled Exception for Request {RequestName}: {Message}", requestName, ex.Message);
 
-            var error = Error.Failure("System.UnhandledException", "Đã xảy ra lỗi hệ thống không mong muốn.");
+            var error = Error.Failure("System.UnhandledException", $"Error: {ex.Message} \n {ex.StackTrace}");
 
             if (typeof(TResponse) == typeof(Result))
             {

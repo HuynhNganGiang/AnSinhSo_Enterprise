@@ -40,8 +40,8 @@ builder.Services.AddApiVersioning(options =>
 // Register Layer Dependencies
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApiAuthorization();
+builder.Services.AddApiRateLimiting();
 
 var app = builder.Build();
 
@@ -62,6 +62,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.UseMiddleware<AnSinhSo.API.Middlewares.ResponseWrapperMiddleware>();
 
@@ -70,3 +71,6 @@ app.MapControllers();
 app.MapHealthChecks("/health");
 
 app.Run();
+
+public partial class Program { }
+

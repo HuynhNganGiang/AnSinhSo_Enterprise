@@ -82,19 +82,22 @@ public static class InfrastructureDependencyInjection
                         if (Guid.TryParse(sidClaim, out var sessionId))
                         {
                             var session = await sessionRepository.GetByIdAsync(new UserSessionId(sessionId));
-                            if (session == null || !session.IsActive())
+                            if (session != null && session.IsActive())
                             {
-                                context.Fail("Session is revoked or expired.");
-                                return;
+                                // AD #100: CitizenIdentity Active check
+                                var identityRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ICitizenIdentityRepository>();
+                                var identity = await identityRepository.GetByIdAsync(new AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.CitizenIdentityId(session.CitizenIdentityId));
+                                if (identity == null || identity.Status != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Active)
+                                {
+                                    System.Console.WriteLine($"[JwtBearerEvents] Citizen Identity not active or null. IdentityId: {session.CitizenIdentityId}, Status: {identity?.Status}");
+                                    context.Fail("Citizen Identity is not active.");
+                                    return;
+                                }
                             }
-
-                            // AD #100: CitizenIdentity Active check
-                            var identityRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ICitizenIdentityRepository>();
-                            var identity = await identityRepository.GetByIdAsync(new AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.CitizenIdentityId(session.CitizenIdentityId));
-                            if (identity == null || identity.Status != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Active)
+                            else
                             {
-                                context.Fail("Citizen Identity is not active.");
-                                return;
+                                System.Console.WriteLine($"[JwtBearerEvents] Invalid session. Session: {session?.Id}, IsActive: {session?.IsActive()}, IsRevoked: {session?.IsRevoked}, IsExpired: {session?.IsExpired()}");
+                                context.Fail("Invalid session ID in token.");
                             }
                         }
                         else

@@ -19,6 +19,7 @@ public static class SecurityDependencyInjection
         services.AddSingleton<IRefreshTokenGenerator, RefreshTokenGenerator>();
         services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
         services.AddScoped<IClientInfoProvider, ClientInfoProvider>();
+        services.AddSingleton<AnSinhSo.Application.Common.Interfaces.Security.ISecurityStampGenerator, SecurityStampGenerator>();
 
         // 2. HttpContext Accessor (required for CurrentUserProvider)
         services.AddHttpContextAccessor();

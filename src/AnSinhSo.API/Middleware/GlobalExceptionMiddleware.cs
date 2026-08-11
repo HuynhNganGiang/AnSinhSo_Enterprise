@@ -29,6 +29,7 @@ public class GlobalExceptionMiddleware
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
+        Console.WriteLine("GLOBAL EXCEPTION: " + exception.ToString());
         context.Response.ContentType = "application/json";
 
         var statusCode = StatusCodes.Status500InternalServerError;

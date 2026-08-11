@@ -1,3 +1,7 @@
 namespace AnSinhSo.Contracts.Authentication;
 
-public record LoginRequest(string UsernameOrEmail, string Password);
+public sealed record LoginRequest(
+    string PhoneNumber,
+    string OtpCode,
+    string DeviceName
+);

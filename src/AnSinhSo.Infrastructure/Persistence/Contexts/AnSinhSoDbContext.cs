@@ -10,6 +10,7 @@ using AnSinhSo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace AnSinhSo.Infrastructure.Persistence.Contexts;
 
@@ -33,6 +34,26 @@ public class AnSinhSoDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AnSinhSoDbContext).Assembly);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        if (Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory")
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (entry.State == EntityState.Added || entry.State == EntityState.Modified)
+                {
+                    var rowVersionProp = entry.Properties.FirstOrDefault(p => p.Metadata.Name == "RowVersion");
+                    if (rowVersionProp != null)
+                    {
+                        rowVersionProp.CurrentValue = System.Guid.NewGuid().ToByteArray().Take(8).ToArray();
+                    }
+                }
+            }
+        }
+        
+        return base.SaveChangesAsync(cancellationToken);
     }
 
 }

@@ -29,7 +29,7 @@ public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
             .HasMaxLength(256)
             .IsRequired();
 
-        builder.ComplexProperty(x => x.DeviceInfo, metadata =>
+        builder.OwnsOne(x => x.DeviceInfo, metadata =>
         {
             metadata.Property(m => m.DeviceName)
                 .HasColumnName("DeviceName")
