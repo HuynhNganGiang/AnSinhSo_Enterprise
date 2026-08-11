@@ -27,4 +27,10 @@ public static class IdentityErrors
         "CitizenIdentity does not exist.",
         ErrorType.NotFound
     );
+
+    public static readonly Error IdentityNotActive = new(
+        "Identity.IdentityNotActive",
+        "CitizenIdentity is not active.",
+        ErrorType.Validation
+    );
 }
