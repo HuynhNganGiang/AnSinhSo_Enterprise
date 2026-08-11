@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
+using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
 using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -19,49 +20,31 @@ public class UserSessionRepository : IUserSessionRepository
         _context = context;
     }
 
-    public Task<UserSession?> GetByTokenHashAsync(string tokenHash, CancellationToken ct = default)
+    public Task<UserSession?> GetByIdAsync(UserSessionId id, CancellationToken cancellationToken = default)
     {
         return _context.Set<UserSession>()
-            .FirstOrDefaultAsync(x => x.CurrentTokenHash == tokenHash, ct);
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
-    public Task<UserSession?> GetByIdAsync(UserSessionId id, CancellationToken ct = default)
+    public Task<UserSession?> GetByRefreshTokenHashAsync(string refreshTokenHash, CancellationToken cancellationToken = default)
     {
         return _context.Set<UserSession>()
-            .FirstOrDefaultAsync(x => x.Id == id, ct);
+            .FirstOrDefaultAsync(x => x.RefreshTokenHash == refreshTokenHash, cancellationToken);
     }
 
-    public Task<List<UserSession>> GetActiveSessionsByUserIdAsync(Guid userId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<UserSession>> GetActiveSessionsByCitizenAsync(Guid citizenIdentityId, CancellationToken cancellationToken = default)
     {
         var now = DateTime.UtcNow;
-        return _context.Set<UserSession>()
-            .Where(x => x.UserId.Value == userId && !x.IsRevoked && x.ExpiresAtUtc > now)
-            .ToListAsync(ct);
+        return await _context.Set<UserSession>()
+            .Where(x => x.CitizenIdentityId == citizenIdentityId && !x.IsRevoked && x.ExpiresAt > now)
+            .ToListAsync(cancellationToken);
     }
 
-    public Task<List<UserSession>> GetSessionsByFamilyIdAsync(Guid familyId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<UserSession>> GetFamilySessionsAsync(Guid refreshTokenFamilyId, CancellationToken cancellationToken = default)
     {
-        return _context.Set<UserSession>()
-            .Where(x => x.FamilyId == familyId)
-            .ToListAsync(ct);
-    }
-
-    public Task<bool> ExistsActiveSessionAsync(Guid userId, string deviceId, CancellationToken ct = default)
-    {
-        var now = DateTime.UtcNow;
-        // In EF Core, value objects properties can be queried this way
-        return _context.Set<UserSession>()
-            .AnyAsync(x => x.UserId.Value == userId && 
-                           !x.IsRevoked && 
-                           x.ExpiresAtUtc > now && 
-                           x.Metadata.DeviceName == deviceId, ct);
-    }
-
-    public Task<int> GetActiveSessionCountAsync(Guid userId, CancellationToken ct = default)
-    {
-        var now = DateTime.UtcNow;
-        return _context.Set<UserSession>()
-            .CountAsync(x => x.UserId.Value == userId && !x.IsRevoked && x.ExpiresAtUtc > now, ct);
+        return await _context.Set<UserSession>()
+            .Where(x => x.RefreshTokenFamilyId == refreshTokenFamilyId)
+            .ToListAsync(cancellationToken);
     }
 
     public void Add(UserSession session)

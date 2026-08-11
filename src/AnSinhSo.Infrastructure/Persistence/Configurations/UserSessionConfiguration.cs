@@ -1,5 +1,5 @@
-using AnSinhSo.Domain.Aggregates.UserAggregate;
 using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
+using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,27 +17,19 @@ public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
             .HasConversion(
                 v => v.Value,
                 v => new UserSessionId(v))
-            .ValueGeneratedNever(); // Using Guid.NewGuid() for now, which is handled at domain level.
-        builder.Property(x => x.UserId)
-            .HasConversion(
-                v => v.Value,
-                v => new UserId(v))
+            .ValueGeneratedNever();
+
+        builder.Property(x => x.CitizenIdentityId)
             .IsRequired();
 
-        // User is not mapped in this DbContext, so we just store the UserId.
-
-        builder.Property(x => x.FamilyId)
+        builder.Property(x => x.RefreshTokenFamilyId)
             .IsRequired();
 
-        builder.Property(x => x.CurrentTokenHash)
+        builder.Property(x => x.RefreshTokenHash)
             .HasMaxLength(256)
             .IsRequired();
 
-        builder.Property(x => x.SecurityStampSnapshot)
-            .HasMaxLength(256)
-            .IsRequired();
-
-        builder.OwnsOne(x => x.Metadata, metadata =>
+        builder.ComplexProperty(x => x.DeviceInfo, metadata =>
         {
             metadata.Property(m => m.DeviceName)
                 .HasColumnName("DeviceName")
@@ -53,31 +45,27 @@ public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
                 .IsRequired();
         });
 
-
-        builder.Property(x => x.LastActivityUtc)
+        builder.Property(x => x.ExpiresAt)
             .IsRequired();
 
-        builder.Property(x => x.ExpiresAtUtc)
-            .IsRequired();
+        builder.Property(x => x.RevokedAt);
 
-        builder.Property(x => x.RevokedAtUtc);
-
-        builder.Property(x => x.RevokedReason)
+        builder.Property(x => x.RevokeReason)
             .HasMaxLength(200);
 
         builder.Property(x => x.IsRevoked)
             .IsRequired();
 
-        builder.Property(x => x.RowVersion)
+        builder.Property<byte[]>("RowVersion")
             .IsRowVersion()
             .IsRequired();
 
         // Indexes
-        builder.HasIndex(x => x.CurrentTokenHash).IsUnique();
-        builder.HasIndex(x => x.FamilyId);
+        builder.HasIndex(x => x.RefreshTokenHash).IsUnique();
+        builder.HasIndex(x => x.RefreshTokenFamilyId);
         
-        // Filtered index for user sessions
-        builder.HasIndex(x => new { x.UserId, x.ExpiresAtUtc })
+        // Filtered index for user sessions by CitizenIdentityId
+        builder.HasIndex(x => new { x.CitizenIdentityId, x.ExpiresAt })
             .HasFilter("[IsRevoked] = 0");
     }
 }

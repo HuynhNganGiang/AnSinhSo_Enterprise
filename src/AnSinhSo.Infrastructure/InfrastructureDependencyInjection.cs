@@ -6,6 +6,12 @@ using AnSinhSo.Infrastructure.DataImport.Cache;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System;
+using AnSinhSo.Infrastructure.Authentication;
+using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
 
 namespace AnSinhSo.Infrastructure;
 
@@ -38,6 +44,66 @@ public static class InfrastructureDependencyInjection
         services.AddSingleton<AnSinhSo.Application.Abstractions.Security.IOtpGenerator, OtpGenerator>();
         services.AddSingleton<AnSinhSo.Application.Abstractions.Security.IHashProvider, HashProvider>();
         services.AddTransient<AnSinhSo.Application.Abstractions.Notifications.IOtpNotificationService, DummyOtpNotificationService>();
+
+        // JWT Authentication (AD #86, AD #91, AD #95)
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.AddSingleton<AnSinhSo.Application.Abstractions.Authentication.IJwtProvider, JwtProvider>();
+        services.AddSingleton<AnSinhSo.Application.Abstractions.Authentication.ITokenGenerator, RefreshTokenGenerator>();
+
+        var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
+        
+        if (string.IsNullOrEmpty(jwtOptions.SecretKey) || Encoding.UTF8.GetByteCount(jwtOptions.SecretKey) < 32)
+        {
+            throw new InvalidOperationException("JwtOptions.SecretKey must be at least 32 bytes (256 bits).");
+        }
+        
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidAudience = jwtOptions.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
+                    ClockSkew = TimeSpan.Zero // AD #95: Enforce exact expiration time
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        var sessionRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.IUserSessionRepository>();
+                        var sidClaim = context.Principal?.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sid)?.Value;
+
+                        if (Guid.TryParse(sidClaim, out var sessionId))
+                        {
+                            var session = await sessionRepository.GetByIdAsync(new UserSessionId(sessionId));
+                            if (session == null || !session.IsActive())
+                            {
+                                context.Fail("Session is revoked or expired.");
+                                return;
+                            }
+
+                            // AD #100: CitizenIdentity Active check
+                            var identityRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ICitizenIdentityRepository>();
+                            var identity = await identityRepository.GetByIdAsync(new AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.CitizenIdentityId(session.CitizenIdentityId));
+                            if (identity == null || identity.Status != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Active)
+                            {
+                                context.Fail("Citizen Identity is not active.");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            context.Fail("Invalid session ID in token.");
+                        }
+                    }
+                };
+            });
 
         // Data Import Pipeline
         services.AddScoped<ILookupCacheService, LookupCacheService>();
