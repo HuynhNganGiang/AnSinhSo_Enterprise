@@ -1,53 +1,90 @@
 using System;
-using AnSinhSo.Domain.Aggregates.UserAggregate;
+using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
 using AnSinhSo.Domain.SeedWork.Entities;
 
 namespace AnSinhSo.Domain.Aggregates.UserSessionAggregate;
 
 public sealed class UserSession : AggregateRoot<UserSessionId>
 {
-    public UserId UserId { get; private set; }
-    public Guid FamilyId { get; private set; }
-    public string CurrentTokenHash { get; private set; } = string.Empty;
-    public string SecurityStampSnapshot { get; private set; } = string.Empty;
-    public DeviceMetadata Metadata { get; private set; } = null!;
+    public Guid CitizenIdentityId { get; private set; }
+    public Guid RefreshTokenFamilyId { get; private set; }
+    public DeviceInfo DeviceInfo { get; private set; }
+    public string RefreshTokenHash { get; private set; }
+    public DateTime ExpiresAt { get; private set; }
     
-
-    public DateTime LastActivityUtc { get; private set; }
-    public DateTime ExpiresAtUtc { get; private set; }
-    
-    public DateTime? RevokedAtUtc { get; private set; }
-    public string? RevokedReason { get; private set; }
     public bool IsRevoked { get; private set; }
-
-    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+    public DateTime? RevokedAt { get; private set; }
+    public string RevokeReason { get; private set; }
 
 #pragma warning disable CS8618
-    private UserSession() { } // ORM
+    private UserSession() { }
 #pragma warning restore CS8618
 
-    public static UserSession Issue(
-        Guid userId,
-        string tokenHash,
-        DateTime expiresAtUtc,
-        string securityStamp,
-        string ipAddress,
-        string deviceName,
-        string userAgent,
-        DateTime now)
+    private UserSession(
+        UserSessionId id,
+        Guid citizenIdentityId,
+        Guid refreshTokenFamilyId,
+        DeviceInfo deviceInfo,
+        string refreshTokenHash,
+        DateTime expiresAt)
     {
-        return new UserSession
-        {
-            Id = UserSessionId.New(),
-            UserId = new UserId(userId),
-            FamilyId = Guid.NewGuid(),
-            CurrentTokenHash = tokenHash,
-            SecurityStampSnapshot = securityStamp,
-            Metadata = new DeviceMetadata(deviceName, ipAddress, userAgent),
+        Id = id;
+        CitizenIdentityId = citizenIdentityId;
+        RefreshTokenFamilyId = refreshTokenFamilyId;
+        DeviceInfo = deviceInfo ?? throw new ArgumentNullException(nameof(deviceInfo));
+        RefreshTokenHash = refreshTokenHash ?? throw new ArgumentNullException(nameof(refreshTokenHash));
+        ExpiresAt = expiresAt;
+        
+        IsRevoked = false;
+        RevokedAt = null;
+        RevokeReason = string.Empty;
+    }
 
-            LastActivityUtc = now,
-            ExpiresAtUtc = expiresAtUtc,
-            IsRevoked = false
-        };
+    public static UserSession Create(
+        Guid citizenIdentityId,
+        Guid refreshTokenFamilyId,
+        DeviceInfo deviceInfo,
+        string refreshTokenHash,
+        DateTime expiresAt)
+    {
+        return new UserSession(
+            UserSessionId.New(),
+            citizenIdentityId,
+            refreshTokenFamilyId,
+            deviceInfo,
+            refreshTokenHash,
+            expiresAt);
+    }
+
+    public void RotateRefreshToken(string newRefreshTokenHash, DateTime expiresAt)
+    {
+        if (IsRevoked)
+            throw new InvalidOperationException("Cannot rotate refresh token for a revoked session.");
+            
+        if (IsExpired())
+            throw new InvalidOperationException("Cannot rotate refresh token for an expired session.");
+
+        RefreshTokenHash = newRefreshTokenHash ?? throw new ArgumentNullException(nameof(newRefreshTokenHash));
+        ExpiresAt = expiresAt;
+    }
+
+    public void Revoke(string reason)
+    {
+        if (IsRevoked)
+            return; // Already revoked
+
+        IsRevoked = true;
+        RevokedAt = DateTime.UtcNow;
+        RevokeReason = reason ?? "Unspecified";
+    }
+
+    public bool IsExpired()
+    {
+        return DateTime.UtcNow >= ExpiresAt;
+    }
+
+    public bool IsActive()
+    {
+        return !IsRevoked && !IsExpired();
     }
 }
