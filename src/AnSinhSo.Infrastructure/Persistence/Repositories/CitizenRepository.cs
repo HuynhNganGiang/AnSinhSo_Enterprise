@@ -25,18 +25,89 @@ public sealed class CitizenRepository : ICitizenRepository
 
     public Task<Citizen?> GetByCitizenNumberAsync(string citizenNumber, CancellationToken cancellationToken = default)
     {
-        // CitizenNumber is a ValueObject so it's mapped to a column, or it can be a navigation.
-        // Assuming CitizenNumber is mapped cleanly.
-        // wait, we need to check how CitizenNumber is modeled. It's a ValueObject, so x.CitizenNumber.Value == citizenNumber.
-        // EF Core 8 ComplexProperty can handle x => x.CitizenNumber.Value.
-        // However, we don't have the domain definition exactly in mind. 
-        // A generic approach is fine, or we can use EF.Functions.
         return _dbContext.Set<Citizen>().FirstOrDefaultAsync(x => x.CitizenNumber.Value == citizenNumber, cancellationToken);
+    }
+
+    public Task<bool> ExistsByIdAsync(CitizenId id, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Set<Citizen>().AnyAsync(x => x.Id == id, cancellationToken);
+    }
+
+    public Task<bool> ExistsByCitizenNumberAsync(string citizenNumber, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Set<Citizen>().AnyAsync(x => x.CitizenNumber.Value == citizenNumber, cancellationToken);
+    }
+
+    public Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Set<Citizen>().AnyAsync(x => x.Email.Value == email, cancellationToken);
+    }
+
+    public Task<bool> ExistsByPhoneAsync(string phone, CancellationToken cancellationToken = default)
+    {
+        return _dbContext.Set<Citizen>().AnyAsync(x => x.PhoneNumber.Value == phone, cancellationToken);
+    }
+
+    public async Task<(IReadOnlyList<Citizen> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, string? sort, CancellationToken cancellationToken = default)
+    {
+        var query = _dbContext.Set<Citizen>().AsQueryable();
+
+        // Basic sorting could be implemented here
+        query = query.OrderBy(x => x.Id);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
+    }
+
+    public async Task<(IReadOnlyList<Citizen> Items, int TotalCount)> SearchAsync(string? identityNumber, string? phone, string? keyword, int page, int pageSize, string? sort, CancellationToken cancellationToken = default)
+    {
+        var query = _dbContext.Set<Citizen>().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(identityNumber))
+        {
+            query = query.Where(x => x.CitizenNumber.Value == identityNumber);
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            query = query.Where(x => x.PhoneNumber.Value == phone);
+        }
+
+        if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            // Use EF.Functions.Like for FullName or IdentityNumber or Phone
+            var pattern = $"%{keyword}%";
+            query = query.Where(x => 
+                EF.Functions.Like(x.FullName.FirstName, pattern) ||
+                EF.Functions.Like(x.FullName.LastName, pattern) ||
+                EF.Functions.Like(x.CitizenNumber.Value, pattern) ||
+                EF.Functions.Like(x.PhoneNumber.Value, pattern));
+        }
+
+        query = query.OrderBy(x => x.Id);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 
     public void Add(Citizen citizen)
     {
         _dbContext.Set<Citizen>().Add(citizen);
+    }
+
+    public void Update(Citizen citizen)
+    {
+        _dbContext.Set<Citizen>().Update(citizen);
     }
 
     public void Remove(Citizen citizen)

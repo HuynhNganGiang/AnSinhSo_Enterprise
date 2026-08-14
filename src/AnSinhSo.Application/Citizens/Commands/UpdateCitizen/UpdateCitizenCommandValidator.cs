@@ -1,22 +1,12 @@
-using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using FluentValidation;
 
-namespace AnSinhSo.Application.Citizens.Commands.CreateCitizen;
+namespace AnSinhSo.Application.Citizens.Commands.UpdateCitizen;
 
-/// <summary>
-/// Validator cho CreateCitizenCommand.
-/// </summary>
-public sealed class CreateCitizenCommandValidator : AbstractValidator<CreateCitizenCommand>
+public sealed class UpdateCitizenCommandValidator : AbstractValidator<UpdateCitizenCommand>
 {
-    /// <summary>
-    /// Khởi tạo CreateCitizenCommandValidator.
-    /// </summary>
-    public CreateCitizenCommandValidator()
+    public UpdateCitizenCommandValidator()
     {
-        RuleFor(x => x.CitizenNumber)
-            .NotEmpty().WithMessage("Số CCCD không được để trống.")
-            .Length(12).WithMessage("Số CCCD phải có 12 ký tự.")
-            .Matches(@"^\d{12}$").WithMessage("Số CCCD chỉ được chứa số.");
+        RuleFor(x => x.CitizenId).NotEmpty();
 
         RuleFor(x => x.FullName)
             .NotEmpty().WithMessage("Họ và tên không được để trống.")

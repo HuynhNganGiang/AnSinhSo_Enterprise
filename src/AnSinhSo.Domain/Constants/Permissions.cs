@@ -24,9 +24,11 @@ public static class Permissions
 
     public static class Citizens
     {
-        public const string Read = "citizens.read";
+        public const string View = "citizens.view";
         public const string Create = "citizens.create";
         public const string Update = "citizens.update";
+        public const string Activate = "citizens.activate";
+        public const string Deactivate = "citizens.deactivate";
         public const string Delete = "citizens.delete";
     }
 

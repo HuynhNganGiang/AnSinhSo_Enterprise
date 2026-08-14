@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -32,16 +33,31 @@ public sealed class UpdateCitizenCommandHandler : IRequestHandler<UpdateCitizenC
 
         var phoneResult = PhoneNumber.Create(request.PhoneNumber);
         var addressResult = Address.Create(request.Address, "N/A", "N/A", "N/A", PostalCode.Create("00000").Value);
+        var emailResult = Email.Create(request.Email);
+        var fullNameResult = FullName.Create("N/A", "N/A", request.FullName);
+        var gender = AnSinhSo.Domain.Enumerations.Enumeration.GetAll<AnSinhSo.Domain.Aggregates.CitizenAggregate.Enumerations.Gender>().FirstOrDefault(x => x.Id == request.Gender) ?? AnSinhSo.Domain.Aggregates.CitizenAggregate.Enumerations.Gender.Other;
 
         if (phoneResult.IsFailure) return phoneResult;
         if (addressResult.IsFailure) return addressResult;
+        if (emailResult.IsFailure) return emailResult;
+        if (fullNameResult.IsFailure) return fullNameResult;
 
-        var phoneUpdateResult = citizen.ChangePhone(phoneResult.Value);
-        if (phoneUpdateResult.IsFailure) return phoneUpdateResult;
+        if (citizen.PhoneNumber.Value != phoneResult.Value.Value && await _citizenRepository.ExistsByPhoneAsync(phoneResult.Value.Value, cancellationToken))
+        {
+            return Result.Failure(Error.Conflict("Citizen.DuplicatePhone", "Số điện thoại đã tồn tại."));
+        }
 
-        var addressUpdateResult = citizen.ChangeAddress(addressResult.Value);
-        if (addressUpdateResult.IsFailure) return addressUpdateResult;
+        if (citizen.Email.Value != emailResult.Value.Value && await _citizenRepository.ExistsByEmailAsync(emailResult.Value.Value, cancellationToken))
+        {
+            return Result.Failure(Error.Conflict("Citizen.DuplicateEmail", "Địa chỉ email đã tồn tại."));
+        }
 
+        citizen.UpdateProfile(fullNameResult.Value, request.BirthDate, gender);
+        citizen.ChangePhone(phoneResult.Value);
+        citizen.ChangeAddress(addressResult.Value);
+        citizen.ChangeEmail(emailResult.Value);
+
+        _citizenRepository.Update(citizen);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

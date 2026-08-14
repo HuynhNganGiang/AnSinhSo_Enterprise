@@ -145,6 +145,26 @@ public sealed class Citizen : AggregateRoot<CitizenId>
     }
 
     /// <summary>
+    /// Thay đổi địa chỉ Email của công dân.
+    /// </summary>
+    /// <param name="newEmail">Email mới.</param>
+    /// <returns>Kết quả thành công hoặc lỗi.</returns>
+    public Result ChangeEmail(Email newEmail)
+    {
+        Guard.Against.Null(newEmail, nameof(newEmail));
+
+        if (Email == newEmail)
+        {
+            return Result.Success();
+        }
+
+        Email = newEmail;
+        RaiseDomainEvent(new CitizenEmailChangedDomainEvent(Id, newEmail));
+
+        return Result.Success();
+    }
+
+    /// <summary>
     /// Thay đổi địa chỉ thường trú của công dân.
     /// </summary>
     /// <param name="newAddress">Địa chỉ mới.</param>
@@ -165,6 +185,24 @@ public sealed class Citizen : AggregateRoot<CitizenId>
     }
 
     /// <summary>
+    /// Cập nhật thông tin cơ bản.
+    /// </summary>
+    public Result UpdateProfile(FullName fullName, DateTime birthDate, Gender gender)
+    {
+        Guard.Against.Null(fullName, nameof(fullName));
+        Guard.Against.Null(gender, nameof(gender));
+        CheckRule(new BirthDateMustBeValidRule(birthDate));
+
+        FullName = fullName;
+        BirthDate = birthDate;
+        Gender = gender;
+        
+        RaiseDomainEvent(new CitizenUpdatedDomainEvent(Id, fullName, birthDate, gender));
+
+        return Result.Success();
+    }
+
+    /// <summary>
     /// Kích hoạt công dân.
     /// </summary>
     /// <returns>Kết quả thành công hoặc lỗi.</returns>
@@ -176,6 +214,7 @@ public sealed class Citizen : AggregateRoot<CitizenId>
         }
 
         Status = CitizenStatus.Active;
+        RaiseDomainEvent(new CitizenActivatedDomainEvent(Id));
         return Result.Success();
     }
 
@@ -191,6 +230,7 @@ public sealed class Citizen : AggregateRoot<CitizenId>
         }
 
         Status = CitizenStatus.Inactive;
+        RaiseDomainEvent(new CitizenDeactivatedDomainEvent(Id));
         return Result.Success();
     }
 }

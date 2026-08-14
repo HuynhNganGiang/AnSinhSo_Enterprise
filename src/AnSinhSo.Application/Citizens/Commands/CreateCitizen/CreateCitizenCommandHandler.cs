@@ -41,6 +41,21 @@ public sealed class CreateCitizenCommandHandler : IRequestHandler<CreateCitizenC
         var addressResult = Address.Create(request.Address, "N/A", "N/A", "N/A", PostalCode.Create("00000").Value);
         var emailResult = Email.Create(request.Email);
 
+        if (citizenNumberResult.IsSuccess && await _citizenRepository.ExistsByCitizenNumberAsync(citizenNumberResult.Value.Value, cancellationToken))
+        {
+            return Result.Failure<Guid>(Error.Conflict("Citizen.DuplicateNumber", "Số Căn cước công dân đã tồn tại."));
+        }
+
+        if (phoneNumberResult.IsSuccess && await _citizenRepository.ExistsByPhoneAsync(phoneNumberResult.Value.Value, cancellationToken))
+        {
+            return Result.Failure<Guid>(Error.Conflict("Citizen.DuplicatePhone", "Số điện thoại đã tồn tại."));
+        }
+
+        if (emailResult.IsSuccess && await _citizenRepository.ExistsByEmailAsync(emailResult.Value.Value, cancellationToken))
+        {
+            return Result.Failure<Guid>(Error.Conflict("Citizen.DuplicateEmail", "Địa chỉ email đã tồn tại."));
+        }
+
         var citizenResult = Citizen.Create(
             id,
             fullNameResult.Value,

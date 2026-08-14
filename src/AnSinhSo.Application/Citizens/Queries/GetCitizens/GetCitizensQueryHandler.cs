@@ -8,23 +8,20 @@ using AnSinhSo.Domain.SeedWork.Results;
 using MediatR;
 using System.Linq;
 
-namespace AnSinhSo.Application.Citizens.Queries.SearchCitizen;
+namespace AnSinhSo.Application.Citizens.Queries.GetCitizens;
 
-public class SearchCitizenQueryHandler : IRequestHandler<SearchCitizenQuery, Result<PagedResult<CitizenDto>>>
+public class GetCitizensQueryHandler : IRequestHandler<GetCitizensQuery, Result<PagedResult<CitizenDto>>>
 {
     private readonly ICitizenRepository _citizenRepository;
 
-    public SearchCitizenQueryHandler(ICitizenRepository citizenRepository)
+    public GetCitizensQueryHandler(ICitizenRepository citizenRepository)
     {
         _citizenRepository = citizenRepository;
     }
 
-    public async Task<Result<PagedResult<CitizenDto>>> Handle(SearchCitizenQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<CitizenDto>>> Handle(GetCitizensQuery request, CancellationToken cancellationToken)
     {
-        var (items, totalCount) = await _citizenRepository.SearchAsync(
-            request.IdentityNumber,
-            request.Phone,
-            request.Keyword,
+        var (items, totalCount) = await _citizenRepository.GetPagedAsync(
             request.Page,
             request.PageSize,
             request.Sort,

@@ -5,20 +5,20 @@ using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using AnSinhSo.Domain.SeedWork.Results;
 using MediatR;
 
-namespace AnSinhSo.Application.Citizens.Queries.GetCitizenById;
+namespace AnSinhSo.Application.Citizens.Queries.SearchCitizenByIdentityNumber;
 
-public class GetCitizenByIdQueryHandler : IRequestHandler<GetCitizenByIdQuery, Result<CitizenDetailDto>>
+public class SearchCitizenByIdentityNumberQueryHandler : IRequestHandler<SearchCitizenByIdentityNumberQuery, Result<CitizenDetailDto>>
 {
     private readonly ICitizenRepository _citizenRepository;
 
-    public GetCitizenByIdQueryHandler(ICitizenRepository citizenRepository)
+    public SearchCitizenByIdentityNumberQueryHandler(ICitizenRepository citizenRepository)
     {
         _citizenRepository = citizenRepository;
     }
 
-    public async Task<Result<CitizenDetailDto>> Handle(GetCitizenByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<CitizenDetailDto>> Handle(SearchCitizenByIdentityNumberQuery request, CancellationToken cancellationToken)
     {
-        var citizen = await _citizenRepository.GetByIdAsync(new CitizenId(request.CitizenId), cancellationToken);
+        var citizen = await _citizenRepository.GetByCitizenNumberAsync(request.IdentityNumber, cancellationToken);
 
         if (citizen is null)
         {

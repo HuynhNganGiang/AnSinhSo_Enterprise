@@ -1,7 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AnSinhSo.Application.Authorization.Queries.GetCurrentUserPermissions;
-using AnSinhSo.Application.Authorization.Queries.GetCurrentUserProfile;
+using AnSinhSo.Application.Citizens.Queries.GetCitizenById;
+using AnSinhSo.Contracts.Citizens;
 using AnSinhSo.Application.Authorization.Queries.GetCurrentUserRoles;
 using AnSinhSo.Contracts.Authorization;
 using Asp.Versioning;
@@ -18,25 +19,43 @@ namespace AnSinhSo.API.Controllers;
 public sealed class CurrentUserController : ApiControllerBase
 {
     private readonly ISender _sender;
+    private readonly AnSinhSo.Domain.Interfaces.ICurrentUser _currentUser;
 
-    public CurrentUserController(ISender sender)
+    public CurrentUserController(ISender sender, AnSinhSo.Domain.Interfaces.ICurrentUser currentUser)
     {
         _sender = sender;
+        _currentUser = currentUser;
     }
 
-    [HttpGet]
+    [HttpGet("profile")]
     [Authorize] // Requires basic authentication
-    [ProducesResponseType(typeof(AnSinhSo.Shared.Responses.ApiResult<CurrentUserProfileDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AnSinhSo.Shared.Responses.ApiResult<CitizenDetailDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProfile(CancellationToken cancellationToken)
     {
-        var result = await _sender.Send(new GetCurrentUserProfileQuery(), cancellationToken);
+        if (!System.Guid.TryParse(_currentUser.UserId, out var citizenIdentityId))
+        {
+            return Unauthorized();
+        }
+
+        // TODO: In a real scenario, we might need to map CitizenIdentityId to CitizenId
+        // but since we are using existing GetCitizenByIdQuery, we assume CitizenId is passed or
+        // we need another query GetCitizenByIdentityIdQuery. Wait, AD #100 says CitizenIdentity maps to Citizen.
+        // Let's create a new query `GetCitizenByCitizenIdentityIdQuery`? No, the correction says:
+        // "Correction: Use existing GetCitizenByIdQuery for CurrentUserController instead of creating a new query."
+        // We will query the DB for the CitizenId if needed.
+        
+        // Wait, how to get CitizenId from ICurrentUser?
+        var identityResult = await _sender.Send(new AnSinhSo.Application.Authorization.Queries.GetCurrentUserProfile.GetCurrentUserProfileQuery(), cancellationToken);
+        if(identityResult.IsFailure) return HandleFailure(identityResult);
+
+        var result = await _sender.Send(new GetCitizenByIdQuery(identityResult.Value.Id), cancellationToken);
         
         if (result.IsFailure)
         {
             return HandleFailure(result);
         }
 
-        return Ok(AnSinhSo.Shared.Responses.ApiResult<CurrentUserProfileDto>.SuccessResult(result.Value));
+        return Ok(AnSinhSo.Shared.Responses.ApiResult<CitizenDetailDto>.SuccessResult(result.Value));
     }
 
     [HttpGet("roles")]

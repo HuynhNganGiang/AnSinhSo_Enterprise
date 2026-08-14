@@ -16,6 +16,7 @@ using AnSinhSo.Application.Authorization.Abstractions;
 using AnSinhSo.Domain.Interfaces.Authorization;
 using AnSinhSo.Infrastructure.Authorization;
 using AnSinhSo.Infrastructure.Caching;
+using AnSinhSo.Infrastructure.Audit;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AnSinhSo.Infrastructure;
@@ -140,6 +141,9 @@ public static class InfrastructureDependencyInjection
         services.AddDistributedMemoryCache();
         services.AddHttpContextAccessor();
         services.AddScoped<AnSinhSo.Domain.Interfaces.ICurrentUser, CurrentUser>();
+
+        // Audit Service (AD #119, AD #132)
+        services.AddSingleton<AnSinhSo.Application.Abstractions.Audit.IAuditService, LoggerAuditService>();
 
         return services;
     }
