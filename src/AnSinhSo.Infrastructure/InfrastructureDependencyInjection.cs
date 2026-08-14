@@ -136,6 +136,11 @@ public static class InfrastructureDependencyInjection
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
+        // Register IDistributedCache and ICurrentUser
+        services.AddDistributedMemoryCache();
+        services.AddHttpContextAccessor();
+        services.AddScoped<AnSinhSo.Domain.Interfaces.ICurrentUser, CurrentUser>();
+
         return services;
     }
 }

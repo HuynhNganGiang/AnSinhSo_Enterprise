@@ -13,14 +13,10 @@ namespace AnSinhSo.Infrastructure.Caching;
 public sealed class AuthorizationCacheService : IAuthorizationCacheService
 {
     private readonly IDistributedCache _cache;
-    private readonly IUserRoleRepository _userRoleRepository;
-
     public AuthorizationCacheService(
-        IDistributedCache cache,
-        IUserRoleRepository userRoleRepository)
+        IDistributedCache cache)
     {
         _cache = cache;
-        _userRoleRepository = userRoleRepository;
     }
 
     private static string GetUserPermissionsCacheKey(CitizenIdentityId citizenIdentityId)

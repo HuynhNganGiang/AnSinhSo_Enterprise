@@ -7,24 +7,22 @@ namespace AnSinhSo.Infrastructure.Authorization;
 
 public class PermissionPolicyProvider : DefaultAuthorizationPolicyProvider
 {
-    private const string PolicyPrefix = "Permission:";
-
     public PermissionPolicyProvider(IOptions<AuthorizationOptions> options) : base(options)
     {
     }
 
     public override async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
-        if (policyName.StartsWith(PolicyPrefix, StringComparison.OrdinalIgnoreCase))
+        // Try to get from base first (for Default policies etc)
+        var policy = await base.GetPolicyAsync(policyName);
+        if (policy != null)
         {
-            var permission = policyName.Substring(PolicyPrefix.Length);
-            
-            var policy = new AuthorizationPolicyBuilder();
-            policy.AddRequirements(new PermissionRequirement(permission));
-            
-            return policy.Build();
+            return policy;
         }
 
-        return await base.GetPolicyAsync(policyName);
+        // If not found, treat it as a permission
+        var policyBuilder = new AuthorizationPolicyBuilder();
+        policyBuilder.AddRequirements(new PermissionRequirement(policyName));
+        return policyBuilder.Build();
     }
 }

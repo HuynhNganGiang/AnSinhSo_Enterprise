@@ -32,13 +32,16 @@ public sealed class Role : AggregateRoot<RoleId>
             throw new ArgumentException("Role name cannot be empty.", nameof(name));
         }
 
-        return Result.Success(new Role
+        var role = new Role
         {
             Id = id,
             Name = name,
             Description = description,
             IsSystemRole = isSystemRole
-        });
+        };
+
+        role.AddDomainEvent(new RoleCreatedDomainEvent(id, name, isSystemRole));
+        return Result.Success(role);
     }
 
     public Result Rename(string newName, string newDescription)
@@ -55,6 +58,7 @@ public sealed class Role : AggregateRoot<RoleId>
 
         Name = newName;
         Description = newDescription;
+        AddDomainEvent(new RoleUpdatedDomainEvent(Id, Name));
         return Result.Success();
     }
 
@@ -67,6 +71,17 @@ public sealed class Role : AggregateRoot<RoleId>
     public Result MarkAsCustom()
     {
         IsSystemRole = false;
+        return Result.Success();
+    }
+
+    public Result Delete()
+    {
+        if (IsSystemRole)
+        {
+            return Result.Failure(AuthorizationErrors.CannotModifySystemRole);
+        }
+        
+        AddDomainEvent(new RoleDeletedDomainEvent(Id));
         return Result.Success();
     }
 
@@ -102,6 +117,38 @@ public sealed class Role : AggregateRoot<RoleId>
 
         _permissions.Remove(permissionToRemove);
         AddDomainEvent(new RolePermissionChangedDomainEvent(Id, DateTime.UtcNow));
+        return Result.Success();
+    }
+
+    public Result UpdatePermissions(IEnumerable<PermissionId> newPermissions)
+    {
+        if (IsSystemRole)
+        {
+            return Result.Failure(AuthorizationErrors.CannotModifySystemRole);
+        }
+
+        var newPermissionsList = newPermissions.Distinct().ToList();
+
+        // Xóa các quyền không còn trong danh sách mới
+        var permissionsToRemove = _permissions.Where(p => !newPermissionsList.Contains(p.PermissionId)).ToList();
+        foreach (var p in permissionsToRemove)
+        {
+            _permissions.Remove(p);
+        }
+
+        // Thêm các quyền mới chưa có
+        var existingPermissionIds = _permissions.Select(p => p.PermissionId).ToHashSet();
+        var permissionsToAdd = newPermissionsList.Where(id => !existingPermissionIds.Contains(id)).ToList();
+        foreach (var id in permissionsToAdd)
+        {
+            _permissions.Add(new RolePermission(Id, id));
+        }
+
+        if (permissionsToRemove.Any() || permissionsToAdd.Any())
+        {
+            AddDomainEvent(new RolePermissionsUpdatedDomainEvent(Id, permissionsToAdd, permissionsToRemove.Select(p => p.PermissionId).ToList()));
+        }
+
         return Result.Success();
     }
 }

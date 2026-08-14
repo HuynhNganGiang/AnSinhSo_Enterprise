@@ -22,6 +22,8 @@ namespace AnSinhSo.IntegrationTests.Authentication;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
+    public bool UseMockAuthentication { get; set; } = true;
+
     public CustomWebApplicationFactory()
     {
         Environment.SetEnvironmentVariable("Authentication__SecretKey", "SuperSecretKeyForIntegrationTestingThatIsAtLeast32BytesLongSoItPassesValidation12345");
@@ -44,6 +46,28 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 options.UseInMemoryDatabase("InMemoryDbForTesting");
             });
 
+            if (UseMockAuthentication)
+            {
+                // Mock Authentication
+                services.AddAuthentication(TestAuthHandler.TestScheme)
+                    .AddScheme<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions, TestAuthHandler>(
+                        TestAuthHandler.TestScheme, options => { });
+            }
+
+            foreach (var s in services) {
+                if (s.ServiceType.Name.Contains("IHostedService")) {
+                    System.Console.WriteLine("DEBUG: HostedService registered -> " + (s.ImplementationType?.FullName ?? "null"));
+                }
+            }
+
+            // Mock Permission Resolver
+            var permissionResolverDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(AnSinhSo.Application.Authorization.Abstractions.IPermissionResolver));
+            if (permissionResolverDescriptor != null)
+            {
+                services.Remove(permissionResolverDescriptor);
+            }
+            services.AddScoped<AnSinhSo.Application.Authorization.Abstractions.IPermissionResolver, TestPermissionResolver>();
+
             // Ensure schema is created
             var sp = services.BuildServiceProvider();
             using var scope = sp.CreateScope();
@@ -61,5 +85,31 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             };
             configBuilder.AddInMemoryCollection(dict!);
         });
+    }
+}
+
+public class TestPermissionResolver : AnSinhSo.Application.Authorization.Abstractions.IPermissionResolver
+{
+    private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
+
+    public TestPermissionResolver(Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public Task<System.Collections.Generic.IReadOnlyCollection<string>> GetPermissionsAsync(AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.CitizenIdentityId citizenIdentityId, System.Threading.CancellationToken cancellationToken = default)
+    {
+        var user = _httpContextAccessor.HttpContext?.User;
+        if (user == null)
+        {
+            return Task.FromResult<System.Collections.Generic.IReadOnlyCollection<string>>(System.Array.Empty<string>());
+        }
+
+        var permissions = user.Claims
+            .Where(c => c.Type == "permissions")
+            .Select(c => c.Value)
+            .ToList();
+
+        return Task.FromResult<System.Collections.Generic.IReadOnlyCollection<string>>(permissions);
     }
 }

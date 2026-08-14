@@ -19,12 +19,20 @@ using System.Net.Http.Headers;
 
 namespace AnSinhSo.IntegrationTests.Authentication;
 
-public class AuthenticationTests : IClassFixture<CustomWebApplicationFactory>
+public class RealAuthWebApplicationFactory : CustomWebApplicationFactory
 {
-    private readonly CustomWebApplicationFactory _factory;
+    public RealAuthWebApplicationFactory()
+    {
+        UseMockAuthentication = false;
+    }
+}
+
+public class AuthenticationTests : IClassFixture<RealAuthWebApplicationFactory>
+{
+    private readonly RealAuthWebApplicationFactory _factory;
     private readonly HttpClient _client;
 
-    public AuthenticationTests(CustomWebApplicationFactory factory)
+    public AuthenticationTests(RealAuthWebApplicationFactory factory)
     {
         _factory = factory;
         _client = _factory.CreateClient();
@@ -156,7 +164,7 @@ public class AuthenticationTests : IClassFixture<CustomWebApplicationFactory>
 
         // Act 1: Logout
         var logoutResponse = await _client.PostAsync("/api/v1/auth/logout", null);
-        if (!logoutResponse.IsSuccessStatusCode) throw new Exception("Logout failed: " + await logoutResponse.Content.ReadAsStringAsync());
+        if (!logoutResponse.IsSuccessStatusCode) throw new Exception($"Logout failed with status {logoutResponse.StatusCode}: " + await logoutResponse.Content.ReadAsStringAsync());
 
         // Act 2: Call protected endpoint again (or logout again)
         var protectedCallResponse = await _client.PostAsync("/api/v1/auth/logout", null);
