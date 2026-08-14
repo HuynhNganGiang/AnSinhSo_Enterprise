@@ -1,4 +1,5 @@
 using AnSinhSo.Domain.Aggregates.CitizenAggregate;
+using AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate;
 using AnSinhSo.Domain.SeedWork.Entities;
 
 namespace AnSinhSo.Domain.Aggregates.HouseholdAggregate;
@@ -19,6 +20,11 @@ public sealed class HouseholdMember : Entity<HouseholdMemberId>
     public bool IsHead { get; private set; }
 
     /// <summary>
+    /// Định danh của loại quan hệ (RelationshipType).
+    /// </summary>
+    public RelationshipTypeId RelationshipTypeId { get; private set; }
+
+    /// <summary>
     /// Constructor ẩn dành cho EF Core.
     /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -32,11 +38,13 @@ public sealed class HouseholdMember : Entity<HouseholdMemberId>
     /// </summary>
     /// <param name="id">Định danh thành viên hộ gia đình.</param>
     /// <param name="citizenId">Định danh công dân.</param>
+    /// <param name="relationshipTypeId">Định danh loại quan hệ.</param>
     /// <param name="isHead">Có phải chủ hộ không.</param>
-    internal HouseholdMember(HouseholdMemberId id, CitizenId citizenId, bool isHead)
+    internal HouseholdMember(HouseholdMemberId id, CitizenId citizenId, RelationshipTypeId relationshipTypeId, bool isHead)
     {
         Id = id;
         CitizenId = citizenId;
+        RelationshipTypeId = relationshipTypeId;
         IsHead = isHead;
     }
 
@@ -47,5 +55,10 @@ public sealed class HouseholdMember : Entity<HouseholdMemberId>
     internal void SetHeadStatus(bool isHead)
     {
         IsHead = isHead;
+    }
+
+    internal void ChangeRelationship(RelationshipTypeId relationshipTypeId)
+    {
+        RelationshipTypeId = relationshipTypeId;
     }
 }

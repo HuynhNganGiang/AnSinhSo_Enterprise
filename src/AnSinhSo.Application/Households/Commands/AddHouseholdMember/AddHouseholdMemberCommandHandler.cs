@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MediatR;
 using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Domain.Aggregates.CitizenAggregate;
+using AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate;
 using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
 using AnSinhSo.Domain.SeedWork.Results;
 
@@ -14,6 +15,8 @@ namespace AnSinhSo.Application.Households.Commands.AddHouseholdMember;
 public sealed class AddHouseholdMemberCommandHandler : IRequestHandler<AddHouseholdMemberCommand, Result>
 {
     private readonly IHouseholdRepository _householdRepository;
+    private readonly ICitizenRepository _citizenRepository;
+    private readonly IRelationshipTypeRepository _relationshipTypeRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     /// <summary>
@@ -21,9 +24,13 @@ public sealed class AddHouseholdMemberCommandHandler : IRequestHandler<AddHouseh
     /// </summary>
     public AddHouseholdMemberCommandHandler(
         IHouseholdRepository householdRepository,
+        ICitizenRepository citizenRepository,
+        IRelationshipTypeRepository relationshipTypeRepository,
         IUnitOfWork unitOfWork)
     {
         _householdRepository = householdRepository;
+        _citizenRepository = citizenRepository;
+        _relationshipTypeRepository = relationshipTypeRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -41,7 +48,26 @@ public sealed class AddHouseholdMemberCommandHandler : IRequestHandler<AddHouseh
         }
 
         var citizenId = new CitizenId(request.CitizenId);
-        var result = household.AddMember(citizenId, isHead: false);
+        var citizenExists = await _citizenRepository.ExistsByIdAsync(citizenId, cancellationToken);
+        if (!citizenExists)
+        {
+            return Result.Failure(Error.NotFound("Citizen.NotFound", "Không tìm thấy công dân."));
+        }
+
+        var isCitizenInHousehold = await _householdRepository.IsCitizenInAnyHouseholdAsync(citizenId, cancellationToken);
+        if (isCitizenInHousehold)
+        {
+            return Result.Failure(Error.Conflict("Household.CitizenAlreadyInHousehold", "Công dân đã thuộc một hộ gia đình."));
+        }
+
+        var relTypeId = new RelationshipTypeId(request.RelationshipTypeId);
+        var relTypeExists = await _relationshipTypeRepository.ExistsByIdAsync(relTypeId, cancellationToken);
+        if (!relTypeExists)
+        {
+            return Result.Failure(Error.NotFound("RelationshipType.NotFound", "Không tìm thấy loại quan hệ."));
+        }
+
+        var result = household.AddMember(citizenId, relTypeId, isHead: false);
 
         if (result.IsFailure)
         {

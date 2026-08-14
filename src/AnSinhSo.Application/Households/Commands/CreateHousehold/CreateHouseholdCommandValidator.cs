@@ -17,17 +17,14 @@ public sealed class CreateHouseholdCommandValidator : AbstractValidator<CreateHo
             .NotEmpty()
             .MaximumLength(50);
 
-        RuleFor(x => x.AddressId)
-            .NotEmpty();
-
         RuleFor(x => x.HeadCitizenId)
             .NotEmpty();
 
-        RuleFor(x => x.Name)
-            .NotEmpty()
-            .MaximumLength(200);
+        RuleFor(x => x.HeadRelationshipTypeId)
+            .NotEmpty();
 
-        RuleFor(x => x.Description)
-            .MaximumLength(1000);
+        RuleFor(x => x.Address)
+            .NotEmpty()
+            .MaximumLength(500);
     }
 }

@@ -45,6 +45,7 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<AnSinhSo.Domain.Aggregates.WelfareGroupAggregate.IWelfareGroupRepository, WelfareGroupRepository>();
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserRepository, UserRepository>();
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserSessionRepository, UserSessionRepository>();
+        services.AddScoped<AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate.IRelationshipTypeRepository, RelationshipTypeRepository>();
 
         // OTP Security & Notifications
         services.AddSingleton<AnSinhSo.Application.Abstractions.Security.IOtpGenerator, OtpGenerator>();

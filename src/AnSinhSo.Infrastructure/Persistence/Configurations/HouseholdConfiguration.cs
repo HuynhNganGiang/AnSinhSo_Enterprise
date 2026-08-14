@@ -2,6 +2,7 @@ using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using AnSinhSo.Infrastructure.Persistence.Converters;
+using AnSinhSo.Domain.ValueObjects;
 using AnSinhSo.Domain.Aggregates.HouseholdAggregate.Enumerations;
 
 namespace AnSinhSo.Infrastructure.Persistence.Configurations;
@@ -17,6 +18,15 @@ public class HouseholdConfiguration : IEntityTypeConfiguration<Household>
                .HasConversion(
                    id => id.Value,
                    value => new HouseholdId(value));
+
+        builder.Property(x => x.HouseholdCode)
+               .HasConversion(
+                   code => code.Value,
+                   value => new HouseholdCode(value))
+               .IsRequired()
+               .HasMaxLength(20);
+
+        builder.HasIndex(x => x.HouseholdCode).IsUnique();
 
         builder.Property(x => x.Status)
                .HasConversion(new EnumerationValueConverter<HouseholdStatus>())

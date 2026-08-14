@@ -24,6 +24,12 @@ public class HouseholdMemberConfiguration : IEntityTypeConfiguration<HouseholdMe
                    value => new CitizenId(value))
                .IsRequired();
 
+        builder.Property(x => x.RelationshipTypeId)
+               .HasConversion(
+                   id => id.Value,
+                   value => new AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate.RelationshipTypeId(value))
+               .IsRequired();
+
         builder.Property(x => x.IsHead)
                .IsRequired();
                

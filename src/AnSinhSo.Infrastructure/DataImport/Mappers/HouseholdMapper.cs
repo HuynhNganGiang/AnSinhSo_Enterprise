@@ -14,8 +14,6 @@ public class HouseholdMapper : IHouseholdMapper
         if (!Guid.TryParse(dto.MaHo, out var id))
             return ImportResult<Household>.Failure(ImportErrorCode.DATA_TYPE_MISMATCH, "Invalid MaHo (Guid).");
 
-        var householdId = new HouseholdId(id);
-
         var postalCodeResult = PostalCode.Create(string.Empty);
         if (!postalCodeResult.IsSuccess)
             return ImportResult<Household>.Failure(ImportErrorCode.MISSING_REQUIRED_FIELD, postalCodeResult.Error?.Message ?? "PostalCode is missing but required by Domain");
@@ -24,7 +22,11 @@ public class HouseholdMapper : IHouseholdMapper
         if (!addressResult.IsSuccess) 
             return ImportResult<Household>.Failure(ImportErrorCode.DOMAIN_RULE, addressResult.Error?.Message ?? "Invalid Address");
 
-        var result = Household.Create(householdId, addressResult.Value);
+        var result = Household.Create(
+            new HouseholdId(Guid.NewGuid()),
+            new HouseholdCode(dto.MaHo ?? string.Empty),
+            addressResult.Value
+        );
 
         if (!result.IsSuccess)
             return ImportResult<Household>.Failure(ImportErrorCode.DOMAIN_RULE, result.Error?.Message ?? "Household validation failed.");

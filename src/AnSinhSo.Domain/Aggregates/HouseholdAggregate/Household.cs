@@ -19,6 +19,11 @@ public sealed class Household : AggregateRoot<HouseholdId>
     private readonly List<HouseholdMember> _members = new();
 
     /// <summary>
+    /// Mã sổ hộ khẩu.
+    /// </summary>
+    public HouseholdCode HouseholdCode { get; private set; }
+
+    /// <summary>
     /// Địa chỉ thường trú của hộ gia đình.
     /// </summary>
     public Address Address { get; private set; }
@@ -42,9 +47,10 @@ public sealed class Household : AggregateRoot<HouseholdId>
     }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-    private Household(HouseholdId id, Address address, HouseholdStatus status)
+    private Household(HouseholdId id, HouseholdCode householdCode, Address address, HouseholdStatus status)
     {
         Id = id;
+        HouseholdCode = householdCode;
         Address = address;
         Status = status;
     }
@@ -53,11 +59,12 @@ public sealed class Household : AggregateRoot<HouseholdId>
     /// Khởi tạo một hộ gia đình mới.
     /// </summary>
     /// <param name="id">Định danh hộ gia đình.</param>
+    /// <param name="householdCode">Mã sổ hộ khẩu.</param>
     /// <param name="address">Địa chỉ thường trú.</param>
     /// <returns>Kết quả chứa hộ gia đình hoặc lỗi.</returns>
-    public static Result<Household> Create(HouseholdId id, Address address)
+    public static Result<Household> Create(HouseholdId id, HouseholdCode householdCode, Address address)
     {
-        var household = new Household(id, address, HouseholdStatus.Active);
+        var household = new Household(id, householdCode, address, HouseholdStatus.Active);
 
         household.RaiseDomainEvent(new HouseholdCreatedDomainEvent(household.Id));
 
@@ -68,9 +75,10 @@ public sealed class Household : AggregateRoot<HouseholdId>
     /// Thêm thành viên mới vào hộ gia đình.
     /// </summary>
     /// <param name="citizenId">Định danh công dân.</param>
+    /// <param name="relationshipTypeId">Loại quan hệ (RelationshipType).</param>
     /// <param name="isHead">Có phải chủ hộ không.</param>
     /// <returns>Kết quả thành công hoặc lỗi.</returns>
-    public Result AddMember(CitizenId citizenId, bool isHead)
+    public Result AddMember(CitizenId citizenId, AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate.RelationshipTypeId relationshipTypeId, bool isHead)
     {
         CheckRule(new CannotAddDuplicateCitizenRule(_members.Any(m => m.CitizenId == citizenId)));
 
@@ -78,7 +86,7 @@ public sealed class Household : AggregateRoot<HouseholdId>
         CheckRule(new HouseholdCannotHaveMultipleHeadsRule(headCount));
 
         var memberId = new HouseholdMemberId(Guid.NewGuid());
-        var member = new HouseholdMember(memberId, citizenId, isHead);
+        var member = new HouseholdMember(memberId, citizenId, relationshipTypeId, isHead);
 
         _members.Add(member);
 
@@ -134,7 +142,21 @@ public sealed class Household : AggregateRoot<HouseholdId>
         }
 
         newHead.SetHeadStatus(true);
+        RaiseDomainEvent(new HouseholdHeadChangedDomainEvent(Id, newHeadCitizenId));
 
+        return Result.Success();
+    }
+
+    /// <summary>
+    /// Thay đổi địa chỉ hộ gia đình.
+    /// </summary>
+    /// <param name="newAddress">Địa chỉ mới.</param>
+    /// <returns>Kết quả.</returns>
+    public Result ChangeAddress(Address newAddress)
+    {
+        Address = newAddress;
+        
+        RaiseDomainEvent(new HouseholdAddressChangedDomainEvent(Id));
         return Result.Success();
     }
 
@@ -150,6 +172,7 @@ public sealed class Household : AggregateRoot<HouseholdId>
         }
 
         Status = HouseholdStatus.Active;
+        RaiseDomainEvent(new HouseholdActivatedDomainEvent(Id));
         return Result.Success();
     }
 
@@ -165,6 +188,7 @@ public sealed class Household : AggregateRoot<HouseholdId>
         }
 
         Status = HouseholdStatus.Inactive;
+        RaiseDomainEvent(new HouseholdDeactivatedDomainEvent(Id));
         return Result.Success();
     }
 }

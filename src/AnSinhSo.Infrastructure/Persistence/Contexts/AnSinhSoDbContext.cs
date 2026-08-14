@@ -10,6 +10,7 @@ using AnSinhSo.Domain.Aggregates.RoleAggregate;
 using AnSinhSo.Domain.Aggregates.PermissionAggregate;
 using AnSinhSo.Domain.Aggregates.PermissionGroupAggregate;
 using AnSinhSo.Domain.Aggregates.UserRoleAggregate;
+using AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate;
 using AnSinhSo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -33,6 +34,7 @@ public class AnSinhSoDbContext : DbContext
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<PermissionGroup> PermissionGroups { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
+    public DbSet<RelationshipType> RelationshipTypes { get; set; }
     public AnSinhSoDbContext(DbContextOptions<AnSinhSoDbContext> options) : base(options)
     {
     }
