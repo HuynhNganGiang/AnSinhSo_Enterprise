@@ -6,6 +6,10 @@ using AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
 using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
 using AnSinhSo.Domain.Aggregates.OtpVerificationAggregate;
+using AnSinhSo.Domain.Aggregates.RoleAggregate;
+using AnSinhSo.Domain.Aggregates.PermissionAggregate;
+using AnSinhSo.Domain.Aggregates.PermissionGroupAggregate;
+using AnSinhSo.Domain.Aggregates.UserRoleAggregate;
 using AnSinhSo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -25,6 +29,10 @@ public class AnSinhSoDbContext : DbContext
     public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<CitizenIdentity> CitizenIdentities { get; set; }
     public DbSet<OtpVerification> OtpVerifications { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<Permission> Permissions { get; set; }
+    public DbSet<PermissionGroup> PermissionGroups { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
     public AnSinhSoDbContext(DbContextOptions<AnSinhSoDbContext> options) : base(options)
     {
     }

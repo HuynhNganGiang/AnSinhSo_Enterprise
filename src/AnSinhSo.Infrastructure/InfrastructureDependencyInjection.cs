@@ -12,6 +12,11 @@ using System.Text;
 using System;
 using AnSinhSo.Infrastructure.Authentication;
 using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
+using AnSinhSo.Application.Authorization.Abstractions;
+using AnSinhSo.Domain.Interfaces.Authorization;
+using AnSinhSo.Infrastructure.Authorization;
+using AnSinhSo.Infrastructure.Caching;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AnSinhSo.Infrastructure;
 
@@ -117,6 +122,19 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<AnSinhSo.Infrastructure.DataImport.Mappers.IHouseholdMapper, AnSinhSo.Infrastructure.DataImport.Mappers.HouseholdMapper>();
         services.AddScoped<AnSinhSo.Infrastructure.DataImport.Mappers.IPolicyMapper, AnSinhSo.Infrastructure.DataImport.Mappers.PolicyMapper>();
         services.AddScoped<AnSinhSo.Infrastructure.DataImport.Mappers.IPaymentMapper, AnSinhSo.Infrastructure.DataImport.Mappers.PaymentMapper>();
+
+        // Authorization Repositories (Domain)
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
+        services.AddScoped<IPermissionGroupRepository, PermissionGroupRepository>();
+        services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+
+        // Authorization Caching & Evaluation (AD #114)
+        services.AddSingleton<AnSinhSo.Application.Abstractions.Caching.IAuthorizationCacheService, AuthorizationCacheService>();
+        services.AddTransient<IPermissionResolver, PermissionResolver>();
+        
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
         return services;
     }

@@ -7,6 +7,7 @@ namespace AnSinhSo.Domain.Interfaces.Authorization;
 public interface IPermissionRepository
 {
     Task<Permission?> GetByIdAsync(PermissionId id, CancellationToken cancellationToken = default);
+    Task<System.Collections.Generic.IReadOnlyCollection<Permission>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<bool> ExistsByCodeAsync(string code, CancellationToken cancellationToken = default);
     
     void Add(Permission permission);

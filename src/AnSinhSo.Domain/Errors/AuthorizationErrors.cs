@@ -39,4 +39,10 @@ public static class AuthorizationErrors
         "The user is not assigned to this role.",
         ErrorType.NotFound
     );
+    
+    public static readonly Error RoleInUse = new(
+        "Authorization.RoleInUse",
+        "The role is currently assigned to one or more users and cannot be deleted.",
+        ErrorType.Conflict
+    );
 }
