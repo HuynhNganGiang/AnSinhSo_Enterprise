@@ -71,4 +71,21 @@ public static class Permissions
         public const string Update = "ai.update";
         public const string Delete = "ai.delete";
     }
+
+    public static class WelfarePrograms
+    {
+        public const string View = "welfareprograms.view";
+        public const string Create = "welfareprograms.create";
+        public const string Update = "welfareprograms.update";
+    }
+
+    public static class WelfareCases
+    {
+        public const string View = "welfarecases.view";
+        public const string Create = "welfarecases.create";
+        public const string Update = "welfarecases.update";
+        public const string Decide = "welfarecases.decide";
+        public const string Cancel = "welfarecases.cancel";
+        public const string Close = "welfarecases.close";
+    }
 }

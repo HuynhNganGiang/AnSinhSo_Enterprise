@@ -3,6 +3,8 @@ using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
 using AnSinhSo.Domain.Aggregates.PaymentAggregate;
 using AnSinhSo.Domain.Aggregates.PolicyAggregate;
 using AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
+using AnSinhSo.Domain.Aggregates.WelfareProgramAggregate;
+using AnSinhSo.Domain.Aggregates.WelfareCaseAggregate;
 using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
 using AnSinhSo.Domain.Aggregates.OtpVerificationAggregate;
@@ -26,6 +28,8 @@ public class AnSinhSoDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Policy> Policies { get; set; }
     public DbSet<WelfareGroup> WelfareGroups { get; set; }
+    public DbSet<WelfareProgram> WelfarePrograms { get; set; }
+    public DbSet<WelfareCase> WelfareCases { get; set; }
     public DbSet<AnSinhSo.Domain.Aggregates.UserAggregate.User> Users { get; set; }
     public DbSet<UserSession> UserSessions { get; set; }
     public DbSet<CitizenIdentity> CitizenIdentities { get; set; }

@@ -42,7 +42,16 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
                     new Claim("permissions", Permissions.Households.Read),
                     new Claim("permissions", Permissions.Households.Create),
                     new Claim("permissions", Permissions.Households.Update),
-                    new Claim("permissions", Permissions.Households.Delete)
+                    new Claim("permissions", Permissions.Households.Delete),
+                    new Claim("permissions", Permissions.WelfarePrograms.View),
+                    new Claim("permissions", Permissions.WelfarePrograms.Create),
+                    new Claim("permissions", Permissions.WelfarePrograms.Update),
+                    new Claim("permissions", Permissions.WelfareCases.View),
+                    new Claim("permissions", Permissions.WelfareCases.Create),
+                    new Claim("permissions", Permissions.WelfareCases.Update),
+                    new Claim("permissions", Permissions.WelfareCases.Decide),
+                    new Claim("permissions", Permissions.WelfareCases.Cancel),
+                    new Claim("permissions", Permissions.WelfareCases.Close)
                 };
                 var identity = new ClaimsIdentity(claims, TestScheme);
                 var principal = new ClaimsPrincipal(identity);
