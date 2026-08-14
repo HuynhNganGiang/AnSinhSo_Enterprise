@@ -1,8 +1,8 @@
-using AnSinhSo.Domain.Aggregates.PaymentAggregate;
 using System;
-using MediatR;
+using AnSinhSo.Application.Payments.DTOs;
 using AnSinhSo.Domain.SeedWork.Results;
+using MediatR;
 
 namespace AnSinhSo.Application.Payments.Queries.GetPaymentById;
 
-public sealed record GetPaymentByIdQuery(Guid PaymentId) : IRequest<Result>;
+public record GetPaymentByIdQuery(Guid PaymentId) : IRequest<Result<PaymentDto>>;

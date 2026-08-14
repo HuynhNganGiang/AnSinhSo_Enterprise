@@ -1,6 +1,5 @@
 using System;
 using AnSinhSo.Domain.Aggregates.PaymentAggregate;
-using AnSinhSo.Domain.Aggregates.PaymentAggregate.Enumerations;
 using AnSinhSo.Infrastructure.DataImport.Models;
 
 namespace AnSinhSo.Infrastructure.DataImport.Mappers;
@@ -16,8 +15,8 @@ public class PaymentMapper : IPaymentMapper
 
         var paymentId = new PaymentId(id);
 
-        // The domain requires PolicyId but Stg_DotChiTraRecord doesn't have it.
+        // The domain requires WelfareCaseId but Stg_DotChiTraRecord doesn't have it.
         // Architectural Decision #3 states: no dummy data, return Failure.
-        return ImportResult<Payment>.Failure(ImportErrorCode.MISSING_REQUIRED_FIELD, "PolicyId is required by Domain but missing in Stg_DotChiTra.");
+        return ImportResult<Payment>.Failure(ImportErrorCode.MISSING_REQUIRED_FIELD, "WelfareCaseId is required by Domain but missing in Stg_DotChiTra.");
     }
 }

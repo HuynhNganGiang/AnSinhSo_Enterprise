@@ -42,10 +42,11 @@ public static class Permissions
 
     public static class Payments
     {
-        public const string Read = "payments.read";
+        public const string View = "payments.view";
         public const string Create = "payments.create";
-        public const string Update = "payments.update";
-        public const string Delete = "payments.delete";
+        public const string Approve = "payments.approve";
+        public const string Complete = "payments.complete";
+        public const string Cancel = "payments.cancel";
     }
 
     public static class GIS

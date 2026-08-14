@@ -1,10 +1,18 @@
-﻿using System;
-using AnSinhSo.Domain.SeedWork.ValueObjects;
+using System;
 
 namespace AnSinhSo.Domain.Aggregates.PaymentAggregate;
 
-/// <summary>
-/// Định danh mạnh (Strongly-typed ID) cho Payment.
-/// </summary>
-/// <param name="Value">Giá trị Guid cốt lõi.</param>
-public sealed record PaymentId(Guid Value) : StronglyTypedId<Guid>(Value);
+public readonly record struct PaymentId
+{
+    public Guid Value { get; }
+
+    public PaymentId(Guid value)
+    {
+        Value = value;
+    }
+
+    public static PaymentId New() => new(Guid.NewGuid());
+    public static PaymentId Empty => new(Guid.Empty);
+
+    public override string ToString() => Value.ToString();
+}

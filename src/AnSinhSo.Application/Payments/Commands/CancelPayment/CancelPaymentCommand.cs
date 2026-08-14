@@ -1,12 +1,7 @@
-using AnSinhSo.Domain.Aggregates.PaymentAggregate;
 using System;
-using MediatR;
 using AnSinhSo.Domain.SeedWork.Results;
+using MediatR;
 
 namespace AnSinhSo.Application.Payments.Commands.CancelPayment;
 
-/// <summary>
-/// Lệnh hủy đợt chi trả.
-/// </summary>
-/// <param name="PaymentId">Định danh đợt chi trả.</param>
-public sealed record CancelPaymentCommand(Guid PaymentId) : IRequest<Result>;
+public record CancelPaymentCommand(Guid PaymentId, string Reason) : IRequest<Result>;

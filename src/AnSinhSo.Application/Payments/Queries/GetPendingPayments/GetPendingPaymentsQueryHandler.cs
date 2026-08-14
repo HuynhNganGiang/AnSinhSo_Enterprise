@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AnSinhSo.Application.Payments.DTOs;
@@ -6,26 +8,22 @@ using AnSinhSo.Domain.Aggregates.PaymentAggregate;
 using AnSinhSo.Domain.SeedWork.Results;
 using MediatR;
 
-namespace AnSinhSo.Application.Payments.Queries.GetPaymentById;
+namespace AnSinhSo.Application.Payments.Queries.GetPendingPayments;
 
-public class GetPaymentByIdQueryHandler : IRequestHandler<GetPaymentByIdQuery, Result<PaymentDto>>
+public class GetPendingPaymentsQueryHandler : IRequestHandler<GetPendingPaymentsQuery, Result<IReadOnlyList<PaymentDto>>>
 {
     private readonly IPaymentRepository _paymentRepository;
 
-    public GetPaymentByIdQueryHandler(IPaymentRepository paymentRepository)
+    public GetPendingPaymentsQueryHandler(IPaymentRepository paymentRepository)
     {
         _paymentRepository = paymentRepository;
     }
 
-    public async Task<Result<PaymentDto>> Handle(GetPaymentByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<PaymentDto>>> Handle(GetPendingPaymentsQuery request, CancellationToken cancellationToken)
     {
-        var paymentId = new PaymentId(request.PaymentId);
-        var payment = await _paymentRepository.GetByIdAsync(paymentId, cancellationToken);
-        
-        if (payment is null)
-            return Result.Failure<PaymentDto>(Error.NotFound("Payment.NotFound", "Payment not found."));
+        var items = await _paymentRepository.GetPendingPaymentsAsync(cancellationToken);
 
-        var dto = new PaymentDto(
+        var dtos = items.Select(payment => new PaymentDto(
             payment.Id.Value,
             payment.PaymentNumber,
             payment.CitizenId.Value,
@@ -37,8 +35,8 @@ public class GetPaymentByIdQueryHandler : IRequestHandler<GetPaymentByIdQuery, R
             payment.Method.Name,
             payment.Status.Name,
             payment.Notes
-        );
+        )).ToList();
 
-        return Result.Success(dto);
+        return Result.Success<IReadOnlyList<PaymentDto>>(dtos);
     }
 }

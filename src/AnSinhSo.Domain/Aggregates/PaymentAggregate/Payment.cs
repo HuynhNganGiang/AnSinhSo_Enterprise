@@ -1,127 +1,134 @@
-using System.Collections.Generic;
-using System.Linq;
-using AnSinhSo.Domain.Aggregates.PaymentAggregate.BusinessRules;
-using AnSinhSo.Domain.Aggregates.PaymentAggregate.Enumerations;
-using AnSinhSo.Domain.Aggregates.PaymentAggregate.Events;
-using AnSinhSo.Domain.Aggregates.PolicyAggregate;
+using System;
+using AnSinhSo.Domain.Aggregates.CitizenAggregate;
+using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
+using AnSinhSo.Domain.Aggregates.WelfareCaseAggregate;
+using AnSinhSo.Domain.Events.PaymentEvents;
 using AnSinhSo.Domain.SeedWork.Entities;
 using AnSinhSo.Domain.SeedWork.Guards;
 using AnSinhSo.Domain.SeedWork.Results;
 
 namespace AnSinhSo.Domain.Aggregates.PaymentAggregate;
 
-/// <summary>
-/// Gốc tập hợp (Aggregate Root) đại diện cho đợt thanh toán (Payment).
-/// </summary>
 public sealed class Payment : AggregateRoot<PaymentId>
 {
-    private readonly List<PaymentDetail> _details = [];
-
-    /// <summary>
-    /// Định danh chính sách liên quan đến đợt thanh toán.
-    /// </summary>
-    public PolicyId PolicyId { get; private set; }
-
-    /// <summary>
-    /// Trạng thái của đợt thanh toán.
-    /// </summary>
+    public string PaymentNumber { get; private set; }
+    public CitizenId CitizenId { get; private set; }
+    public HouseholdId? HouseholdId { get; private set; }
+    public WelfareCaseId WelfareCaseId { get; private set; }
+    public decimal Amount { get; private set; }
+    public DateTime ScheduledDate { get; private set; }
+    public DateTime? ActualPaymentDate { get; private set; }
+    public PaymentMethod Method { get; private set; }
     public PaymentStatus Status { get; private set; }
+    public string? Notes { get; private set; }
 
-    /// <summary>
-    /// Danh sách chi tiết thanh toán.
-    /// </summary>
-    public IReadOnlyCollection<PaymentDetail> Details => _details.AsReadOnly();
-
-    /// <summary>
-    /// Constructor ẩn dành cho EF Core.
-    /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    private Payment()
-    {
-    }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    private Payment() { }
+#pragma warning restore CS8618
 
     private Payment(
         PaymentId id,
-        PolicyId policyId,
-        PaymentStatus status) : base(id)
+        string paymentNumber,
+        CitizenId citizenId,
+        HouseholdId? householdId,
+        WelfareCaseId welfareCaseId,
+        decimal amount,
+        DateTime scheduledDate,
+        PaymentMethod method,
+        string? notes) : base(id)
     {
-        PolicyId = policyId;
-        Status = status;
+        PaymentNumber = paymentNumber;
+        CitizenId = citizenId;
+        HouseholdId = householdId;
+        WelfareCaseId = welfareCaseId;
+        Amount = amount;
+        ScheduledDate = scheduledDate;
+        Method = method;
+        Notes = notes;
+        Status = PaymentStatus.Draft;
     }
 
-    /// <summary>
-    /// Khởi tạo một Payment mới.
-    /// </summary>
-    /// <param name="id">Định danh đợt thanh toán.</param>
-    /// <param name="policyId">Định danh chính sách.</param>
-    /// <returns>Kết quả chứa Payment hoặc lỗi.</returns>
     public static Result<Payment> Create(
         PaymentId id,
-        PolicyId policyId)
+        string paymentNumber,
+        CitizenId citizenId,
+        HouseholdId? householdId,
+        WelfareCaseId welfareCaseId,
+        decimal amount,
+        DateTime scheduledDate,
+        PaymentMethod method,
+        string? notes = null)
     {
         Guard.Against.Null(id, nameof(id));
-        Guard.Against.Null(policyId, nameof(policyId));
+        if (string.IsNullOrWhiteSpace(paymentNumber)) return Result.Failure<Payment>(Error.Validation("Payment.PaymentNumberEmpty", "Payment number cannot be empty."));
+        Guard.Against.Null(citizenId, nameof(citizenId));
+        Guard.Against.Null(welfareCaseId, nameof(welfareCaseId));
+        if (amount <= 0) return Result.Failure<Payment>(Error.Validation("Payment.AmountInvalid", "Amount must be greater than zero."));
 
-        var payment = new Payment(id, policyId, PaymentStatus.Open);
-        payment.RaiseDomainEvent(new PaymentCreatedDomainEvent(id));
+        var payment = new Payment(id, paymentNumber, citizenId, householdId, welfareCaseId, amount, scheduledDate, method, notes);
+        payment.RaiseDomainEvent(new PaymentCreatedDomainEvent(payment.Id));
 
         return Result.Success(payment);
     }
 
-    /// <summary>
-    /// Thêm một chi tiết thanh toán mới.
-    /// </summary>
-    /// <param name="detail">Chi tiết thanh toán.</param>
-    /// <returns>Kết quả thành công hoặc lỗi.</returns>
-    public Result AddDetail(PaymentDetail detail)
+    public Result Submit()
     {
-        Guard.Against.Null(detail, nameof(detail));
+        if (Status != PaymentStatus.Draft)
+            return Result.Failure(Error.Failure("Payment.SubmitInvalid", "Only Draft payments can be submitted."));
 
-        if (_details.Any(x => x.Id == detail.Id))
-        {
-            return Result.Success();
-        }
-
-        _details.Add(detail);
-
+        Status = PaymentStatus.Pending;
         return Result.Success();
     }
 
-    /// <summary>
-    /// Đóng đợt thanh toán.
-    /// </summary>
-    /// <returns>Kết quả thành công hoặc lỗi.</returns>
-    public Result Close()
+    public Result Approve()
     {
-        if (Status == PaymentStatus.Closed)
-        {
-            return Result.Success();
-        }
+        if (Status != PaymentStatus.Pending)
+            return Result.Failure(Error.Failure("Payment.ApproveInvalid", "Only Pending payments can be approved."));
 
-        var hasUnpaidDetails = _details.Any(d => d.Status != PaymentDetailStatus.Paid);
-        CheckRule(new PaymentCannotCloseWhenUnpaidRule(hasUnpaidDetails));
-
-        Status = PaymentStatus.Closed;
-        RaiseDomainEvent(new PaymentClosedDomainEvent(Id));
-
+        Status = PaymentStatus.Approved;
+        RaiseDomainEvent(new PaymentApprovedDomainEvent(Id));
         return Result.Success();
     }
 
-    /// <summary>
-    /// Hủy đợt thanh toán.
-    /// </summary>
-    /// <returns>Kết quả thành công hoặc lỗi.</returns>
-    public Result Cancel()
+    public Result StartProcessing()
     {
-        if (Status == PaymentStatus.Cancelled)
-        {
-            return Result.Success();
-        }
+        if (Status != PaymentStatus.Approved)
+            return Result.Failure(Error.Failure("Payment.StartProcessingInvalid", "Only Approved payments can start processing."));
+
+        Status = PaymentStatus.Processing;
+        return Result.Success();
+    }
+
+    public Result Complete(DateTime actualPaymentDate)
+    {
+        if (Status != PaymentStatus.Processing)
+            return Result.Failure(Error.Failure("Payment.CompleteInvalid", "Only Processing payments can be completed."));
+
+        Status = PaymentStatus.Paid;
+        ActualPaymentDate = actualPaymentDate;
+        RaiseDomainEvent(new PaymentCompletedDomainEvent(Id));
+        return Result.Success();
+    }
+
+    public Result Fail(string reason)
+    {
+        if (Status != PaymentStatus.Processing)
+            return Result.Failure(Error.Failure("Payment.FailInvalid", "Only Processing payments can be marked as failed."));
+
+        Status = PaymentStatus.Failed;
+        Notes = !string.IsNullOrEmpty(Notes) ? $"{Notes} | Failed Reason: {reason}" : $"Failed Reason: {reason}";
+        RaiseDomainEvent(new PaymentFailedDomainEvent(Id));
+        return Result.Success();
+    }
+
+    public Result Cancel(string reason)
+    {
+        if (Status == PaymentStatus.Paid || Status == PaymentStatus.Failed || Status == PaymentStatus.Cancelled)
+            return Result.Failure(Error.Failure("Payment.CancelInvalid", "Cannot cancel a payment that is already Paid, Failed, or Cancelled."));
 
         Status = PaymentStatus.Cancelled;
+        Notes = !string.IsNullOrEmpty(Notes) ? $"{Notes} | Cancel Reason: {reason}" : $"Cancel Reason: {reason}";
         RaiseDomainEvent(new PaymentCancelledDomainEvent(Id));
-
         return Result.Success();
     }
 }
