@@ -48,6 +48,7 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserRepository, UserRepository>();
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserSessionRepository, UserSessionRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate.IRelationshipTypeRepository, RelationshipTypeRepository>();
+        services.AddScoped<AnSinhSo.Domain.Aggregates.PaymentPointAggregate.IPaymentPointRepository, PaymentPointRepository>();
 
         // OTP Security & Notifications
         services.AddSingleton<AnSinhSo.Application.Abstractions.Security.IOtpGenerator, OtpGenerator>();
@@ -139,6 +140,16 @@ public static class InfrastructureDependencyInjection
         
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        
+        // Map Queries
+        services.AddScoped<AnSinhSo.Application.Map.Queries.IMapQueryService, AnSinhSo.Infrastructure.Persistence.Queries.MapQueryService>();
+
+        // Notifications
+        services.AddScoped<AnSinhSo.Domain.Aggregates.NotificationAggregate.INotificationRepository, NotificationRepository>();
+        services.AddScoped<AnSinhSo.Application.Notifications.Services.INotificationQueryService, AnSinhSo.Infrastructure.Persistence.Queries.NotificationQueryService>();
+        services.AddScoped<AnSinhSo.Application.Notifications.Services.INotificationDispatcher, AnSinhSo.Infrastructure.Services.Notifications.NotificationDispatcher>();
+        services.AddScoped<AnSinhSo.Application.Notifications.Services.IZaloNotificationService, AnSinhSo.Infrastructure.Services.Notifications.ZaloNotificationService>();
+
 
         // Register IDistributedCache and ICurrentUser
         services.AddDistributedMemoryCache();

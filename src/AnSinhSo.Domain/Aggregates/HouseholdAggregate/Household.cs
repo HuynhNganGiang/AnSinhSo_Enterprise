@@ -7,6 +7,7 @@ using AnSinhSo.Domain.Aggregates.HouseholdAggregate.Enumerations;
 using AnSinhSo.Domain.Aggregates.HouseholdAggregate.Events;
 using AnSinhSo.Domain.SeedWork.Entities;
 using AnSinhSo.Domain.SeedWork.Results;
+using AnSinhSo.Domain.SeedWork.Guards;
 using AnSinhSo.Domain.ValueObjects;
 
 namespace AnSinhSo.Domain.Aggregates.HouseholdAggregate;
@@ -32,6 +33,11 @@ public sealed class Household : AggregateRoot<HouseholdId>
     /// Trạng thái hiện tại của hộ gia đình.
     /// </summary>
     public HouseholdStatus Status { get; private set; }
+
+    /// <summary>
+    /// Toạ độ địa lý trên bản đồ.
+    /// </summary>
+    public Location? Location { get; private set; }
 
     /// <summary>
     /// Danh sách các thành viên trong hộ gia đình.
@@ -189,6 +195,23 @@ public sealed class Household : AggregateRoot<HouseholdId>
 
         Status = HouseholdStatus.Inactive;
         RaiseDomainEvent(new HouseholdDeactivatedDomainEvent(Id));
+        return Result.Success();
+    }
+
+    /// <summary>
+    /// Cập nhật toạ độ địa lý.
+    /// </summary>
+    public Result UpdateLocation(Location location)
+    {
+        Guard.Against.Null(location, nameof(location));
+
+        if (Location == location)
+        {
+            return Result.Success();
+        }
+
+        Location = location;
+        RaiseDomainEvent(new HouseholdLocationUpdatedDomainEvent(Id, location));
         return Result.Success();
     }
 }

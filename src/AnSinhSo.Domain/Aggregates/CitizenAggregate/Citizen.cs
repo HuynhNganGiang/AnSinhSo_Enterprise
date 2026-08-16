@@ -55,6 +55,11 @@ public sealed class Citizen : AggregateRoot<CitizenId>
     public CitizenStatus Status { get; private set; }
 
     /// <summary>
+    /// Toạ độ địa lý trên bản đồ.
+    /// </summary>
+    public Location? Location { get; private set; }
+
+    /// <summary>
     /// Constructor ẩn dành cho EF Core.
     /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -231,6 +236,23 @@ public sealed class Citizen : AggregateRoot<CitizenId>
 
         Status = CitizenStatus.Inactive;
         RaiseDomainEvent(new CitizenDeactivatedDomainEvent(Id));
+        return Result.Success();
+    }
+
+    /// <summary>
+    /// Cập nhật toạ độ địa lý.
+    /// </summary>
+    public Result UpdateLocation(Location location)
+    {
+        Guard.Against.Null(location, nameof(location));
+
+        if (Location == location)
+        {
+            return Result.Success();
+        }
+
+        Location = location;
+        RaiseDomainEvent(new CitizenLocationUpdatedDomainEvent(Id, location));
         return Result.Success();
     }
 }

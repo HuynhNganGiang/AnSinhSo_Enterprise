@@ -44,6 +44,12 @@ public class HouseholdConfiguration : IEntityTypeConfiguration<Household>
             });
         });
 
+        builder.OwnsOne(x => x.Location, b =>
+        {
+            b.Property(p => p.Latitude).HasColumnName("Latitude");
+            b.Property(p => p.Longitude).HasColumnName("Longitude");
+        });
+
         builder.HasMany(x => x.Members)
                .WithOne()
                .HasForeignKey("HouseholdId")

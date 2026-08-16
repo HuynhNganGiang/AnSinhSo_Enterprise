@@ -59,10 +59,12 @@ public static class Permissions
 
     public static class Notifications
     {
-        public const string Read = "notifications.read";
+        public const string View = "notifications.view";
         public const string Create = "notifications.create";
-        public const string Update = "notifications.update";
-        public const string Delete = "notifications.delete";
+        public const string Broadcast = "notifications.broadcast";
+        public const string Retry = "notifications.retry";
+        public const string Read = "notifications.read";
+        public const string Statistics = "notifications.statistics";
     }
 
     public static class AI
@@ -88,5 +90,11 @@ public static class Permissions
         public const string Decide = "welfarecases.decide";
         public const string Cancel = "welfarecases.cancel";
         public const string Close = "welfarecases.close";
+    }
+
+    public static class Map
+    {
+        public const string View = "map.view";
+        public const string UpdateLocation = "map.updatelocation";
     }
 }

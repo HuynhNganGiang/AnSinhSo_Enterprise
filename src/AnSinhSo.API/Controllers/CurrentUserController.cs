@@ -85,4 +85,28 @@ public sealed class CurrentUserController : ApiControllerBase
 
         return Ok(AnSinhSo.Shared.Responses.ApiResult<System.Collections.Generic.List<string>>.SuccessResult(result.Value));
     }
+
+    [HttpGet("notifications")]
+    [Authorize]
+    public async Task<IActionResult> GetNotifications(CancellationToken cancellationToken)
+    {
+        var identityResult = await _sender.Send(new AnSinhSo.Application.Authorization.Queries.GetCurrentUserProfile.GetCurrentUserProfileQuery(), cancellationToken);
+        if (identityResult.IsFailure) return HandleFailure(identityResult);
+
+        var result = await _sender.Send(new AnSinhSo.Application.Notifications.Queries.GetUserNotifications.GetUserNotificationsQuery(identityResult.Value.Id), cancellationToken);
+        
+        return Ok(AnSinhSo.Shared.Responses.ApiResult<System.Collections.Generic.List<AnSinhSo.Application.Notifications.DTOs.NotificationDto>>.SuccessResult(result));
+    }
+
+    [HttpGet("unread-count")]
+    [Authorize]
+    public async Task<IActionResult> GetUnreadCount(CancellationToken cancellationToken)
+    {
+        var identityResult = await _sender.Send(new AnSinhSo.Application.Authorization.Queries.GetCurrentUserProfile.GetCurrentUserProfileQuery(), cancellationToken);
+        if (identityResult.IsFailure) return HandleFailure(identityResult);
+
+        var result = await _sender.Send(new AnSinhSo.Application.Notifications.Queries.GetUnreadNotificationCount.GetUnreadNotificationCountQuery(identityResult.Value.Id), cancellationToken);
+        
+        return Ok(AnSinhSo.Shared.Responses.ApiResult<AnSinhSo.Application.Notifications.DTOs.UnreadCountDto>.SuccessResult(result));
+    }
 }

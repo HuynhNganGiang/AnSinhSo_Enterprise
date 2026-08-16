@@ -17,17 +17,17 @@ namespace AnSinhSo.Api.Controllers;
 [Route("api/welfare-groups")]
 public class WelfareGroupsController : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly ISender _sender;
 
-    public WelfareGroupsController(IMediator mediator)
+    public WelfareGroupsController(ISender sender)
     {
-        _mediator = mediator;
+        _sender = sender;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetList([FromQuery] GetWelfareGroupListQuery query)
     {
-        var result = await _mediator.Send(query);
+        var result = await _sender.Send(query);
         return Ok(result);
     }
 
@@ -35,14 +35,14 @@ public class WelfareGroupsController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var query = new GetWelfareGroupByIdQuery(id);
-        var result = await _mediator.Send(query);
+        var result = await _sender.Send(query);
         return Ok(result);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateWelfareGroupCommand command)
     {
-        var result = await _mediator.Send(command);
+        var result = await _sender.Send(command);
         return Ok(result);
     }
 
@@ -50,7 +50,7 @@ public class WelfareGroupsController : ControllerBase
     public async Task<IActionResult> ChangeName(Guid id, [FromBody] ChangeWelfareGroupNameCommand command)
     {
         var request = command with { WelfareGroupId = id };
-        var result = await _mediator.Send(request);
+        var result = await _sender.Send(request);
         return Ok(result);
     }
 
@@ -58,7 +58,7 @@ public class WelfareGroupsController : ControllerBase
     public async Task<IActionResult> Activate(Guid id)
     {
         var command = new ActivateWelfareGroupCommand(id);
-        var result = await _mediator.Send(command);
+        var result = await _sender.Send(command);
         return Ok(result);
     }
 
@@ -66,7 +66,7 @@ public class WelfareGroupsController : ControllerBase
     public async Task<IActionResult> Deactivate(Guid id)
     {
         var command = new DeactivateWelfareGroupCommand(id);
-        var result = await _mediator.Send(command);
+        var result = await _sender.Send(command);
         return Ok(result);
     }
 }

@@ -64,5 +64,11 @@ public class CitizenConfiguration : IEntityTypeConfiguration<Citizen>
                 pc.Property(p => p.Value).HasColumnName("PostalCode").HasMaxLength(20).IsRequired();
             });
         });
+
+        builder.OwnsOne(x => x.Location, b =>
+        {
+            b.Property(p => p.Latitude).HasColumnName("Latitude");
+            b.Property(p => p.Longitude).HasColumnName("Longitude");
+        });
     }
 }

@@ -21,6 +21,7 @@ public interface IHouseholdRepository
     Task<(IReadOnlyList<Household> Items, int TotalCount)> SearchAsync(string? keyword, HouseholdStatus? status, int page, int pageSize, string? sort, CancellationToken cancellationToken = default);
 
     void Add(Household household);
+    void Update(Household household);
     void Remove(Household household);
 
     // Specification Pattern readiness

@@ -17,17 +17,17 @@ namespace AnSinhSo.Api.Controllers;
 [Route("api/policies")]
 public class PoliciesController : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly ISender _sender;
 
-    public PoliciesController(IMediator mediator)
+    public PoliciesController(ISender sender)
     {
-        _mediator = mediator;
+        _sender = sender;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetList([FromQuery] GetPolicyListQuery query)
     {
-        var result = await _mediator.Send(query);
+        var result = await _sender.Send(query);
         return Ok(result);
     }
 
@@ -35,14 +35,14 @@ public class PoliciesController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var query = new GetPolicyByIdQuery(id);
-        var result = await _mediator.Send(query);
+        var result = await _sender.Send(query);
         return Ok(result);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreatePolicyCommand command)
     {
-        var result = await _mediator.Send(command);
+        var result = await _sender.Send(command);
         return Ok(result);
     }
 
@@ -50,7 +50,7 @@ public class PoliciesController : ControllerBase
     public async Task<IActionResult> UpdateAmount(Guid id, [FromBody] UpdatePolicyAmountCommand command)
     {
         var request = command with { PolicyId = id };
-        var result = await _mediator.Send(request);
+        var result = await _sender.Send(request);
         return Ok(result);
     }
 
@@ -58,7 +58,7 @@ public class PoliciesController : ControllerBase
     public async Task<IActionResult> Activate(Guid id)
     {
         var command = new ActivatePolicyCommand(id);
-        var result = await _mediator.Send(command);
+        var result = await _sender.Send(command);
         return Ok(result);
     }
 
@@ -66,7 +66,7 @@ public class PoliciesController : ControllerBase
     public async Task<IActionResult> Deactivate(Guid id)
     {
         var command = new DeactivatePolicyCommand(id);
-        var result = await _mediator.Send(command);
+        var result = await _sender.Send(command);
         return Ok(result);
     }
 }

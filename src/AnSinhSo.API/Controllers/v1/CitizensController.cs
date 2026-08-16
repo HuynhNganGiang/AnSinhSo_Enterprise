@@ -134,4 +134,19 @@ public class CitizensController : ApiControllerBase
 
         return Ok(ApiResult<bool>.SuccessResult(true));
     }
+
+    [HttpPatch("{id:guid}/location")]
+    [Authorize(Policy = Permissions.Map.UpdateLocation)]
+    [ProducesResponseType(typeof(ApiResult<bool>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResult<object>), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateLocation(Guid id, [FromBody] UpdateLocationRequest request)
+    {
+        var command = new AnSinhSo.Application.Citizens.Commands.UpdateLocation.UpdateCitizenLocationCommand(id, request.Latitude, request.Longitude);
+        var result = await _sender.Send(command);
+
+        if (result.IsFailure) return HandleFailure(result);
+
+        return Ok(ApiResult<bool>.SuccessResult(true));
+    }
 }

@@ -114,6 +114,11 @@ public sealed class HouseholdRepository : IHouseholdRepository
         _dbContext.Set<Household>().Add(household);
     }
 
+    public void Update(Household household)
+    {
+        _dbContext.Set<Household>().Update(household);
+    }
+
     public void Remove(Household household)
     {
         _dbContext.Set<Household>().Remove(household);

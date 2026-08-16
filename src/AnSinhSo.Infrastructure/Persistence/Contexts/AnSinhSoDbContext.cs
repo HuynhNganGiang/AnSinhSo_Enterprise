@@ -13,6 +13,7 @@ using AnSinhSo.Domain.Aggregates.PermissionAggregate;
 using AnSinhSo.Domain.Aggregates.PermissionGroupAggregate;
 using AnSinhSo.Domain.Aggregates.UserRoleAggregate;
 using AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate;
+using AnSinhSo.Domain.Aggregates.NotificationAggregate;
 using AnSinhSo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -26,6 +27,7 @@ public class AnSinhSoDbContext : DbContext
     public DbSet<Citizen> Citizens { get; set; }
     public DbSet<Household> Households { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<AnSinhSo.Domain.Aggregates.PaymentPointAggregate.PaymentPoint> PaymentPoints { get; set; }
     public DbSet<Policy> Policies { get; set; }
     public DbSet<WelfareGroup> WelfareGroups { get; set; }
     public DbSet<WelfareProgram> WelfarePrograms { get; set; }
@@ -39,6 +41,9 @@ public class AnSinhSoDbContext : DbContext
     public DbSet<PermissionGroup> PermissionGroups { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RelationshipType> RelationshipTypes { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<NotificationHistory> NotificationHistories { get; set; }
+    
     public AnSinhSoDbContext(DbContextOptions<AnSinhSoDbContext> options) : base(options)
     {
     }
