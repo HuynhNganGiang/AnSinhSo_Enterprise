@@ -69,10 +69,11 @@ public static class Permissions
 
     public static class AI
     {
-        public const string Read = "ai.read";
-        public const string Create = "ai.create";
-        public const string Update = "ai.update";
-        public const string Delete = "ai.delete";
+        public const string Analyze = "ai.analyze";
+        public const string Scan = "ai.scan";
+        public const string ViewRecommendations = "ai.viewrecommendations";
+        public const string UpdateStatus = "ai.updatestatus";
+        public const string Dashboard = "ai.dashboard";
     }
 
     public static class WelfarePrograms

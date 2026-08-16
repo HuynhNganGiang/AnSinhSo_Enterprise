@@ -61,7 +61,11 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
                     new Claim("permissions", Permissions.Notifications.Create),
                     new Claim("permissions", Permissions.Notifications.Broadcast),
                     new Claim("permissions", Permissions.Notifications.Read),
-                    new Claim("permissions", Permissions.Notifications.Retry)
+                    new Claim("permissions", Permissions.Notifications.Retry),
+                    new Claim("permissions", Permissions.AI.Dashboard),
+                    new Claim("permissions", Permissions.AI.Scan),
+                    new Claim("permissions", Permissions.AI.ViewRecommendations),
+                    new Claim("permissions", Permissions.AI.Analyze)
                 };
                 var identity = new ClaimsIdentity(claims, TestScheme);
                 var principal = new ClaimsPrincipal(identity);

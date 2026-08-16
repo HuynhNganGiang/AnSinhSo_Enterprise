@@ -14,6 +14,7 @@ using AnSinhSo.Domain.Aggregates.PermissionGroupAggregate;
 using AnSinhSo.Domain.Aggregates.UserRoleAggregate;
 using AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate;
 using AnSinhSo.Domain.Aggregates.NotificationAggregate;
+using AnSinhSo.Domain.Aggregates.AiRecommendationAggregate;
 using AnSinhSo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -43,6 +44,7 @@ public class AnSinhSoDbContext : DbContext
     public DbSet<RelationshipType> RelationshipTypes { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<NotificationHistory> NotificationHistories { get; set; }
+    public DbSet<AiRecommendation> AiRecommendations { get; set; }
     
     public AnSinhSoDbContext(DbContextOptions<AnSinhSoDbContext> options) : base(options)
     {

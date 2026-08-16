@@ -150,6 +150,16 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<AnSinhSo.Application.Notifications.Services.INotificationDispatcher, AnSinhSo.Infrastructure.Services.Notifications.NotificationDispatcher>();
         services.AddScoped<AnSinhSo.Application.Notifications.Services.IZaloNotificationService, AnSinhSo.Infrastructure.Services.Notifications.ZaloNotificationService>();
 
+        // AI Decision Support Engine
+        services.AddScoped<AnSinhSo.Domain.Interfaces.IAiRecommendationRepository, AnSinhSo.Infrastructure.Persistence.Repositories.AI.AiRecommendationRepository>();
+        services.AddScoped<AnSinhSo.Application.AI.Queries.Common.IAiQueryService, AnSinhSo.Infrastructure.Persistence.Queries.AiQueryService>();
+        services.AddScoped<AnSinhSo.Application.AI.Services.IAiAnalysisService, AnSinhSo.Infrastructure.Services.AI.AiAnalysisService>();
+        
+        // AI Rules Registration
+        services.AddTransient<AnSinhSo.Application.AI.Rules.IAiRule<AnSinhSo.Application.AI.Rules.Contexts.AiHouseholdContext>, AnSinhSo.Application.AI.Rules.Households.LowIncomeRule>();
+        services.AddTransient<AnSinhSo.Application.AI.Rules.IAiRule<AnSinhSo.Application.AI.Rules.Contexts.AiHouseholdContext>, AnSinhSo.Application.AI.Rules.Households.VulnerableMembersRule>();
+        services.AddTransient<AnSinhSo.Application.AI.Rules.IAiRule<AnSinhSo.Application.AI.Rules.Contexts.AiCitizenContext>, AnSinhSo.Application.AI.Rules.Citizens.MissingIdentityRule>();
+        services.AddTransient<AnSinhSo.Application.AI.Rules.IAiRule<AnSinhSo.Application.AI.Rules.Contexts.AiCitizenContext>, AnSinhSo.Application.AI.Rules.Citizens.ElderlyWithoutSupportRule>();
 
         // Register IDistributedCache and ICurrentUser
         services.AddDistributedMemoryCache();

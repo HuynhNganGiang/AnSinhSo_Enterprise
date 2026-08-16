@@ -41,9 +41,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 services.Remove(descriptor);
             }
 
+            var dbName = $"InMemoryDbForTesting_{Guid.NewGuid()}";
             services.AddDbContext<AnSinhSoDbContext>(options =>
             {
-                options.UseInMemoryDatabase("InMemoryDbForTesting");
+                options.UseInMemoryDatabase(dbName);
             });
 
             if (UseMockAuthentication)
