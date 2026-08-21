@@ -22,6 +22,12 @@ public class UserRepository : IUserRepository
             .SingleOrDefaultAsync(u => u.Username == username, cancellationToken);
     }
 
+    public async Task<User?> GetByIdAsync(UserId id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Users
+            .SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
+    }
+
     public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         return await _context.Users

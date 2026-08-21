@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using AnSinhSo.Domain.SeedWork.ValueObjects;
 
 namespace AnSinhSo.Domain.Aggregates.PolicyAggregate;
 
 /// <summary>
-/// Định danh mạnh (Strongly-typed ID) cho Policy.
+/// �?nh danh m?nh (Strongly-typed ID) cho Policy.
 /// </summary>
-/// <param name="Value">Giá trị Guid cốt lõi.</param>
+/// <param name="Value">Gi� tr? Guid c?t l�i.</param>
 public sealed record PolicyId(Guid Value) : StronglyTypedId<Guid>(Value);

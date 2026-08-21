@@ -1,9 +1,9 @@
-﻿using AnSinhSo.Domain.Enumerations;
+using AnSinhSo.Domain.Enumerations;
 
 namespace AnSinhSo.Domain.Enumerations;
 
 /// <summary>
-/// Enumeration đại diện cho Currency.
+/// Enumeration d?i di?n cho Currency.
 /// </summary>
 public sealed class Currency : Enumeration
 {

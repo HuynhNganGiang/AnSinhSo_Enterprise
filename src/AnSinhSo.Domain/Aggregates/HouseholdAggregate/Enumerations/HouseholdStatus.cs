@@ -1,9 +1,9 @@
-﻿using AnSinhSo.Domain.Enumerations;
+using AnSinhSo.Domain.Enumerations;
 
 namespace AnSinhSo.Domain.Aggregates.HouseholdAggregate.Enumerations;
 
 /// <summary>
-/// Enumeration đại diện cho HouseholdStatus.
+/// Enumeration d?i di?n cho HouseholdStatus.
 /// </summary>
 public sealed class HouseholdStatus : Enumeration
 {

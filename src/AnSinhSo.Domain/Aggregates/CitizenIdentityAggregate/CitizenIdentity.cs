@@ -42,7 +42,7 @@ public sealed class CitizenIdentity : AggregateRoot<CitizenIdentityId>
         {
             Id = id,
             CitizenId = citizenId,
-            Status = IdentityStatus.PendingVerification,
+            Status = IdentityStatus.Pending,
             SecurityStamp = securityStamp,
             PrimaryPhone = primaryPhone,
             FailedAttemptCount = 0
@@ -55,13 +55,13 @@ public sealed class CitizenIdentity : AggregateRoot<CitizenIdentityId>
     public void VerifyPhoneNumber(PhoneNumber phoneNumber, DateTime verifiedAt)
     {
         // AD #26: Only from PendingVerification
-        if (Status != IdentityStatus.PendingVerification)
+        if (Status != IdentityStatus.Pending)
         {
-            throw new InvalidOperationException($"Cannot verify phone number when status is {Status}. Must be PendingVerification.");
+            throw new InvalidOperationException($"Cannot verify phone number when status is {Status}. Must be Pending.");
         }
 
         PrimaryPhone = phoneNumber;
-        Status = IdentityStatus.Active;
+        Status = IdentityStatus.Verified;
 
         AddDomainEvent(new CitizenIdentityActivatedDomainEvent(Id, CitizenId, verifiedAt));
     }
@@ -69,7 +69,7 @@ public sealed class CitizenIdentity : AggregateRoot<CitizenIdentityId>
     public void LinkExternalProvider(Guid providerEntityId, ProviderType type, string subjectId, DateTime linkedAt)
     {
         // AD #26: If Locked or Suspended, block linking.
-        if (Status == IdentityStatus.Locked || Status == IdentityStatus.Suspended)
+        if (Status == IdentityStatus.Suspended || Status == IdentityStatus.Suspended)
         {
             throw new InvalidOperationException($"Cannot link provider when identity is {Status}.");
         }
@@ -85,9 +85,9 @@ public sealed class CitizenIdentity : AggregateRoot<CitizenIdentityId>
         AddDomainEvent(new ExternalProviderLinkedDomainEvent(Id, type, linkedAt));
 
         // AD #26: Auto-activate if pending
-        if (Status == IdentityStatus.PendingVerification)
+        if (Status == IdentityStatus.Pending)
         {
-            Status = IdentityStatus.Active;
+            Status = IdentityStatus.Verified;
             AddDomainEvent(new CitizenIdentityActivatedDomainEvent(Id, CitizenId, linkedAt));
         }
     }
@@ -111,7 +111,7 @@ public sealed class CitizenIdentity : AggregateRoot<CitizenIdentityId>
 
     public void RecordFailedAttempt(int maxAttempts, string newSecurityStamp, DateTime failedAt)
     {
-        if (Status == IdentityStatus.Locked || Status == IdentityStatus.Suspended)
+        if (Status == IdentityStatus.Suspended || Status == IdentityStatus.Suspended)
         {
             return; // Already locked/suspended
         }
@@ -120,7 +120,7 @@ public sealed class CitizenIdentity : AggregateRoot<CitizenIdentityId>
 
         if (FailedAttemptCount >= maxAttempts)
         {
-            Status = IdentityStatus.Locked;
+            Status = IdentityStatus.Suspended;
             SecurityStamp = newSecurityStamp;
             AddDomainEvent(new CitizenIdentityLockedDomainEvent(Id, "Exceeded maximum failed attempts.", failedAt));
         }

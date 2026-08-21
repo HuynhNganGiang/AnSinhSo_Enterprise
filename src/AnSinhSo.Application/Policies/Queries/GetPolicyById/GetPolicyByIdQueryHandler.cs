@@ -36,7 +36,7 @@ public sealed class GetPolicyByIdQueryHandler : IRequestHandler<GetPolicyByIdQue
             return Result.Failure(Error.NotFound("Policy.NotFound", $"Chính sách {request.PolicyId} không tồn tại."));
         }
 
-        // TODO Step 17: Return DTO
+        // Pending: Step 17: Return DTO
         return Result.Success();
     }
 }

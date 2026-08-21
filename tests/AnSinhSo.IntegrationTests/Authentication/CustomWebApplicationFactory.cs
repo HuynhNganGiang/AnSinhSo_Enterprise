@@ -26,9 +26,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     public CustomWebApplicationFactory()
     {
-        Environment.SetEnvironmentVariable("Authentication__SecretKey", "SuperSecretKeyForIntegrationTestingThatIsAtLeast32BytesLongSoItPassesValidation12345");
-        Environment.SetEnvironmentVariable("Authentication__Issuer", "TestIssuer");
-        Environment.SetEnvironmentVariable("Authentication__Audience", "TestAudience");
+        Environment.SetEnvironmentVariable("Jwt__SecretKey", "SuperSecretKeyForIntegrationTestingThatIsAtLeast32BytesLongSoItPassesValidation12345");
+        Environment.SetEnvironmentVariable("Jwt__Issuer", "TestIssuer");
+        Environment.SetEnvironmentVariable("Jwt__Audience", "TestAudience");
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -61,6 +61,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 }
             }
 
+            // Remove existing IDistributedCache
+            var cacheDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(Microsoft.Extensions.Caching.Distributed.IDistributedCache));
+            if (cacheDescriptor != null)
+            {
+                services.Remove(cacheDescriptor);
+            }
+            services.AddDistributedMemoryCache();
+
             // Mock Permission Resolver
             var permissionResolverDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(AnSinhSo.Application.Authorization.Abstractions.IPermissionResolver));
             if (permissionResolverDescriptor != null)
@@ -80,9 +88,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         {
             var dict = new System.Collections.Generic.Dictionary<string, string>
             {
-                { "Authentication:SecretKey", "SuperSecretKeyForIntegrationTestingThatIsAtLeast32BytesLongSoItPassesValidation12345" },
-                { "Authentication:Issuer", "TestIssuer" },
-                { "Authentication:Audience", "TestAudience" }
+                { "Jwt:SecretKey", "SuperSecretKeyForIntegrationTestingThatIsAtLeast32BytesLongSoItPassesValidation12345" },
+                { "Jwt:Issuer", "TestIssuer" },
+                { "Jwt:Audience", "TestAudience" },
+                { "ConnectionStrings:Redis", "" }
             };
             configBuilder.AddInMemoryCollection(dict!);
         });

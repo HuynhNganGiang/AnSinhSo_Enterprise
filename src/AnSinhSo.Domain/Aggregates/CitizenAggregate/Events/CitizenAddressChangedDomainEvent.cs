@@ -1,14 +1,14 @@
-﻿using AnSinhSo.Domain.Aggregates.CitizenAggregate;
+using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using AnSinhSo.Domain.SeedWork.Events;
 using AnSinhSo.Domain.ValueObjects;
 
 namespace AnSinhSo.Domain.Aggregates.CitizenAggregate.Events;
 
 /// <summary>
-/// Sự kiện miền: Địa chỉ công dân thay đổi.
+/// S? ki?n mi?n: �?a ch? c�ng d�n thay d?i.
 /// </summary>
-/// <param name="CitizenId">Định danh của công dân.</param>
-/// <param name="Address">Địa chỉ mới của công dân.</param>
+/// <param name="CitizenId">�?nh danh c?a c�ng d�n.</param>
+/// <param name="Address">�?a ch? m?i c?a c�ng d�n.</param>
 public sealed record CitizenAddressChangedDomainEvent(
     CitizenId CitizenId,
     Address Address) : DomainEvent;

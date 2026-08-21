@@ -38,5 +38,10 @@ public enum ErrorType
     /// <summary>
     /// Lỗi liên quan đến xác thực.
     /// </summary>
-    Unauthorized = 6
+    Unauthorized = 6,
+
+    /// <summary>
+    /// Yêu cầu quá nhiều lần.
+    /// </summary>
+    TooManyRequests = 7
 }

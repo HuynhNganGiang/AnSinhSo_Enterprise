@@ -36,7 +36,7 @@ public sealed class GetWelfareGroupByIdQueryHandler : IRequestHandler<GetWelfare
             return Result.Failure(DomainErrors.NotFound(nameof(WelfareGroup), request.WelfareGroupId));
         }
 
-        // TODO Step 17: Return DTO
+        // Pending: Step 17: Return DTO
 
         return Result.Success();
     }

@@ -50,7 +50,7 @@ public sealed class SendOtpCommandHandler : IRequestHandler<SendOtpCommand, Resu
             return Result.Failure(IdentityErrors.IdentityNotFound);
         }
 
-        if (identity.Status != IdentityStatus.PendingVerification)
+        if (identity.Status != IdentityStatus.Pending)
         {
             // Just return success or validation error depending on business, usually InvalidOperation
             return Result.Failure(Error.Validation("Identity.NotPending", "Tài khoản không ở trạng thái chờ xác thực."));
@@ -72,6 +72,7 @@ public sealed class SendOtpCommandHandler : IRequestHandler<SendOtpCommand, Resu
         // 4. Create new OTP Aggregate
         var newOtp = OtpVerification.Create(
             identityId,
+            Guid.NewGuid(),
             hashedOtp,
             targetPhone,
             DateTime.UtcNow.AddMinutes(3)

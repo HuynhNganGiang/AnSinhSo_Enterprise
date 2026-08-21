@@ -23,6 +23,32 @@ public sealed class PermissionsController : ApiControllerBase
         _sender = sender;
     }
 
+    /// <summary>
+    /// Liệt kê danh sách tất cả các quyền hạn thao tác chi tiết có trong toàn bộ hệ thống.
+    /// </summary>
+    /// <remarks>
+    /// Chức năng này cung cấp danh sách đầy đủ các hành động có thể được cấp phép cho người sử dụng. Cán bộ quản trị dùng danh sách này để xây dựng các cấu hình bảo mật phức tạp.
+    /// </remarks>
+    /// <response code="200">
+    /// Success Response
+    /// {
+    ///   "success": true,
+    ///   "message": "Thao tác thành công.",
+    ///   "data": { }
+    /// }
+    /// </response>
+    /// <response code="400">
+    /// Validation Error
+    /// {
+    ///   "success": false,
+    ///   "message": "Dữ liệu đầu vào không hợp lệ.",
+    ///   "errors": [ ]
+    /// }
+    /// </response>
+    /// <response code="401">Unauthorized - Người dùng chưa đăng nhập.</response>
+    /// <response code="403">Forbidden - Không có quyền truy cập.</response>
+    /// <response code="404">Not Found - Không tìm thấy dữ liệu.</response>
+    /// <response code="500">Internal Server Error - Lỗi hệ thống.</response>
     [HttpGet]
     [Authorize(Policy = Permissions.PermissionsModule.View)]
     public async Task<IActionResult> GetPermissions(CancellationToken cancellationToken)

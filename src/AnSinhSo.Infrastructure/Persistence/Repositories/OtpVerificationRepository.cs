@@ -31,6 +31,12 @@ public sealed class OtpVerificationRepository : IOtpVerificationRepository
             .FirstOrDefaultAsync(o => o.CitizenIdentityId == citizenIdentityId && o.Status == OtpStatus.Pending, cancellationToken);
     }
 
+    public async Task<OtpVerification?> GetByRequestIdAsync(System.Guid requestId, CancellationToken cancellationToken = default)
+    {
+        return await _context.OtpVerifications
+            .FirstOrDefaultAsync(o => o.RequestId == requestId, cancellationToken);
+    }
+
     public void Add(OtpVerification otpVerification)
     {
         _context.OtpVerifications.Add(otpVerification);

@@ -39,9 +39,14 @@ namespace AnSinhSo.API.Middlewares
             using var memStream = new MemoryStream();
             context.Response.Body = memStream;
 
-            await _next(context);
-
-            context.Response.Body = originalBodyStream;
+            try
+            {
+                await _next(context);
+            }
+            finally
+            {
+                context.Response.Body = originalBodyStream;
+            }
 
             var contentType = context.Response.ContentType ?? string.Empty;
             bool isJson = contentType.Contains("application/json", StringComparison.OrdinalIgnoreCase);

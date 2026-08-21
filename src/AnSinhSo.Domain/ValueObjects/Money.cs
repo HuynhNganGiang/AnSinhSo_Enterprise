@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using AnSinhSo.Domain.Enumerations;
 using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Domain.SeedWork.ValueObjects;
@@ -6,17 +6,17 @@ using AnSinhSo.Domain.SeedWork.ValueObjects;
 namespace AnSinhSo.Domain.ValueObjects;
 
 /// <summary>
-/// Value Object đại diện cho tiền tệ.
+/// Value Object d?i di?n cho ti?n t?.
 /// </summary>
 public sealed class Money : ValueObject
 {
     /// <summary>
-    /// Số tiền.
+    /// S? ti?n.
     /// </summary>
     public decimal Amount { get; }
 
     /// <summary>
-    /// Loại tiền tệ (Enumeration).
+    /// Lo?i ti?n t? (Enumeration).
     /// </summary>
     public Currency Currency { get; }
 
@@ -27,18 +27,18 @@ public sealed class Money : ValueObject
     }
 
     /// <summary>
-    /// Khởi tạo Money.
+    /// Kh?i t?o Money.
     /// </summary>
     public static Result<Money> Create(decimal amount, Currency currency)
     {
         if (amount < 0)
         {
-            return Result.Failure<Money>(Error.Validation("Money.NegativeAmount", "Số tiền không được âm."));
+            return Result.Failure<Money>(Error.Validation("Money.NegativeAmount", "S? ti?n kh�ng du?c �m."));
         }
 
         if (currency is null)
         {
-            return Result.Failure<Money>(Error.Validation("Money.CurrencyNull", "Loại tiền tệ không được để trống."));
+            return Result.Failure<Money>(Error.Validation("Money.CurrencyNull", "Lo?i ti?n t? kh�ng du?c d? tr?ng."));
         }
 
         return Result.Success(new Money(amount, currency));

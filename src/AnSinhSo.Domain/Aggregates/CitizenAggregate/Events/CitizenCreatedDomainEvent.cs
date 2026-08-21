@@ -1,12 +1,12 @@
-﻿using AnSinhSo.Domain.Aggregates.CitizenAggregate;
+using AnSinhSo.Domain.Aggregates.CitizenAggregate;
 using AnSinhSo.Domain.SeedWork.Events;
 
 namespace AnSinhSo.Domain.Aggregates.CitizenAggregate.Events;
 
 /// <summary>
-/// Sự kiện miền: Công dân được tạo.
+/// S? ki?n mi?n: C�ng d�n du?c t?o.
 /// </summary>
-/// <param name="CitizenId">Định danh của công dân được tạo.</param>
+/// <param name="CitizenId">�?nh danh c?a c�ng d�n du?c t?o.</param>
 public sealed record CitizenCreatedDomainEvent(
     CitizenId CitizenId) : DomainEvent;
 

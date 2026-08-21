@@ -1,9 +1,9 @@
-﻿using AnSinhSo.Domain.Enumerations;
+using AnSinhSo.Domain.Enumerations;
 
 namespace AnSinhSo.Domain.Aggregates.PolicyAggregate.Enumerations;
 
 /// <summary>
-/// Enumeration đại diện cho PolicyStatus.
+/// Enumeration d?i di?n cho PolicyStatus.
 /// </summary>
 public sealed class PolicyStatus : Enumeration
 {

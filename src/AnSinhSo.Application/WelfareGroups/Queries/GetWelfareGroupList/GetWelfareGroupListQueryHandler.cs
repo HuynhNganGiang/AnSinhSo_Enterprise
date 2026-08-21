@@ -27,7 +27,7 @@ public sealed class GetWelfareGroupListQueryHandler : IRequestHandler<GetWelfare
     /// </summary>
     public async Task<Result> Handle(GetWelfareGroupListQuery request, CancellationToken cancellationToken)
     {
-        // TODO Step 17: Repository call and Mapping to DTO
+        // Pending: Step 17: Repository call and Mapping to DTO
         return await Task.FromResult(Result.Success());
     }
 }

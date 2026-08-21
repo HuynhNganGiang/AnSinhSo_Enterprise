@@ -27,6 +27,7 @@
     <ProjectReference Include="..\..\src\AnSinhSo.Domain\AnSinhSo.Domain.csproj" />
     <ProjectReference Include="..\..\src\AnSinhSo.Shared\AnSinhSo.Shared.csproj" />
     <ProjectReference Include="..\..\src\AnSinhSo.Infrastructure\AnSinhSo.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\AnSinhSo.API\AnSinhSo.API.csproj" />
   </ItemGroup>
 
 </Project>

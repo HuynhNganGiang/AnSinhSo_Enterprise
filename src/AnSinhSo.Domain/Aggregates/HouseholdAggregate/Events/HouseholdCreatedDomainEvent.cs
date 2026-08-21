@@ -1,12 +1,12 @@
-﻿using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
+using AnSinhSo.Domain.Aggregates.HouseholdAggregate;
 using AnSinhSo.Domain.SeedWork.Events;
 
 namespace AnSinhSo.Domain.Aggregates.HouseholdAggregate.Events;
 
 /// <summary>
-/// Sự kiện miền: Hộ gia đình được tạo.
+/// S? ki?n mi?n: H? gia d�nh du?c t?o.
 /// </summary>
-/// <param name="HouseholdId">Định danh của hộ gia đình được tạo.</param>
+/// <param name="HouseholdId">�?nh danh c?a h? gia d�nh du?c t?o.</param>
 public sealed record HouseholdCreatedDomainEvent(
     HouseholdId HouseholdId) : DomainEvent;
 

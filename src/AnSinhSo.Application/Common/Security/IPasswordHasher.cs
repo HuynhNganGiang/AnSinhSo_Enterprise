@@ -1,4 +1,4 @@
-﻿namespace AnSinhSo.Application.Common.Security;
+namespace AnSinhSo.Application.Common.Security;
 
 public interface IPasswordHasher
 {

@@ -49,5 +49,6 @@ public class OtpVerificationConfiguration : IEntityTypeConfiguration<OtpVerifica
 
         // Indexes
         builder.HasIndex(o => new { o.CitizenIdentityId, o.Status });
+        builder.HasIndex(o => o.RequestId).IsUnique();
     }
 }

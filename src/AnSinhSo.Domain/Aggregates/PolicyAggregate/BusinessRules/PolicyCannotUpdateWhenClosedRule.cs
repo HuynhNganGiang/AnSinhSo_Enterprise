@@ -1,17 +1,17 @@
-﻿using AnSinhSo.Domain.Aggregates.PolicyAggregate.Enumerations;
+using AnSinhSo.Domain.Aggregates.PolicyAggregate.Enumerations;
 using AnSinhSo.Domain.SeedWork.Exceptions;
 
 namespace AnSinhSo.Domain.Aggregates.PolicyAggregate.BusinessRules;
 
 /// <summary>
-/// Business Rule: Không cho Update nếu Policy đã Closed.
+/// Business Rule: Kh�ng cho Update n?u Policy d� Closed.
 /// </summary>
 public sealed class PolicyCannotUpdateWhenClosedRule : IBusinessRule
 {
     private readonly PolicyStatus _status;
 
     /// <summary>
-    /// Khởi tạo rule.
+    /// Kh?i t?o rule.
     /// </summary>
     public PolicyCannotUpdateWhenClosedRule(PolicyStatus status)
     {
@@ -19,7 +19,7 @@ public sealed class PolicyCannotUpdateWhenClosedRule : IBusinessRule
     }
 
     /// <inheritdoc />
-    public string Message => "Không cho Update nếu Policy đã Closed.";
+    public string Message => "Kh�ng cho Update n?u Policy d� Closed.";
 
     /// <inheritdoc />
     public bool IsBroken() => _status == PolicyStatus.Closed;

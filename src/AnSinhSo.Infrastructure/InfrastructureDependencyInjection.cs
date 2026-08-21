@@ -9,7 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System;
+using AnSinhSo.Application.Abstractions.Authentication;
+using AnSinhSo.Application.Abstractions.Authentication.RateLimiting;
 using AnSinhSo.Infrastructure.Authentication;
 using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
 using AnSinhSo.Application.Authorization.Abstractions;
@@ -53,7 +54,7 @@ public static class InfrastructureDependencyInjection
         // OTP Security & Notifications
         services.AddSingleton<AnSinhSo.Application.Abstractions.Security.IOtpGenerator, OtpGenerator>();
         services.AddSingleton<AnSinhSo.Application.Abstractions.Security.IHashProvider, HashProvider>();
-        services.AddTransient<AnSinhSo.Application.Abstractions.Notifications.IOtpNotificationService, DummyOtpNotificationService>();
+        services.AddTransient<AnSinhSo.Application.Abstractions.Notifications.IOtpNotificationService, AnSinhSo.Infrastructure.Notifications.ConsoleOtpNotificationService>();
 
         // JWT Authentication (AD #86, AD #91, AD #95)
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
@@ -86,18 +87,51 @@ public static class InfrastructureDependencyInjection
                 {
                     OnTokenValidated = async context =>
                     {
-                        var sessionRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.IUserSessionRepository>();
+                        var sessionType = context.Principal?.FindFirst("SessionType")?.Value;
                         var sidClaim = context.Principal?.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sid)?.Value;
 
-                        if (Guid.TryParse(sidClaim, out var sessionId))
+                        if (string.IsNullOrEmpty(sidClaim) || !Guid.TryParse(sidClaim, out var sessionId))
                         {
+                            context.Fail("Invalid session ID in token.");
+                            return;
+                        }
+
+                        if (sessionType == "BackOffice")
+                        {
+                            var securityRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.ISecurityRepository>();
+                            var deviceSession = await securityRepository.GetDeviceSessionByIdAsync(new AnSinhSo.Domain.Aggregates.SecurityAggregate.ValueObjects.DeviceSessionId(sessionId));
+                            
+                            if (deviceSession == null || !deviceSession.IsActive())
+                            {
+                                context.Fail("Device session is invalid or inactive.");
+                                return;
+                            }
+                            
+                            var userRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.IUserRepository>();
+                            var user = await userRepository.GetByIdAsync(new AnSinhSo.Domain.Aggregates.UserAggregate.UserId(deviceSession.UserId));
+                            if (user == null || user.IsLocked)
+                            {
+                                context.Fail("User account is not active or locked.");
+                                return;
+                            }
+                        }
+                        else if (sessionType == "Citizen")
+                        {
+                            var sessionRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.IUserSessionRepository>();
                             var session = await sessionRepository.GetByIdAsync(new UserSessionId(sessionId));
                             if (session != null && session.IsActive())
                             {
                                 // AD #100: CitizenIdentity Active check
                                 var identityRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ICitizenIdentityRepository>();
+                                // Use dynamic properties from Context instead of static Token Validation (Fix AI-44, SEC-902)
+                                var userStatus = context.Principal?.Claims.FirstOrDefault(c => c.Type == "citizen_status")?.Value;
+                                if (userStatus != null && userStatus != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Verified.ToString())
+                                {
+                                    context.Fail("User account is not active.");
+                                    return;
+                                }
                                 var identity = await identityRepository.GetByIdAsync(new AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.CitizenIdentityId(session.CitizenIdentityId));
-                                if (identity == null || identity.Status != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Active)
+                                if (identity == null || identity.Status != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Verified)
                                 {
                                     System.Console.WriteLine($"[JwtBearerEvents] Citizen Identity not active or null. IdentityId: {session.CitizenIdentityId}, Status: {identity?.Status}");
                                     context.Fail("Citizen Identity is not active.");
@@ -112,7 +146,8 @@ public static class InfrastructureDependencyInjection
                         }
                         else
                         {
-                            context.Fail("Invalid session ID in token.");
+                            // Missing or unknown session type
+                            context.Fail("Unknown session type.");
                         }
                     }
                 };
@@ -162,9 +197,49 @@ public static class InfrastructureDependencyInjection
         services.AddTransient<AnSinhSo.Application.AI.Rules.IAiRule<AnSinhSo.Application.AI.Rules.Contexts.AiCitizenContext>, AnSinhSo.Application.AI.Rules.Citizens.ElderlyWithoutSupportRule>();
 
         // Register IDistributedCache and ICurrentUser
-        services.AddDistributedMemoryCache();
+        var redisConnectionString = configuration.GetConnectionString("Redis");
+        if (!string.IsNullOrEmpty(redisConnectionString))
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = "AnSinhSo_";
+            });
+        }
+        else
+        {
+            services.AddDistributedMemoryCache();
+        }
         services.AddHttpContextAccessor();
         services.AddScoped<AnSinhSo.Domain.Interfaces.ICurrentUser, CurrentUser>();
+
+        // Rate Limiting
+        services.AddScoped<IOtpRateLimitService, OtpRateLimitService>();
+        services.AddSingleton<IRateLimitKeyBuilder, RateLimitKeyBuilder>();
+
+        // Zalo OA
+        services.Configure<AnSinhSo.Infrastructure.Services.Zalo.ZaloOptions>(configuration.GetSection(AnSinhSo.Infrastructure.Services.Zalo.ZaloOptions.SectionName));
+        services.AddScoped<AnSinhSo.Domain.Interfaces.Repositories.IZaloUserRepository, AnSinhSo.Infrastructure.Persistence.Repositories.ZaloUserRepository>();
+        services.AddScoped<AnSinhSo.Application.Zalo.IZaloTokenManager, AnSinhSo.Infrastructure.Services.Zalo.ZaloTokenManager>();
+        services.AddScoped<AnSinhSo.Application.Zalo.IZaloOAService, AnSinhSo.Infrastructure.Services.Zalo.ZaloOAService>();
+
+        // Security & OTP
+        services.Configure<AnSinhSo.Application.Authentication.Citizen.OtpOptions>(configuration.GetSection("OtpOptions"));
+        services.AddScoped<AnSinhSo.Domain.Interfaces.ISecurityRepository, AnSinhSo.Infrastructure.Persistence.Repositories.SecurityRepository>();
+        services.AddHttpClient<IOtpProvider, AnSinhSo.Infrastructure.Authentication.Providers.ZaloOtpProvider>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.DefaultRequestHeaders.Add("User-Agent", "AnSinhSo-ZaloOtpProvider/1.0");
+        })
+        .AddStandardResilienceHandler();
+
+        services.AddHttpClient<IOtpProvider, AnSinhSo.Infrastructure.Authentication.Providers.SmsOtpProvider>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+            client.DefaultRequestHeaders.Add("User-Agent", "AnSinhSo-SmsOtpProvider/1.0");
+        })
+        .AddStandardResilienceHandler();
+        services.AddScoped<IOtpDeliveryStrategy, AnSinhSo.Infrastructure.Authentication.Providers.OtpDeliveryStrategy>();
 
         // Audit Service (AD #119, AD #132)
         services.AddSingleton<AnSinhSo.Application.Abstractions.Audit.IAuditService, LoggerAuditService>();

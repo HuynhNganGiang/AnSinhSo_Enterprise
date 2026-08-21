@@ -1,12 +1,12 @@
-﻿using AnSinhSo.Domain.Aggregates.PolicyAggregate;
+using AnSinhSo.Domain.Aggregates.PolicyAggregate;
 using AnSinhSo.Domain.SeedWork.Events;
 
 namespace AnSinhSo.Domain.Aggregates.PolicyAggregate.Events;
 
 /// <summary>
-/// Sự kiện miền: Chính sách được kích hoạt.
+/// S? ki?n mi?n: Ch�nh s�ch du?c k�ch ho?t.
 /// </summary>
-/// <param name="PolicyId">Định danh của chính sách được kích hoạt.</param>
+/// <param name="PolicyId">�?nh danh c?a ch�nh s�ch du?c k�ch ho?t.</param>
 public sealed record PolicyActivatedDomainEvent(
     PolicyId PolicyId) : DomainEvent;
 

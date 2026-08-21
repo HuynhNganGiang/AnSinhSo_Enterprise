@@ -1,4 +1,4 @@
-﻿using AnSinhSo.Application.Common.Security;
+using AnSinhSo.Application.Common.Security;
 using BCrypt.Net;
 
 namespace AnSinhSo.Infrastructure.Security.Identity;

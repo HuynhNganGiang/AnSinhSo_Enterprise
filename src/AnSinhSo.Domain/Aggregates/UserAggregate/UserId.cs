@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AnSinhSo.Domain.SeedWork.ValueObjects;
 
 namespace AnSinhSo.Domain.Aggregates.UserAggregate;

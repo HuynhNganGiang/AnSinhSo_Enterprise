@@ -1,17 +1,17 @@
-﻿using System.Linq;
+using System.Linq;
 using AnSinhSo.Domain.SeedWork.Exceptions;
 
 namespace AnSinhSo.Domain.Aggregates.CitizenAggregate.BusinessRules;
 
 /// <summary>
-/// Business Rule: Số CCCD phải hợp lệ.
+/// Business Rule: S? CCCD ph?i h?p l?.
 /// </summary>
 public sealed class CitizenNumberMustBeValidRule : IBusinessRule
 {
     private readonly string _citizenNumber;
 
     /// <summary>
-    /// Khởi tạo rule.
+    /// Kh?i t?o rule.
     /// </summary>
     public CitizenNumberMustBeValidRule(string citizenNumber)
     {
@@ -19,7 +19,7 @@ public sealed class CitizenNumberMustBeValidRule : IBusinessRule
     }
 
     /// <inheritdoc />
-    public string Message => "Số CCCD không hợp lệ.";
+    public string Message => "S? CCCD kh�ng h?p l?.";
 
     /// <inheritdoc />
     public bool IsBroken() => string.IsNullOrWhiteSpace(_citizenNumber) || _citizenNumber.Length != 12 || !_citizenNumber.All(char.IsDigit);

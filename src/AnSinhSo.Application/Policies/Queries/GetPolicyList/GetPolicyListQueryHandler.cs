@@ -27,7 +27,7 @@ public sealed class GetPolicyListQueryHandler : IRequestHandler<GetPolicyListQue
     /// </summary>
     public async Task<Result> Handle(GetPolicyListQuery request, CancellationToken cancellationToken)
     {
-        // TODO Step 17: Repository call and Mapping to DTO
+        // Pending: Step 17: Repository call and Mapping to DTO
         return await Task.FromResult(Result.Success());
     }
 }

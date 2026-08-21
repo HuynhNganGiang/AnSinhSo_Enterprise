@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using AnSinhSo.Domain.SeedWork.ValueObjects;
 
 namespace AnSinhSo.Domain.Aggregates.WelfareGroupAggregate;
 
 /// <summary>
-/// Định danh mạnh (Strongly-typed ID) cho WelfareGroup.
+/// �?nh danh m?nh (Strongly-typed ID) cho WelfareGroup.
 /// </summary>
-/// <param name="Value">Giá trị Guid cốt lõi.</param>
+/// <param name="Value">Gi� tr? Guid c?t l�i.</param>
 public sealed record WelfareGroupId(Guid Value) : StronglyTypedId<Guid>(Value);

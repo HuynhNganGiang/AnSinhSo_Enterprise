@@ -2,20 +2,18 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AnSinhSo.Application.Abstractions.Security;
 using AnSinhSo.Contracts.Authentication;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
-using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ValueObjects;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
 using AnSinhSo.Domain.Aggregates.OtpVerificationAggregate;
 using AnSinhSo.Infrastructure.Persistence.Contexts;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
-using System.Net.Http.Headers;
 
 namespace AnSinhSo.IntegrationTests.Authentication;
 
@@ -56,76 +54,182 @@ public class AuthenticationTests : IClassFixture<RealAuthWebApplicationFactory>
         await db.SaveChangesAsync();
     }
 
-    [Fact]
-    public async Task Login_ThànhCông()
+    private static string CreateUniquePhoneNumber()
     {
-        // Arrange
-        var phone = "0987654321";
-        var rawOtp = "123456";
-        
-        await SeedDataAsync((db, sp) =>
+        var suffix = new Random().Next(1000, 9999);
+        return $"098765{suffix}";
+    }
+
+    private static Guid ParseRequestId(JsonElement root)
+    {
+        if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("data", out var dataElement))
         {
-            db.Database.EnsureDeleted();
-            db.Database.EnsureCreated();
+            return dataElement.GetGuid();
+        }
 
-            var hashProvider = sp.GetRequiredService<IHashProvider>();
-            
-            var identity = CitizenIdentity.Create(new CitizenIdentityId(Guid.NewGuid()), new AnSinhSo.Domain.Aggregates.CitizenAggregate.CitizenId(Guid.NewGuid()), Guid.NewGuid().ToString(), PhoneNumber.Create(phone));
-            identity.VerifyPhoneNumber(PhoneNumber.Create(phone), DateTime.UtcNow);
-            db.CitizenIdentities.Add(identity);
+        if (root.ValueKind == JsonValueKind.String)
+        {
+            return Guid.Parse(root.GetString()!);
+        }
 
-            var hashedOtp = hashProvider.Hash(rawOtp);
-            var otp = OtpVerification.Create(identity.Id, hashedOtp, PhoneNumber.Create(phone), DateTime.UtcNow.AddMinutes(5));
-            db.OtpVerifications.Add(otp);
-        });
+        if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("value", out var valueElement))
+        {
+            return Guid.Parse(valueElement.GetString()!);
+        }
 
-        var request = new LoginRequest(phone, rawOtp, "TestDevice");
+        if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("requestId", out var requestIdElement))
+        {
+            return requestIdElement.GetGuid();
+        }
 
-        // Act
-        var response = await _client.PostAsJsonAsync("/api/v1/auth/login", request);
+        throw new InvalidOperationException($"Unexpected request-otp response format: {root}");
+    }
 
-        // Assert
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.True(response.IsSuccessStatusCode, content);
-        Assert.Contains("accessToken", content);
-        Assert.Contains("refreshToken", content);
+    private static string GetTokenValue(JsonElement responseJson, string propertyName)
+    {
+        return responseJson
+            .GetProperty("data")
+            .GetProperty("tokens")
+            .GetProperty(propertyName)
+            .GetString()!;
     }
 
     [Fact]
-    public async Task Refresh_ReplayAttack()
+    public async Task RequestOtp_And_VerifyOtp_Issues_AccessAndRefreshTokens()
     {
         // Arrange
-        var phone = "0987654321";
-        var rawOtp = "123456";
-        
+        var phone = CreateUniquePhoneNumber();
+        const string rawOtp = "123456";
+
         await SeedDataAsync((db, sp) =>
         {
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
 
             var hashProvider = sp.GetRequiredService<IHashProvider>();
-            var identity = CitizenIdentity.Create(new CitizenIdentityId(Guid.NewGuid()), new AnSinhSo.Domain.Aggregates.CitizenAggregate.CitizenId(Guid.NewGuid()), Guid.NewGuid().ToString(), PhoneNumber.Create(phone));
+            var identity = CitizenIdentity.Create(
+                new CitizenIdentityId(Guid.NewGuid()),
+                new AnSinhSo.Domain.Aggregates.CitizenAggregate.CitizenId(Guid.NewGuid()),
+                Guid.NewGuid().ToString(),
+                PhoneNumber.Create(phone));
+
             identity.VerifyPhoneNumber(PhoneNumber.Create(phone), DateTime.UtcNow);
             db.CitizenIdentities.Add(identity);
 
-            var hashedOtp = hashProvider.Hash(rawOtp);
-            var otp = OtpVerification.Create(identity.Id, hashedOtp, PhoneNumber.Create(phone), DateTime.UtcNow.AddMinutes(5));
+            var otp = OtpVerification.Create(
+                identity.Id,
+                Guid.NewGuid(),
+                hashProvider.Hash(rawOtp),
+                PhoneNumber.Create(phone),
+                DateTime.UtcNow.AddMinutes(5));
+
             db.OtpVerifications.Add(otp);
         });
 
-        var loginRequest = new LoginRequest(phone, rawOtp, "TestDevice");
-        var loginResponse = await _client.PostAsJsonAsync("/api/v1/auth/login", loginRequest);
-        var loginResponseText = await loginResponse.Content.ReadAsStringAsync();
-        var json = System.Text.Json.JsonDocument.Parse(loginResponseText);
-        var refreshToken = json.RootElement.GetProperty("data").GetProperty("refreshToken").GetString();
+        var requestOtp = new { phoneNumber = phone };
 
-        var refreshRequest = new RefreshTokenRequest(refreshToken!, "TestDevice");
-        
-        // Act 1: Use valid refresh token (Rotates to new one)
+        // Act 1: Request OTP
+        var requestOtpResponse = await _client.PostAsJsonAsync("/api/v1/auth/citizen/request-otp", requestOtp);
+        var requestOtpContent = await requestOtpResponse.Content.ReadAsStringAsync();
+
+        Assert.True(requestOtpResponse.IsSuccessStatusCode, requestOtpContent);
+
+        var requestId = ParseRequestId(JsonDocument.Parse(requestOtpContent).RootElement);
+
+        var verifyOtpRequest = new
+        {
+            requestId,
+            otpCode = rawOtp,
+            deviceName = "TestDevice",
+            browser = "Chrome",
+            os = "Windows",
+            platform = "Web",
+            ipAddress = "127.0.0.1",
+            fingerprint = "test-fingerprint",
+            timeZone = "UTC",
+            rememberMe = true
+        };
+
+        // Act 2: Verify OTP and receive tokens
+        var verifyOtpResponse = await _client.PostAsJsonAsync("/api/v1/auth/citizen/verify-otp", verifyOtpRequest);
+        var verifyOtpContent = await verifyOtpResponse.Content.ReadAsStringAsync();
+
+        // Assert
+        Assert.True(verifyOtpResponse.IsSuccessStatusCode, verifyOtpContent);
+
+        using var json = JsonDocument.Parse(verifyOtpContent);
+        Assert.True(json.RootElement.GetProperty("data").GetProperty("isSuccess").GetBoolean());
+        Assert.False(json.RootElement.GetProperty("data").GetProperty("requiresRegistration").GetBoolean());
+
+        var accessToken = GetTokenValue(json.RootElement, "accessToken");
+        var refreshToken = GetTokenValue(json.RootElement, "refreshToken");
+
+        Assert.False(string.IsNullOrWhiteSpace(accessToken));
+        Assert.False(string.IsNullOrWhiteSpace(refreshToken));
+    }
+
+    [Fact]
+    public async Task Refresh_ReplayAttack_Rejects_Reused_RefreshToken()
+    {
+        // Arrange
+        var phone = CreateUniquePhoneNumber();
+        const string rawOtp = "123456";
+
+        await SeedDataAsync((db, sp) =>
+        {
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
+
+            var hashProvider = sp.GetRequiredService<IHashProvider>();
+            var identity = CitizenIdentity.Create(
+                new CitizenIdentityId(Guid.NewGuid()),
+                new AnSinhSo.Domain.Aggregates.CitizenAggregate.CitizenId(Guid.NewGuid()),
+                Guid.NewGuid().ToString(),
+                PhoneNumber.Create(phone));
+
+            identity.VerifyPhoneNumber(PhoneNumber.Create(phone), DateTime.UtcNow);
+            db.CitizenIdentities.Add(identity);
+
+            var otp = OtpVerification.Create(
+                identity.Id,
+                Guid.NewGuid(),
+                hashProvider.Hash(rawOtp),
+                PhoneNumber.Create(phone),
+                DateTime.UtcNow.AddMinutes(5));
+
+            db.OtpVerifications.Add(otp);
+        });
+
+        var requestOtpResponse = await _client.PostAsJsonAsync("/api/v1/auth/citizen/request-otp", new { phoneNumber = phone });
+        var requestId = ParseRequestId(JsonDocument.Parse(await requestOtpResponse.Content.ReadAsStringAsync()).RootElement);
+
+        var verifyOtpResponse = await _client.PostAsJsonAsync("/api/v1/auth/citizen/verify-otp", new
+        {
+            requestId,
+            otpCode = rawOtp,
+            deviceName = "TestDevice",
+            browser = "Chrome",
+            os = "Windows",
+            platform = "Web",
+            ipAddress = "127.0.0.1",
+            fingerprint = "test-fingerprint",
+            timeZone = "UTC",
+            rememberMe = true
+        });
+
+        using var verifyJson = JsonDocument.Parse(await verifyOtpResponse.Content.ReadAsStringAsync());
+        var refreshToken = GetTokenValue(verifyJson.RootElement, "refreshToken");
+
+        var refreshRequest = new RefreshTokenRequest(refreshToken, "TestDevice");
+
+        // Act 1: Use valid refresh token (rotates it)
         var refreshResponse1 = await _client.PostAsJsonAsync("/api/v1/auth/refresh-token", refreshRequest);
-        if (!refreshResponse1.IsSuccessStatusCode) throw new Exception("Refresh failed: " + await refreshResponse1.Content.ReadAsStringAsync());
+        if (!refreshResponse1.IsSuccessStatusCode)
+        {
+            throw new Exception("Refresh failed: " + await refreshResponse1.Content.ReadAsStringAsync());
+        }
 
-        // Act 2: Use the SAME old refresh token (Replay Attack)
+        // Act 2: Reuse the same old refresh token (replay attack)
         var refreshResponse2 = await _client.PostAsJsonAsync("/api/v1/auth/refresh-token", refreshRequest);
 
         // Assert
@@ -133,40 +237,67 @@ public class AuthenticationTests : IClassFixture<RealAuthWebApplicationFactory>
     }
 
     [Fact]
-    public async Task Logout_SauĐóGọiApiProtected()
+    public async Task Logout_After_Verification_Rejects_Future_Protected_Requests()
     {
         // Arrange
-        var phone = "0987654321";
-        var rawOtp = "123456";
-        
+        var phone = CreateUniquePhoneNumber();
+        const string rawOtp = "123456";
+
         await SeedDataAsync((db, sp) =>
         {
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
 
             var hashProvider = sp.GetRequiredService<IHashProvider>();
-            var identity = CitizenIdentity.Create(new CitizenIdentityId(Guid.NewGuid()), new AnSinhSo.Domain.Aggregates.CitizenAggregate.CitizenId(Guid.NewGuid()), Guid.NewGuid().ToString(), PhoneNumber.Create(phone));
+            var identity = CitizenIdentity.Create(
+                new CitizenIdentityId(Guid.NewGuid()),
+                new AnSinhSo.Domain.Aggregates.CitizenAggregate.CitizenId(Guid.NewGuid()),
+                Guid.NewGuid().ToString(),
+                PhoneNumber.Create(phone));
+
             identity.VerifyPhoneNumber(PhoneNumber.Create(phone), DateTime.UtcNow);
             db.CitizenIdentities.Add(identity);
 
-            var hashedOtp = hashProvider.Hash(rawOtp);
-            var otp = OtpVerification.Create(identity.Id, hashedOtp, PhoneNumber.Create(phone), DateTime.UtcNow.AddMinutes(5));
+            var otp = OtpVerification.Create(
+                identity.Id,
+                Guid.NewGuid(),
+                hashProvider.Hash(rawOtp),
+                PhoneNumber.Create(phone),
+                DateTime.UtcNow.AddMinutes(5));
+
             db.OtpVerifications.Add(otp);
         });
 
-        var loginRequest = new LoginRequest(phone, rawOtp, "TestDevice");
-        var loginResponse = await _client.PostAsJsonAsync("/api/v1/auth/login", loginRequest);
-        var loginResponseText = await loginResponse.Content.ReadAsStringAsync();
-        var json = System.Text.Json.JsonDocument.Parse(loginResponseText);
-        var accessToken = json.RootElement.GetProperty("data").GetProperty("accessToken").GetString();
+        var requestOtpResponse = await _client.PostAsJsonAsync("/api/v1/auth/citizen/request-otp", new { phoneNumber = phone });
+        var requestId = ParseRequestId(JsonDocument.Parse(await requestOtpResponse.Content.ReadAsStringAsync()).RootElement);
+
+        var verifyOtpResponse = await _client.PostAsJsonAsync("/api/v1/auth/citizen/verify-otp", new
+        {
+            requestId,
+            otpCode = rawOtp,
+            deviceName = "TestDevice",
+            browser = "Chrome",
+            os = "Windows",
+            platform = "Web",
+            ipAddress = "127.0.0.1",
+            fingerprint = "test-fingerprint",
+            timeZone = "UTC",
+            rememberMe = true
+        });
+
+        using var verifyJson = JsonDocument.Parse(await verifyOtpResponse.Content.ReadAsStringAsync());
+        var accessToken = GetTokenValue(verifyJson.RootElement, "accessToken");
 
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
         // Act 1: Logout
         var logoutResponse = await _client.PostAsync("/api/v1/auth/logout", null);
-        if (!logoutResponse.IsSuccessStatusCode) throw new Exception($"Logout failed with status {logoutResponse.StatusCode}: " + await logoutResponse.Content.ReadAsStringAsync());
+        if (!logoutResponse.IsSuccessStatusCode)
+        {
+            throw new Exception($"Logout failed with status {logoutResponse.StatusCode}: " + await logoutResponse.Content.ReadAsStringAsync());
+        }
 
-        // Act 2: Call protected endpoint again (or logout again)
+        // Act 2: Call protected endpoint again
         var protectedCallResponse = await _client.PostAsync("/api/v1/auth/logout", null);
 
         // Assert
@@ -174,51 +305,75 @@ public class AuthenticationTests : IClassFixture<RealAuthWebApplicationFactory>
     }
 
     [Fact]
-    public async Task CitizenDisable_JwtCònHạn()
+    public async Task DisabledCitizen_With_ValidToken_IsRejected()
     {
         // Arrange
-        var phone = "0987654321";
-        var rawOtp = "123456";
-        
+        var phone = CreateUniquePhoneNumber();
+        const string rawOtp = "123456";
+
         await SeedDataAsync((db, sp) =>
         {
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
 
             var hashProvider = sp.GetRequiredService<IHashProvider>();
-            var identity = CitizenIdentity.Create(new CitizenIdentityId(Guid.NewGuid()), new AnSinhSo.Domain.Aggregates.CitizenAggregate.CitizenId(Guid.NewGuid()), Guid.NewGuid().ToString(), PhoneNumber.Create(phone));
+            var identity = CitizenIdentity.Create(
+                new CitizenIdentityId(Guid.NewGuid()),
+                new AnSinhSo.Domain.Aggregates.CitizenAggregate.CitizenId(Guid.NewGuid()),
+                Guid.NewGuid().ToString(),
+                PhoneNumber.Create(phone));
+
             identity.VerifyPhoneNumber(PhoneNumber.Create(phone), DateTime.UtcNow);
             db.CitizenIdentities.Add(identity);
 
-            var hashedOtp = hashProvider.Hash(rawOtp);
-            var otp = OtpVerification.Create(identity.Id, hashedOtp, PhoneNumber.Create(phone), DateTime.UtcNow.AddMinutes(5));
+            var otp = OtpVerification.Create(
+                identity.Id,
+                Guid.NewGuid(),
+                hashProvider.Hash(rawOtp),
+                PhoneNumber.Create(phone),
+                DateTime.UtcNow.AddMinutes(5));
+
             db.OtpVerifications.Add(otp);
         });
 
-        var loginRequest = new LoginRequest(phone, rawOtp, "TestDevice");
-        var loginResponse = await _client.PostAsJsonAsync("/api/v1/auth/login", loginRequest);
-        var loginResponseText = await loginResponse.Content.ReadAsStringAsync();
-        var json = System.Text.Json.JsonDocument.Parse(loginResponseText);
-        var accessToken = json.RootElement.GetProperty("data").GetProperty("accessToken").GetString();
+        var requestOtpResponse = await _client.PostAsJsonAsync("/api/v1/auth/citizen/request-otp", new { phoneNumber = phone });
+        var requestId = ParseRequestId(JsonDocument.Parse(await requestOtpResponse.Content.ReadAsStringAsync()).RootElement);
+
+        var verifyOtpResponse = await _client.PostAsJsonAsync("/api/v1/auth/citizen/verify-otp", new
+        {
+            requestId,
+            otpCode = rawOtp,
+            deviceName = "TestDevice",
+            browser = "Chrome",
+            os = "Windows",
+            platform = "Web",
+            ipAddress = "127.0.0.1",
+            fingerprint = "test-fingerprint",
+            timeZone = "UTC",
+            rememberMe = true
+        });
+
+        using var verifyJson = JsonDocument.Parse(await verifyOtpResponse.Content.ReadAsStringAsync());
+        var accessToken = GetTokenValue(verifyJson.RootElement, "accessToken");
 
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-        // Act 1: Disable Citizen
+        // Act: Disable citizen after token creation
         await SeedDataAsync((db, sp) =>
         {
             var identity = db.CitizenIdentities.First();
-            // Simulate disabling by recording failed attempts until locked
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 5; i++)
             {
                 identity.RecordFailedAttempt(5, Guid.NewGuid().ToString(), DateTime.UtcNow);
             }
+
             db.CitizenIdentities.Update(identity);
         });
 
-        // Act 2: Call protected endpoint
         var protectedCallResponse = await _client.PostAsync("/api/v1/auth/logout", null);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, protectedCallResponse.StatusCode);
     }
 }
+

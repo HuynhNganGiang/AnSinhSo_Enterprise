@@ -1,16 +1,16 @@
-﻿using AnSinhSo.Domain.SeedWork.Exceptions;
+using AnSinhSo.Domain.SeedWork.Exceptions;
 
 namespace AnSinhSo.Domain.Aggregates.HouseholdAggregate.BusinessRules;
 
 /// <summary>
-/// Business Rule: Chỉ có duy nhất một chủ hộ.
+/// Business Rule: Ch? c� duy nh?t m?t ch? h?.
 /// </summary>
 public sealed class HouseholdCannotHaveMultipleHeadsRule : IBusinessRule
 {
     private readonly int _headCount;
 
     /// <summary>
-    /// Khởi tạo rule với số lượng chủ hộ.
+    /// Kh?i t?o rule v?i s? lu?ng ch? h?.
     /// </summary>
     public HouseholdCannotHaveMultipleHeadsRule(int headCount)
     {
@@ -18,7 +18,7 @@ public sealed class HouseholdCannotHaveMultipleHeadsRule : IBusinessRule
     }
 
     /// <inheritdoc />
-    public string Message => "Chỉ có duy nhất một chủ hộ.";
+    public string Message => "Ch? c� duy nh?t m?t ch? h?.";
 
     /// <inheritdoc />
     public bool IsBroken() => _headCount > 1;

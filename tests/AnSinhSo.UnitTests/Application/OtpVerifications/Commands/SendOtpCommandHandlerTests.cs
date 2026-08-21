@@ -95,7 +95,7 @@ public class SendOtpCommandHandlerTests
         
         var identity = CitizenIdentity.Create(identityId, citizenId, "stamp", targetPhone);
         
-        var oldOtp = OtpVerification.Create(identityId, "oldhash", targetPhone, DateTime.UtcNow.AddMinutes(3));
+        var oldOtp = OtpVerification.Create(identityId, Guid.NewGuid(), "oldhash", targetPhone, DateTime.UtcNow.AddMinutes(3));
 
         _citizenIdentityRepoMock.Setup(x => x.GetByIdAsync(identityId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(identity);
@@ -113,7 +113,7 @@ public class SendOtpCommandHandlerTests
         Assert.True(result.IsSuccess);
         
         // Assert Revoked
-        Assert.Equal(OtpStatus.Revoked, oldOtp.Status);
+        Assert.Equal(OtpStatus.Cancelled, oldOtp.Status);
         _otpVerificationRepoMock.Verify(x => x.Update(oldOtp), Times.Once);
 
         // Assert New Created

@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using AnSinhSo.Domain.SeedWork.Results;
 using AnSinhSo.Domain.SeedWork.ValueObjects;
 
 namespace AnSinhSo.Domain.ValueObjects;
 
 /// <summary>
-/// Value Object đại diện cho phần trăm.
+/// Value Object d?i di?n cho ph?n tram.
 /// </summary>
 public sealed class Percentage : ValueObject
 {
     /// <summary>
-    /// Giá trị phần trăm (từ 0 đến 100).
+    /// Gi� tr? ph?n tram (t? 0 d?n 100).
     /// </summary>
     public decimal Value { get; }
 
@@ -20,13 +20,13 @@ public sealed class Percentage : ValueObject
     }
 
     /// <summary>
-    /// Khởi tạo Percentage.
+    /// Kh?i t?o Percentage.
     /// </summary>
     public static Result<Percentage> Create(decimal value)
     {
         if (value < 0 || value > 100)
         {
-            return Result.Failure<Percentage>(Error.Validation("Percentage.OutOfRange", "Phần trăm phải nằm trong khoảng từ 0 đến 100."));
+            return Result.Failure<Percentage>(Error.Validation("Percentage.OutOfRange", "Ph?n tram ph?i n?m trong kho?ng t? 0 d?n 100."));
         }
 
         return Result.Success(new Percentage(value));

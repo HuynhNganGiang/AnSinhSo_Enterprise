@@ -28,7 +28,7 @@ public class CitizenIdentityTests
         // Assert
         Assert.Equal(id, identity.Id);
         Assert.Equal(citizenId, identity.CitizenId);
-        Assert.Equal(IdentityStatus.PendingVerification, identity.Status);
+        Assert.Equal(IdentityStatus.Pending, identity.Status);
         Assert.Equal(securityStamp, identity.SecurityStamp);
         Assert.Equal(0, identity.FailedAttemptCount);
     }
@@ -45,7 +45,7 @@ public class CitizenIdentityTests
         identity.VerifyPhoneNumber(phone, verifiedAt);
 
         // Assert
-        Assert.Equal(IdentityStatus.Active, identity.Status);
+        Assert.Equal(IdentityStatus.Verified, identity.Status);
         Assert.Equal(phone, identity.PrimaryPhone);
         
         var domainEvent = identity.GetDomainEvents().OfType<CitizenIdentityActivatedDomainEvent>().SingleOrDefault();
@@ -84,7 +84,7 @@ public class CitizenIdentityTests
         identity.LinkExternalProvider(providerId, ProviderType.VNeID, "123456789012", linkedAt);
 
         // Assert
-        Assert.Equal(IdentityStatus.Active, identity.Status);
+        Assert.Equal(IdentityStatus.Verified, identity.Status);
         Assert.Single(identity.LinkedProviders);
         
         var linkedProvider = identity.LinkedProviders.First();
@@ -191,13 +191,13 @@ public class CitizenIdentityTests
         identity.RecordFailedAttempt(3, "temp_stamp2", DateTime.UtcNow);
         
         Assert.Equal(2, identity.FailedAttemptCount);
-        Assert.Equal(IdentityStatus.PendingVerification, identity.Status);
+        Assert.Equal(IdentityStatus.Pending, identity.Status);
 
         identity.RecordFailedAttempt(3, newStamp, lockedAt);
 
         // Assert
         Assert.Equal(3, identity.FailedAttemptCount);
-        Assert.Equal(IdentityStatus.Locked, identity.Status);
+        Assert.Equal(IdentityStatus.Suspended, identity.Status);
         Assert.Equal(newStamp, identity.SecurityStamp);
 
         var lockedEvent = identity.GetDomainEvents().OfType<CitizenIdentityLockedDomainEvent>().SingleOrDefault();

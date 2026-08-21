@@ -20,9 +20,10 @@ public class OtpVerificationTests
     {
         return OtpVerification.Create(
             _citizenIdentityId,
+            Guid.NewGuid(),
             _validCodeHash,
             _phoneNumber,
-            _createdAt.AddMinutes(5) // Expires in 5 minutes
+            _createdAt.AddMinutes(5)
         );
     }
 
@@ -52,7 +53,7 @@ public class OtpVerificationTests
         otp.Verify(_validCodeHash, maxAttempts: 3, now);
 
         // Assert
-        Assert.Equal(OtpStatus.Used, otp.Status);
+        Assert.Equal(OtpStatus.Verified, otp.Status);
         Assert.Equal(0, otp.FailedAttemptCount);
         
         var domainEvent = otp.GetDomainEvents().OfType<OtpVerifiedDomainEvent>().SingleOrDefault();
@@ -69,10 +70,10 @@ public class OtpVerificationTests
         var now = _createdAt.AddMinutes(10); // After 5 minutes expiration
 
         // Act
-        var ex = Assert.Throws<InvalidOperationException>(() => otp.Verify(_validCodeHash, maxAttempts: 3, now));
+        var exception = Assert.Throws<InvalidOperationException>(() => otp.Verify(_validCodeHash, 3, now));
 
         // Assert
-        Assert.Contains("expired", ex.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("expired", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Equal(OtpStatus.Expired, otp.Status);
     }
 
@@ -111,7 +112,7 @@ public class OtpVerificationTests
 
         // Attempt 3 (Should exceed)
         Assert.Throws<InvalidOperationException>(() => otp.Verify("wrong_hash", maxAttempts, now));
-        Assert.Equal(OtpStatus.Revoked, otp.Status);
+        Assert.Equal(OtpStatus.Locked, otp.Status);
         Assert.Equal(3, otp.FailedAttemptCount);
     }
 
@@ -129,7 +130,7 @@ public class OtpVerificationTests
         var ex = Assert.Throws<InvalidOperationException>(() => otp.Verify(_validCodeHash, maxAttempts: 3, now.AddSeconds(10)));
 
         // Assert
-        Assert.Contains("already been used", ex.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("This OTP has already been verified/used.", ex.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -142,6 +143,6 @@ public class OtpVerificationTests
         otp.Revoke("New OTP generated");
 
         // Assert
-        Assert.Equal(OtpStatus.Revoked, otp.Status);
+        Assert.Equal(OtpStatus.Cancelled, otp.Status);
     }
 }

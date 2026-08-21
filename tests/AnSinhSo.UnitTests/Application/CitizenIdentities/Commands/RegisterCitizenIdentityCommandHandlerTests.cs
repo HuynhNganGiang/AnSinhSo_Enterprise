@@ -129,7 +129,7 @@ public class RegisterCitizenIdentityCommandHandlerTests
         _citizenIdentityRepositoryMock.Verify(x => x.Add(It.Is<CitizenIdentity>(i => 
             i.CitizenId.Value == command.CitizenId && 
             i.SecurityStamp == "new-stamp-123" &&
-            i.Status == AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.PendingVerification &&
+            i.Status == AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Pending &&
             i.PrimaryPhone != null && i.PrimaryPhone.Value == command.PhoneNumber
         )), Times.Once); // AD #32: Init with phone number, Status is PendingVerification
         

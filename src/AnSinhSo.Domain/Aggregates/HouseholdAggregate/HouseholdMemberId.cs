@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using AnSinhSo.Domain.SeedWork.ValueObjects;
 
 namespace AnSinhSo.Domain.Aggregates.HouseholdAggregate;
 
 /// <summary>
-/// Định danh mạnh (Strongly-typed ID) cho HouseholdMember.
+/// �?nh danh m?nh (Strongly-typed ID) cho HouseholdMember.
 /// </summary>
-/// <param name="Value">Giá trị Guid cốt lõi.</param>
+/// <param name="Value">Gi� tr? Guid c?t l�i.</param>
 public sealed record HouseholdMemberId(Guid Value) : StronglyTypedId<Guid>(Value);

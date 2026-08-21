@@ -21,6 +21,11 @@ public static class ApplicationDependencyInjection
         services.AddValidatorsFromAssembly(assembly);
         services.AddAutoMapper(cfg => cfg.AddProfile<AnSinhSo.Application.Common.Mappings.MappingProfile>());
 
+        services.AddScoped<AnSinhSo.Application.Abstractions.Authentication.IOtpVerificationService, AnSinhSo.Application.Authentication.Services.OtpVerificationService>();
+        services.AddScoped<AnSinhSo.Application.Abstractions.Authentication.IIdentityVerificationService, AnSinhSo.Application.Authentication.Services.IdentityVerificationService>();
+        services.AddScoped<AnSinhSo.Application.Abstractions.Authentication.ITokenIssuingService, AnSinhSo.Application.Authentication.Services.TokenIssuingService>();
+        services.AddScoped<AnSinhSo.Application.Abstractions.Authentication.ISecurityAuditService, AnSinhSo.Application.Authentication.Services.SecurityAuditService>();
+
         return services;
     }
 }

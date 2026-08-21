@@ -15,6 +15,7 @@ using AnSinhSo.Domain.Aggregates.UserRoleAggregate;
 using AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate;
 using AnSinhSo.Domain.Aggregates.NotificationAggregate;
 using AnSinhSo.Domain.Aggregates.AiRecommendationAggregate;
+using AnSinhSo.Domain.Aggregates.SecurityAggregate;
 using AnSinhSo.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -45,6 +46,14 @@ public class AnSinhSoDbContext : DbContext
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<NotificationHistory> NotificationHistories { get; set; }
     public DbSet<AiRecommendation> AiRecommendations { get; set; }
+    public DbSet<AnSinhSo.Domain.Aggregates.ZaloUserAggregate.ZaloUser> ZaloUsers { get; set; }
+    
+    // Security Aggregates
+    public DbSet<SecurityLog> SecurityLogs { get; set; }
+    public DbSet<AuditLogin> AuditLogins { get; set; }
+    public DbSet<LoginHistory> LoginHistories { get; set; }
+    public DbSet<DeviceSession> DeviceSessions { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
     
     public AnSinhSoDbContext(DbContextOptions<AnSinhSoDbContext> options) : base(options)
     {

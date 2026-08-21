@@ -11,6 +11,7 @@ namespace AnSinhSo.Domain.Aggregates.OtpVerificationAggregate;
 public sealed class OtpVerification : AggregateRoot<OtpVerificationId>
 {
     public CitizenIdentityId CitizenIdentityId { get; private set; }
+    public Guid RequestId { get; private set; }
     public string CodeHash { get; private set; } = string.Empty;
     public PhoneNumber TargetPhone { get; private set; }
     public DateTime ExpiresAt { get; private set; }
@@ -24,12 +25,14 @@ public sealed class OtpVerification : AggregateRoot<OtpVerificationId>
     private OtpVerification(
         OtpVerificationId id,
         CitizenIdentityId citizenIdentityId,
+        Guid requestId,
         string codeHash,
         PhoneNumber targetPhone,
         DateTime expiresAt)
     {
         Id = id;
         CitizenIdentityId = citizenIdentityId;
+        RequestId = requestId;
         CodeHash = codeHash;
         TargetPhone = targetPhone;
         ExpiresAt = expiresAt;
@@ -39,6 +42,7 @@ public sealed class OtpVerification : AggregateRoot<OtpVerificationId>
 
     public static OtpVerification Create(
         CitizenIdentityId citizenIdentityId,
+        Guid requestId,
         string codeHash,
         PhoneNumber targetPhone,
         DateTime expiresAt)
@@ -46,6 +50,7 @@ public sealed class OtpVerification : AggregateRoot<OtpVerificationId>
         return new OtpVerification(
             OtpVerificationId.New(),
             citizenIdentityId,
+            requestId,
             codeHash,
             targetPhone,
             expiresAt);
@@ -54,9 +59,9 @@ public sealed class OtpVerification : AggregateRoot<OtpVerificationId>
     public void Verify(string providedCodeHash, int maxAttempts, DateTime now)
     {
         // AD #56: OTP One-Time Usage
-        if (Status == OtpStatus.Used)
+        if (Status == OtpStatus.Verified || Status == OtpStatus.Used)
         {
-            throw new InvalidOperationException("This OTP has already been used.");
+            throw new InvalidOperationException("This OTP has already been verified/used.");
         }
 
         if (Status != OtpStatus.Pending)
@@ -72,8 +77,8 @@ public sealed class OtpVerification : AggregateRoot<OtpVerificationId>
 
         if (FailedAttemptCount >= maxAttempts)
         {
-            Status = OtpStatus.Revoked;
-            throw new InvalidOperationException("OTP revoked due to too many failed attempts.");
+            Status = OtpStatus.Locked;
+            throw new InvalidOperationException("OTP locked due to too many failed attempts.");
         }
 
         if (CodeHash != providedCodeHash)
@@ -81,12 +86,12 @@ public sealed class OtpVerification : AggregateRoot<OtpVerificationId>
             FailedAttemptCount++;
             if (FailedAttemptCount >= maxAttempts)
             {
-                Status = OtpStatus.Revoked;
+                Status = OtpStatus.Locked;
             }
             throw new InvalidOperationException("Invalid OTP code.");
         }
 
-        Status = OtpStatus.Used;
+        Status = OtpStatus.Verified;
         
         // AD #54 - Note: Cross Aggregate Orchestration is done in the Handler.
         // We still raise an event here to signify successful verification of THIS aggregate.
@@ -97,7 +102,7 @@ public sealed class OtpVerification : AggregateRoot<OtpVerificationId>
     {
         if (Status == OtpStatus.Pending)
         {
-            Status = OtpStatus.Revoked;
+            Status = OtpStatus.Cancelled;
             // Optionally store revocation reason if the domain model dictates it,
             // but AD #55 just says older OTPs must be revoked.
         }

@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using AnSinhSo.Domain.SeedWork.ValueObjects;
 
 namespace AnSinhSo.Domain.Aggregates.CitizenAggregate;
 
 /// <summary>
-/// Định danh mạnh (Strongly-typed ID) cho Citizen.
+/// �?nh danh m?nh (Strongly-typed ID) cho Citizen.
 /// </summary>
-/// <param name="Value">Giá trị Guid cốt lõi.</param>
+/// <param name="Value">Gi� tr? Guid c?t l�i.</param>
 public sealed record CitizenId(Guid Value) : StronglyTypedId<Guid>(Value);

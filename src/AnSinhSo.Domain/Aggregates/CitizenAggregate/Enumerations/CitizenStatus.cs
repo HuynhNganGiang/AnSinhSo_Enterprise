@@ -1,9 +1,9 @@
-﻿using AnSinhSo.Domain.Enumerations;
+using AnSinhSo.Domain.Enumerations;
 
 namespace AnSinhSo.Domain.Aggregates.CitizenAggregate.Enumerations;
 
 /// <summary>
-/// Enumeration đại diện cho CitizenStatus.
+/// Enumeration d?i di?n cho CitizenStatus.
 /// </summary>
 public sealed class CitizenStatus : Enumeration
 {

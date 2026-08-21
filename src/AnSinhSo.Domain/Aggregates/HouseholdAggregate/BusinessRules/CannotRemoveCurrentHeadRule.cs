@@ -1,16 +1,16 @@
-﻿using AnSinhSo.Domain.SeedWork.Exceptions;
+using AnSinhSo.Domain.SeedWork.Exceptions;
 
 namespace AnSinhSo.Domain.Aggregates.HouseholdAggregate.BusinessRules;
 
 /// <summary>
-/// Business Rule: Không được xóa chủ hộ hiện tại.
+/// Business Rule: Kh�ng du?c x�a ch? h? hi?n t?i.
 /// </summary>
 public sealed class CannotRemoveCurrentHeadRule : IBusinessRule
 {
     private readonly bool _isHead;
 
     /// <summary>
-    /// Khởi tạo rule.
+    /// Kh?i t?o rule.
     /// </summary>
     public CannotRemoveCurrentHeadRule(bool isHead)
     {
@@ -18,7 +18,7 @@ public sealed class CannotRemoveCurrentHeadRule : IBusinessRule
     }
 
     /// <inheritdoc />
-    public string Message => "Không được xóa chủ hộ hiện tại.";
+    public string Message => "Kh�ng du?c x�a ch? h? hi?n t?i.";
 
     /// <inheritdoc />
     public bool IsBroken() => _isHead;

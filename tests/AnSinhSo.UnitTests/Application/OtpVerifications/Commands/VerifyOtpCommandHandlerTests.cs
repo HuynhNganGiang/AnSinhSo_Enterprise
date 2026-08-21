@@ -63,7 +63,7 @@ public class VerifyOtpCommandHandlerTests
         var identityId = CitizenIdentityId.Create(command.CitizenIdentityId);
         var targetPhone = PhoneNumber.Create("0901234567");
 
-        var otp = OtpVerification.Create(identityId, "hash", targetPhone, DateTime.UtcNow.AddMinutes(3));
+        var otp = OtpVerification.Create(identityId, Guid.NewGuid(), "hash", targetPhone, DateTime.UtcNow.AddMinutes(3));
 
         _otpVerificationRepoMock.Setup(x => x.GetPendingByCitizenIdentityIdAsync(identityId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(otp);
@@ -87,7 +87,7 @@ public class VerifyOtpCommandHandlerTests
         var identityId = CitizenIdentityId.Create(command.CitizenIdentityId);
         var targetPhone = PhoneNumber.Create("0901234567");
 
-        var otp = OtpVerification.Create(identityId, "validHash", targetPhone, DateTime.UtcNow.AddMinutes(3));
+        var otp = OtpVerification.Create(identityId, Guid.NewGuid(), "validHash", targetPhone, DateTime.UtcNow.AddMinutes(3));
         
         var citizenId = new CitizenId(Guid.NewGuid());
         var identity = CitizenIdentity.Create(identityId, citizenId, "stamp", targetPhone);
@@ -121,7 +121,7 @@ public class VerifyOtpCommandHandlerTests
         var identityId = CitizenIdentityId.Create(command.CitizenIdentityId);
         var targetPhone = PhoneNumber.Create("0901234567");
 
-        var otp = OtpVerification.Create(identityId, "validHash", targetPhone, DateTime.UtcNow.AddMinutes(3));
+        var otp = OtpVerification.Create(identityId, Guid.NewGuid(), "validHash", targetPhone, DateTime.UtcNow.AddMinutes(3));
         
         var citizenId = new CitizenId(Guid.NewGuid());
         var identity = CitizenIdentity.Create(identityId, citizenId, "stamp", targetPhone);
@@ -141,8 +141,8 @@ public class VerifyOtpCommandHandlerTests
         Assert.True(result.IsSuccess);
         
         // Assert Orchestration
-        Assert.Equal(OtpStatus.Used, otp.Status);
-        Assert.Equal(IdentityStatus.Active, identity.Status);
+        Assert.Equal(OtpStatus.Verified, otp.Status);
+        Assert.Equal(IdentityStatus.Verified, identity.Status);
 
         _otpVerificationRepoMock.Verify(x => x.Update(otp), Times.Once);
         _citizenIdentityRepoMock.Verify(x => x.Update(identity), Times.Once);

@@ -1,9 +1,9 @@
-﻿using AnSinhSo.Domain.Enumerations;
+using AnSinhSo.Domain.Enumerations;
 
 namespace AnSinhSo.Domain.Aggregates.CitizenAggregate.Enumerations;
 
 /// <summary>
-/// Enumeration đại diện cho Gender.
+/// Enumeration d?i di?n cho Gender.
 /// </summary>
 public sealed class Gender : Enumeration
 {

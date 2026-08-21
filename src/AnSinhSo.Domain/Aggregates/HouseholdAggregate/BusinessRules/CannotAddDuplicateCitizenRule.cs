@@ -1,16 +1,16 @@
-﻿using AnSinhSo.Domain.SeedWork.Exceptions;
+using AnSinhSo.Domain.SeedWork.Exceptions;
 
 namespace AnSinhSo.Domain.Aggregates.HouseholdAggregate.BusinessRules;
 
 /// <summary>
-/// Business Rule: Không được thêm CitizenId đã tồn tại.
+/// Business Rule: Kh�ng du?c th�m CitizenId d� t?n t?i.
 /// </summary>
 public sealed class CannotAddDuplicateCitizenRule : IBusinessRule
 {
     private readonly bool _alreadyExists;
 
     /// <summary>
-    /// Khởi tạo rule.
+    /// Kh?i t?o rule.
     /// </summary>
     public CannotAddDuplicateCitizenRule(bool alreadyExists)
     {
@@ -18,7 +18,7 @@ public sealed class CannotAddDuplicateCitizenRule : IBusinessRule
     }
 
     /// <inheritdoc />
-    public string Message => "Không được thêm CitizenId đã tồn tại.";
+    public string Message => "Kh�ng du?c th�m CitizenId d� t?n t?i.";
 
     /// <inheritdoc />
     public bool IsBroken() => _alreadyExists;

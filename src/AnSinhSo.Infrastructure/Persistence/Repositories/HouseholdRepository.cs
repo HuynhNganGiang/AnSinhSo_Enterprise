@@ -66,7 +66,7 @@ public sealed class HouseholdRepository : IHouseholdRepository
 
         if (!string.IsNullOrWhiteSpace(sort))
         {
-            // TODO: implement sort
+            // Pending: implement sort
         }
 
         var items = await query
@@ -97,7 +97,7 @@ public sealed class HouseholdRepository : IHouseholdRepository
 
         if (!string.IsNullOrWhiteSpace(sort))
         {
-            // TODO: implement sort
+            // Pending: implement sort
         }
 
         var items = await query

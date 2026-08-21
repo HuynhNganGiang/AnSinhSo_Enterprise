@@ -21,6 +21,7 @@ public abstract class ApiControllerBase : ControllerBase
             ErrorType.Validation => StatusCodes.Status400BadRequest,
             ErrorType.NotFound => StatusCodes.Status404NotFound,
             ErrorType.Conflict => StatusCodes.Status409Conflict,
+            ErrorType.TooManyRequests => StatusCodes.Status429TooManyRequests,
             _ => StatusCodes.Status400BadRequest
         };
 
@@ -32,6 +33,13 @@ public abstract class ApiControllerBase : ControllerBase
             Type = GetType(error.Type),
             Extensions = { { "errors", new[] { error.Code } } }
         };
+
+        if (error.Type == ErrorType.TooManyRequests)
+        {
+            // Adding a generic Retry-After header for TooManyRequests (in seconds)
+            // A more robust implementation would read from options or specific error extensions.
+            Response.Headers["Retry-After"] = "60";
+        }
 
         return new ObjectResult(problemDetails)
         {
@@ -45,6 +53,7 @@ public abstract class ApiControllerBase : ControllerBase
             ErrorType.Validation => "Bad Request",
             ErrorType.NotFound => "Not Found",
             ErrorType.Conflict => "Conflict",
+            ErrorType.TooManyRequests => "Too Many Requests",
             _ => "Server Error"
         };
 
@@ -54,6 +63,7 @@ public abstract class ApiControllerBase : ControllerBase
             ErrorType.Validation => "https://tools.ietf.org/html/rfc7231#section-6.5.1",
             ErrorType.NotFound => "https://tools.ietf.org/html/rfc7231#section-6.5.4",
             ErrorType.Conflict => "https://tools.ietf.org/html/rfc7231#section-6.5.8",
+            ErrorType.TooManyRequests => "https://tools.ietf.org/html/rfc6585#section-4",
             _ => "https://tools.ietf.org/html/rfc7231#section-6.6.1"
         };
 }

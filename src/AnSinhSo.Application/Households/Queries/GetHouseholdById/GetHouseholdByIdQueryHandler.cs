@@ -37,7 +37,7 @@ public sealed class GetHouseholdByIdQueryHandler : IRequestHandler<GetHouseholdB
     {
         var householdId = new HouseholdId(request.HouseholdId);
 
-        // TODO Step 17: Repository.GetByIdAsync()
+        // Pending: Step 17: Repository.GetByIdAsync()
         var household = await _householdRepository.GetByIdAsync(householdId, cancellationToken);
 
         if (household is null)
@@ -59,7 +59,7 @@ public sealed class GetHouseholdByIdQueryHandler : IRequestHandler<GetHouseholdB
                 member.CitizenId.Value,
                 citizenName,
                 member.IsHead,
-                System.DateTime.UtcNow)); // TODO: Add JoinedDate to domain model
+                System.DateTime.UtcNow)); // Pending: Add JoinedDate to domain model
 
             if (member.IsHead)
             {

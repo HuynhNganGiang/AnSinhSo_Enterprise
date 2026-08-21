@@ -1,4 +1,4 @@
-﻿using AnSinhSo.Domain.Aggregates.UserAggregate;
+using AnSinhSo.Domain.Aggregates.UserAggregate;
 
 namespace AnSinhSo.Application.Common.Security;
 

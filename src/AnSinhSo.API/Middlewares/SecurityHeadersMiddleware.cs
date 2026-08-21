@@ -49,7 +49,14 @@ namespace AnSinhSo.API.Middlewares
 
                 if (!headers.ContainsKey("Content-Security-Policy"))
                 {
-                    headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';");
+                    if (context.Request.Path.StartsWithSegments("/swagger"))
+                    {
+                        headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;");
+                    }
+                    else
+                    {
+                        headers.Append("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; form-action 'none';");
+                    }
                 }
 
                 return Task.CompletedTask;

@@ -36,4 +36,9 @@ public sealed record Error(string Code, string Message, ErrorType Type)
     /// Khởi tạo Error dạng Failure mặc định.
     /// </summary>
     public static Error Failure(string code, string message) => new(code, message, ErrorType.Failure);
+
+    /// <summary>
+    /// Khởi tạo Error dạng TooManyRequests.
+    /// </summary>
+    public static Error TooManyRequests(string code, string message) => new(code, message, ErrorType.TooManyRequests);
 }

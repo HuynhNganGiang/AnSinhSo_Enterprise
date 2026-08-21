@@ -43,13 +43,25 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApiAuthorization();
 builder.Services.AddApiRateLimiting();
 
+builder.Services.AddCors();
+
+builder.Services.AddScoped<AnSinhSo.API.Filters.CitizenOtpAntiSpamFilter>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => 
+    {
+        c.HeadContent = "<style>.swagger-ui .opblock-tag small { font-size: 18px !important; font-weight: 600 !important; color: #3b4151 !important; margin-left: 15px !important; }</style>";
+    });
+}
+else
+{
+    // Hardening: HSTS in production
+    app.UseHsts();
 }
 
 app.UseMiddleware<AnSinhSo.API.Middlewares.CorrelationIdMiddleware>();
@@ -59,6 +71,13 @@ app.UseMiddleware<AnSinhSo.Api.Middleware.GlobalExceptionMiddleware>();
 app.UseMiddleware<AnSinhSo.API.Middlewares.SecurityHeadersMiddleware>();
 
 app.UseHttpsRedirection();
+
+// Hardening: CORS
+app.UseCors(policy => policy
+    .WithOrigins("https://localhost:44300") // Replace with actual allowed origins in production
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials());
 
 app.UseAuthentication();
 app.UseAuthorization();
