@@ -77,6 +77,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             }
             services.AddScoped<AnSinhSo.Application.Authorization.Abstractions.IPermissionResolver, TestPermissionResolver>();
 
+            // Mock OTP Generator
+            var otpGeneratorDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(AnSinhSo.Application.Abstractions.Security.IOtpGenerator));
+            if (otpGeneratorDescriptor != null)
+            {
+                services.Remove(otpGeneratorDescriptor);
+            }
+            services.AddSingleton<AnSinhSo.Application.Abstractions.Security.IOtpGenerator, TestOtpGenerator>();
+
             // Ensure schema is created
             var sp = services.BuildServiceProvider();
             using var scope = sp.CreateScope();
@@ -121,5 +129,13 @@ public class TestPermissionResolver : AnSinhSo.Application.Authorization.Abstrac
             .ToList();
 
         return Task.FromResult<System.Collections.Generic.IReadOnlyCollection<string>>(permissions);
+    }
+}
+
+public class TestOtpGenerator : AnSinhSo.Application.Abstractions.Security.IOtpGenerator
+{
+    public string Generate(int length = 6)
+    {
+        return new string('1', length).Replace("111111", "123456"); // Returns 123456 for length=6
     }
 }

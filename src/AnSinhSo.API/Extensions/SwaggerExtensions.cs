@@ -77,6 +77,15 @@ Tài liệu này mô tả toàn bộ RESTful API của hệ thống.
                 options.IncludeXmlComments(contractsXmlPath);
             }
 
+            var appXmlFile = "AnSinhSo.Application.xml";
+            var appXmlPath = Path.Combine(AppContext.BaseDirectory, appXmlFile);
+            if (File.Exists(appXmlPath))
+            {
+                options.IncludeXmlComments(appXmlPath);
+            }
+
+            options.DocInclusionPredicate((docName, apiDesc) => true);
+
             options.DocumentFilter<OrderTagsDocumentFilter>();
             options.SchemaFilter<EnumSchemaFilter>();
         });
