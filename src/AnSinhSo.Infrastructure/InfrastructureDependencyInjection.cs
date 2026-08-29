@@ -243,6 +243,17 @@ public static class InfrastructureDependencyInjection
         // Audit Service (AD #119, AD #132)
         services.AddSingleton<AnSinhSo.Application.Abstractions.Audit.IAuditService, LoggerAuditService>();
 
+        // Seeding
+        services.Configure<AnSinhSo.Infrastructure.Persistence.Seeding.SeedAdminOptions>(configuration.GetSection(AnSinhSo.Infrastructure.Persistence.Seeding.SeedAdminOptions.SectionName));
+        services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.IDataSeeder, AnSinhSo.Infrastructure.Persistence.Seeding.PermissionGroupSeeder>();
+        services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.IDataSeeder, AnSinhSo.Infrastructure.Persistence.Seeding.PermissionSeeder>();
+        services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.IDataSeeder, AnSinhSo.Infrastructure.Persistence.Seeding.RoleSeeder>();
+        services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.IDataSeeder, AnSinhSo.Infrastructure.Persistence.Seeding.RolePermissionSeeder>();
+        services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.IDataSeeder, AnSinhSo.Infrastructure.Persistence.Seeding.UserSeeder>();
+        services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.IDataSeeder, AnSinhSo.Infrastructure.Persistence.Seeding.UserRoleSeeder>();
+
+        services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.SeedRunner>();
+
         return services;
     }
 }
