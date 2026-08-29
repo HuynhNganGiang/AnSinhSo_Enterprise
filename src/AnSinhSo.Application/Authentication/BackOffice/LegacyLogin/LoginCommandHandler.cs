@@ -7,8 +7,8 @@ using AnSinhSo.Application.Abstractions.Security;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ValueObjects;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
+
+
 using AnSinhSo.Domain.Errors;
 using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Domain.SeedWork.Results;
@@ -21,7 +21,8 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<A
 {
     private readonly ICitizenIdentityRepository _citizenIdentityRepository;
     private readonly IOtpVerificationRepository _otpVerificationRepository;
-    private readonly IUserSessionRepository _userSessionRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly ISecurityRepository _securityRepository;
     private readonly IHashProvider _hashProvider;
     private readonly IJwtProvider _jwtProvider;
     private readonly ITokenGenerator _tokenGenerator;
@@ -31,7 +32,8 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<A
     public LoginCommandHandler(
         ICitizenIdentityRepository citizenIdentityRepository,
         IOtpVerificationRepository otpVerificationRepository,
-        IUserSessionRepository userSessionRepository,
+        IUserRepository userRepository,
+        ISecurityRepository securityRepository,
         IHashProvider hashProvider,
         IJwtProvider jwtProvider,
         ITokenGenerator tokenGenerator,
@@ -40,7 +42,8 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<A
     {
         _citizenIdentityRepository = citizenIdentityRepository;
         _otpVerificationRepository = otpVerificationRepository;
-        _userSessionRepository = userSessionRepository;
+        _userRepository = userRepository;
+        _securityRepository = securityRepository;
         _hashProvider = hashProvider;
         _jwtProvider = jwtProvider;
         _tokenGenerator = tokenGenerator;
@@ -77,7 +80,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<A
         {
             // Verify OTP
             pendingOtp.Verify(providedHash, maxAttempts: 5, DateTime.UtcNow);
-            
+
             // Mark as used is handled inside Verify() domain method, but we still need to update
             _otpVerificationRepository.Update(pendingOtp);
         }
@@ -88,64 +91,106 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, Result<A
 
             if (ex.Message.Contains("expired", StringComparison.OrdinalIgnoreCase))
                 return Result.Failure<AuthenticationResult>(OtpErrors.Expired);
-            
+
             if (ex.Message.Contains("revoked", StringComparison.OrdinalIgnoreCase))
                 return Result.Failure<AuthenticationResult>(OtpErrors.ExceedMaxAttempts);
-            
+
             if (ex.Message.Contains("already been used", StringComparison.OrdinalIgnoreCase))
                 return Result.Failure<AuthenticationResult>(OtpErrors.AlreadyUsed);
-            
+
             if (ex.Message.Contains("Invalid OTP code", StringComparison.OrdinalIgnoreCase))
                 return Result.Failure<AuthenticationResult>(OtpErrors.Invalid);
 
             return Result.Failure<AuthenticationResult>(Error.Validation("Otp.VerificationFailed", ex.Message));
         }
 
-        // 3. Manage Device Limits (AD #87)
-        var activeSessions = await _userSessionRepository.GetActiveSessionsByCitizenAsync(identity.Id.Value, cancellationToken);
-        if (activeSessions.Count >= 5)
+        if (identity.PrimaryPhone == null)
         {
-            // Revoke the oldest session
-            var oldestSession = activeSessions.OrderBy(s => s.ExpiresAt).First(); // ExpiresAt relates to when it was created since lifetime is fixed
-            oldestSession.Revoke("Device limit exceeded");
-            _userSessionRepository.Update(oldestSession);
+            return Result.Failure<AuthenticationResult>(Error.Validation("Identity.NoPhone", "Identity does not have a primary phone."));
         }
 
-        // 4. Generate Tokens
-        var rawRefreshToken = _tokenGenerator.GenerateRefreshToken();
-        var hashedRefreshToken = _hashProvider.Hash(rawRefreshToken);
-        
-        var deviceInfo = DeviceInfo.Create(request.IpAddress, request.UserAgent, request.DeviceName);
-        var familyId = Guid.NewGuid();
-        
-        var refreshTokenExpiryDays = _options.RefreshTokenLifetimeDays;
-        var refreshTokenExpiry = DateTime.UtcNow.AddDays(refreshTokenExpiryDays);
+        var user = await _userRepository.GetByUsernameAsync(identity.PrimaryPhone.Value, cancellationToken);
+        if (user == null)
+        {
+            return Result.Failure<AuthenticationResult>(Error.NotFound("User.NotFound", "The verified identity does not have an associated active user account."));
+        }
 
-        var newSession = UserSession.Create(
-            identity.Id.Value,
-            familyId,
-            deviceInfo,
-            hashedRefreshToken,
-            refreshTokenExpiry);
+        // 5. Manage Device Limits & Save Transaction
+        int maxRetries = 2;
+        string accessToken = string.Empty;
+        string finalRawRefreshToken = string.Empty;
+        int jwtExpiryMinutes = _options.AccessTokenLifetimeMinutes;
 
-        _userSessionRepository.Add(newSession);
-
-        // 5. Generate JWT
-        var jwtExpiryMinutes = _options.AccessTokenLifetimeMinutes;
         if (jwtExpiryMinutes > 15)
         {
-            // Enforce AD #86 Fail Fast (Alternatively this could be at Startup, but enforcing here adds extra safety)
             throw new InvalidOperationException("Access Token Lifetime exceeds maximum allowed (15 minutes).");
         }
 
-        var accessToken = _jwtProvider.GenerateAccessToken(identity, newSession.Id);
+        for (int retry = 0; retry <= maxRetries; retry++)
+        {
+            try
+            {
+                var activeSessions = await _securityRepository.GetActiveDeviceSessionsByUserIdAsync(user.Id.Value, cancellationToken);
+                if (activeSessions.Count >= 5)
+                {
+                    var sessionsToRevoke = activeSessions.OrderBy(s => s.LastSeenAt).Take(activeSessions.Count - 4);
+                    foreach (var s in sessionsToRevoke)
+                    {
+                        s.Revoke("Device limit exceeded (Legacy Login)");
+                        _securityRepository.UpdateDeviceSession(s);
+                    }
+                }
 
-        // 6. Save Transaction
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+                // Generate new objects per retry
+                finalRawRefreshToken = _tokenGenerator.GenerateRefreshToken();
+                var hashedRefreshToken = _hashProvider.Hash(finalRawRefreshToken);
+                var familyId = Guid.NewGuid();
+                var refreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenLifetimeDays);
+
+                var deviceSession = AnSinhSo.Domain.Aggregates.SecurityAggregate.DeviceSession.Create(
+                    user.Id.Value,
+                    request.DeviceName,
+                    "Unknown", // Browser
+                    "Unknown", // OS
+                    "LegacyClient", // Platform
+                    request.IpAddress,
+                    "Unknown", // Fingerprint
+                    isTrusted: false,
+                    securityStamp: user.SecurityStamp
+                );
+
+                var securityRefreshToken = AnSinhSo.Domain.Aggregates.SecurityAggregate.RefreshToken.Create(
+                    user.Id.Value,
+                    identity.Id.Value,
+                    hashedRefreshToken,
+                    familyId,
+                    refreshTokenExpiry,
+                    deviceSession.Id);
+
+                deviceSession.LinkRefreshToken(securityRefreshToken.Id.Value);
+
+                _securityRepository.AddDeviceSession(deviceSession);
+                _securityRepository.AddRefreshToken(securityRefreshToken);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                accessToken = _jwtProvider.GenerateAccessToken(identity, deviceSession.Id);
+                break;
+            }
+            catch (AnSinhSo.Domain.Exceptions.ConcurrencyException)
+            {
+                if (retry == maxRetries)
+                {
+                    return Result.Failure<AuthenticationResult>(Error.Conflict("Auth.Concurrency", "Xung đột dữ liệu khi đăng nhập. Vui lòng thử lại."));
+                }
+
+                _unitOfWork.ClearChangeTracker();
+            }
+        }
 
         var result = new AuthenticationResult(
             accessToken,
-            rawRefreshToken,
+            finalRawRefreshToken,
             jwtExpiryMinutes * 60,
             identity.Id.Value);
 

@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AnSinhSo.Application.Authentication;
 using AnSinhSo.Domain.SeedWork.Results;
 using MediatR;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace AnSinhSo.Application.Authentication.BackOffice.BackOfficeLogin;
 
@@ -49,7 +51,7 @@ public sealed class BackOfficeLoginCommandHandler : IRequestHandler<BackOfficeLo
         }
 
         var user = await _userRepository.GetByUsernameAsync(request.Username, cancellationToken);
-        
+
         if (user == null)
         {
             return Result.Failure<AuthenticationResult>(Error.Failure("Auth.InvalidCredentials", "Tên đăng nhập hoặc mật khẩu không chính xác."));
@@ -72,7 +74,7 @@ public sealed class BackOfficeLoginCommandHandler : IRequestHandler<BackOfficeLo
         {
             // Fallback for legacy SHA256 hashes if BCrypt fails to parse
             isPasswordValid = _hashProvider.Verify(request.Password, user.PasswordHash);
-            
+
             // If valid, we should upgrade the hash here to BCrypt
             if (isPasswordValid)
             {
@@ -85,10 +87,10 @@ public sealed class BackOfficeLoginCommandHandler : IRequestHandler<BackOfficeLo
         {
             user.RecordAccessFailed(5, TimeSpan.FromMinutes(30)); // 5 attempts, 30 min lockout
             _userRepository.Update(user);
-            
+
             _securityRepository.AddAuditLogin(AnSinhSo.Domain.Aggregates.SecurityAggregate.AuditLogin.CreateFailure(
                 user.Id.Value, request.IpAddress, request.UserAgent, request.TimeZone, "Sai mật khẩu."));
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Failure<AuthenticationResult>(Error.Failure("Auth.InvalidCredentials", "Tên đăng nhập hoặc mật khẩu không chính xác."));
         }
@@ -96,19 +98,6 @@ public sealed class BackOfficeLoginCommandHandler : IRequestHandler<BackOfficeLo
         // Success Login
         user.ResetAccessFailedCount();
         _userRepository.Update(user);
-
-        var deviceSession = AnSinhSo.Domain.Aggregates.SecurityAggregate.DeviceSession.Create(
-            user.Id.Value, request.DeviceName, "UnknownBrowser", "UnknownOS", "UnknownPlatform", request.IpAddress, "", request.RememberMe, user.SecurityStamp);
-        _securityRepository.AddDeviceSession(deviceSession);
-
-        var refreshTokenString = _tokenGenerator.GenerateRefreshToken();
-        var hashedRefreshToken = _hashProvider.Hash(refreshTokenString);
-        var expirationDays = request.RememberMe ? 30 : 1; // 30 days if RememberMe, otherwise 1 day
-        var refreshToken = AnSinhSo.Domain.Aggregates.SecurityAggregate.RefreshToken.Create(
-            user.Id.Value, hashedRefreshToken, Guid.NewGuid(), DateTime.UtcNow.AddDays(expirationDays), deviceSession.Id);
-        
-        deviceSession.LinkRefreshToken(refreshToken.Id.Value);
-        _securityRepository.AddRefreshToken(refreshToken);
 
         _securityRepository.AddLoginHistory(AnSinhSo.Domain.Aggregates.SecurityAggregate.LoginHistory.RecordLogin(
             user.Id.Value, request.IpAddress, request.DeviceName, "Unknown Location"));
@@ -119,13 +108,58 @@ public sealed class BackOfficeLoginCommandHandler : IRequestHandler<BackOfficeLo
         _securityRepository.AddSecurityLog(AnSinhSo.Domain.Aggregates.SecurityAggregate.SecurityLog.Create(
             user.Id.Value, AnSinhSo.Domain.Aggregates.SecurityAggregate.Enumerations.SecurityEventType.LOGIN_SUCCESS, "Đăng nhập Back Office thành công.", request.IpAddress));
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        int maxRetries = 2;
+        string jwtToken = string.Empty;
+        string finalRefreshTokenString = string.Empty;
 
-        var jwtToken = _jwtProvider.GenerateAccessTokenForUser(user, deviceSession.Id);
+        for (int retry = 0; retry <= maxRetries; retry++)
+        {
+            try
+            {
+                var activeSessions = await _securityRepository.GetActiveDeviceSessionsByUserIdAsync(user.Id.Value, cancellationToken);
+                if (activeSessions.Count >= 5)
+                {
+                    var sessionsToRevoke = activeSessions.OrderBy(s => s.LastSeenAt).Take(activeSessions.Count - 4);
+                    foreach (var s in sessionsToRevoke)
+                    {
+                        s.Revoke("Device limit exceeded (BackOffice Login)");
+                        _securityRepository.UpdateDeviceSession(s);
+                    }
+                }
+
+                var deviceSession = AnSinhSo.Domain.Aggregates.SecurityAggregate.DeviceSession.Create(
+                    user.Id.Value, request.DeviceName, "UnknownBrowser", "UnknownOS", "UnknownPlatform", request.IpAddress, "", request.RememberMe, user.SecurityStamp);
+
+                finalRefreshTokenString = _tokenGenerator.GenerateRefreshToken();
+                var hashedRefreshToken = _hashProvider.Hash(finalRefreshTokenString);
+                var expirationDays = request.RememberMe ? 30 : 1;
+                var refreshToken = AnSinhSo.Domain.Aggregates.SecurityAggregate.RefreshToken.Create(
+                    user.Id.Value, null, hashedRefreshToken, Guid.NewGuid(), DateTime.UtcNow.AddDays(expirationDays), deviceSession.Id);
+
+                deviceSession.LinkRefreshToken(refreshToken.Id.Value);
+
+                _securityRepository.AddDeviceSession(deviceSession);
+                _securityRepository.AddRefreshToken(refreshToken);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                jwtToken = _jwtProvider.GenerateAccessTokenForUser(user, deviceSession.Id);
+                break;
+            }
+            catch (AnSinhSo.Domain.Exceptions.ConcurrencyException)
+            {
+                if (retry == maxRetries)
+                {
+                    return Result.Failure<AuthenticationResult>(Error.Conflict("Auth.Concurrency", "Xung đột dữ liệu khi đăng nhập. Vui lòng thử lại."));
+                }
+
+                _unitOfWork.ClearChangeTracker();
+            }
+        }
 
         return Result.Success(new AuthenticationResult(
-            jwtToken, 
-            refreshTokenString, 
+            jwtToken,
+            finalRefreshTokenString,
             request.RememberMe ? 30 * 24 * 3600 : 24 * 3600, // Expiration time in seconds
             user.Id.Value
         ));

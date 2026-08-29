@@ -7,8 +7,8 @@ using AnSinhSo.Contracts.Authentication;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ValueObjects;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
+
+
 using AnSinhSo.Infrastructure.Persistence.Contexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

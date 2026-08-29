@@ -14,6 +14,7 @@ public sealed class RefreshToken : AggregateRoot<RefreshTokenId>
     public DateTime? RevokedAt { get; private set; }
     public string RevokedReason { get; private set; }
     public DeviceSessionId DeviceSessionId { get; private set; }
+    public Guid? CitizenIdentityId { get; private set; }
 
     public bool IsRevoked => RevokedAt != null;
     public bool IsExpired => DateTime.UtcNow >= ExpiredAt;
@@ -23,10 +24,11 @@ public sealed class RefreshToken : AggregateRoot<RefreshTokenId>
     private RefreshToken() { }
 #pragma warning restore CS8618
 
-    private RefreshToken(RefreshTokenId id, Guid userId, string tokenHash, Guid familyId, DateTime expiredAt, DeviceSessionId deviceSessionId)
+    private RefreshToken(RefreshTokenId id, Guid userId, Guid? citizenIdentityId, string tokenHash, Guid familyId, DateTime expiredAt, DeviceSessionId deviceSessionId)
     {
         Id = id;
         UserId = userId;
+        CitizenIdentityId = citizenIdentityId;
         TokenHash = tokenHash;
         FamilyId = familyId;
         CreatedAt = DateTime.UtcNow;
@@ -35,9 +37,9 @@ public sealed class RefreshToken : AggregateRoot<RefreshTokenId>
         RevokedReason = string.Empty;
     }
 
-    public static RefreshToken Create(Guid userId, string tokenHash, Guid familyId, DateTime expiredAt, DeviceSessionId deviceSessionId)
+    public static RefreshToken Create(Guid userId, Guid? citizenIdentityId, string tokenHash, Guid familyId, DateTime expiredAt, DeviceSessionId deviceSessionId)
     {
-        return new RefreshToken(RefreshTokenId.New(), userId, tokenHash, familyId, expiredAt, deviceSessionId);
+        return new RefreshToken(RefreshTokenId.New(), userId, citizenIdentityId, tokenHash, familyId, expiredAt, deviceSessionId);
     }
 
     public void Revoke(string reason)

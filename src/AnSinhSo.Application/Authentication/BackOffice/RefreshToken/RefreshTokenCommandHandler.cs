@@ -3,24 +3,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using AnSinhSo.Application.Abstractions.Authentication;
 using AnSinhSo.Application.Abstractions.Security;
-using AnSinhSo.Domain.Aggregates.SecurityAggregate;
+using AnSinhSo.Application.Authentication.BackOffice.RefreshToken.Resolvers;
+using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
+using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ValueObjects;
 using AnSinhSo.Domain.Aggregates.SecurityAggregate.ValueObjects;
-using AnSinhSo.Domain.Aggregates.UserAggregate;
+
 using AnSinhSo.Domain.Errors;
 using AnSinhSo.Domain.Interfaces;
 using AnSinhSo.Domain.SeedWork.Results;
 using MediatR;
 using Microsoft.Extensions.Options;
-using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
-using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ValueObjects;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
+
 namespace AnSinhSo.Application.Authentication.BackOffice.RefreshToken;
 
 public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, Result<AuthenticationResult>>
 {
-    private readonly IUserSessionRepository _userSessionRepository;
+    private readonly IRefreshSessionResolver _sessionResolver;
     private readonly ICitizenIdentityRepository _citizenIdentityRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IHashProvider _hashProvider;
     private readonly IJwtProvider _jwtProvider;
     private readonly ITokenGenerator _tokenGenerator;
@@ -28,16 +28,18 @@ public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCom
     private readonly AuthenticationOptions _options;
 
     public RefreshTokenCommandHandler(
-        IUserSessionRepository userSessionRepository,
+        IRefreshSessionResolver sessionResolver,
         ICitizenIdentityRepository citizenIdentityRepository,
+        IUserRepository userRepository,
         IHashProvider hashProvider,
         IJwtProvider jwtProvider,
         ITokenGenerator tokenGenerator,
         IUnitOfWork unitOfWork,
         IOptions<AuthenticationOptions> options)
     {
-        _userSessionRepository = userSessionRepository;
+        _sessionResolver = sessionResolver;
         _citizenIdentityRepository = citizenIdentityRepository;
+        _userRepository = userRepository;
         _hashProvider = hashProvider;
         _jwtProvider = jwtProvider;
         _tokenGenerator = tokenGenerator;
@@ -47,67 +49,93 @@ public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCom
 
     public async Task<Result<AuthenticationResult>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
+        // 1. Resolve Session Context (Handles parsing, replay detection, revocation, and expiration)
         var hash = _hashProvider.Hash(request.RefreshToken);
+        var contextResult = await _sessionResolver.ResolveAsync(hash, cancellationToken);
 
-        var session = await _userSessionRepository.GetByRefreshTokenHashAsync(hash, cancellationToken);
-
-        if (session is null)
+        if (contextResult.IsFailure)
         {
-            return Result.Failure<AuthenticationResult>(Error.Failure("Auth.InvalidToken", "Token không hợp lệ."));
-        }
-
-        if (session.IsRevoked)
-        {
-            // Replay Attack Detection
-            var familySessions = await _userSessionRepository.GetFamilySessionsAsync(session.RefreshTokenFamilyId, cancellationToken);
-            foreach (var s in familySessions)
+            if (contextResult.Error == SessionErrors.Compromised)
             {
-                s.Revoke("Compromised: Token Replay");
-                _userSessionRepository.Update(s);
+                // If resolver caught a replay attack, commit the revocations it performed.
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Result.Failure<AuthenticationResult>(SessionErrors.Compromised);
+            return Result.Failure<AuthenticationResult>(contextResult.Error);
         }
 
-        if (session.IsExpired())
+        var context = contextResult.Value;
+
+        // 2. Validate Identity
+        AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.CitizenIdentity? identity = null;
+        if (context.CitizenIdentityId.HasValue)
         {
-            return Result.Failure<AuthenticationResult>(SessionErrors.Expired);
+            identity = await _citizenIdentityRepository.GetByIdAsync(new CitizenIdentityId(context.CitizenIdentityId.Value), cancellationToken);
+            if (identity is null || identity.Status != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Verified)
+            {
+                return Result.Failure<AuthenticationResult>(Error.Failure("Auth.InvalidUser", "Tài khoản công dân không hợp lệ hoặc chưa xác thực."));
+            }
         }
 
-        if (!session.IsActive())
+        AnSinhSo.Domain.Aggregates.UserAggregate.User? user = null;
+        if (context.UserId.HasValue)
         {
-            return Result.Failure<AuthenticationResult>(Error.Failure("Auth.InvalidSession", "Phiên đăng nhập không hợp lệ hoặc đã bị thu hồi."));
+            user = await _userRepository.GetByIdAsync(new AnSinhSo.Domain.Aggregates.UserAggregate.UserId(context.UserId.Value), cancellationToken);
+            if (user == null)
+            {
+                return Result.Failure<AuthenticationResult>(Error.Failure("Auth.InvalidUser", "Tài khoản User không tồn tại."));
+            }
         }
 
-        var identity = await _citizenIdentityRepository.GetByIdAsync(new CitizenIdentityId(session.CitizenIdentityId), cancellationToken);
-        if (identity is null || identity.Status != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Verified)
+        if (identity == null && user == null)
         {
-            return Result.Failure<AuthenticationResult>(Error.Failure("Auth.InvalidUser", "Tài khoản không hợp lệ hoặc chưa xác thực."));
+             return Result.Failure<AuthenticationResult>(Error.Failure("Auth.InvalidUser", "Phiên đăng nhập không gắn với danh tính hợp lệ."));
         }
 
-        // Generate new Refresh Token
+        // 3. Issue New Tokens (SRP: Handlers/Generators issue tokens)
         var newRawRefreshToken = _tokenGenerator.GenerateRefreshToken();
         var newHashedRefreshToken = _hashProvider.Hash(newRawRefreshToken);
-        
-        var refreshTokenExpiryDays = _options.RefreshTokenLifetimeDays;
-        var refreshTokenExpiry = DateTime.UtcNow.AddDays(refreshTokenExpiryDays);
+        var refreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenLifetimeDays);
 
-        session.RotateRefreshToken(newHashedRefreshToken, refreshTokenExpiry);
-        _userSessionRepository.Update(session);
-
-        // Generate new JWT
         var jwtExpiryMinutes = _options.AccessTokenLifetimeMinutes;
-        var accessToken = _jwtProvider.GenerateAccessToken(identity, session.Id);
 
-        // Commit transaction
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        // 4. Rotate Session
+        int maxRetries = 2;
+        string accessToken = string.Empty;
+
+        for (int retry = 0; retry <= maxRetries; retry++)
+        {
+            try
+            {
+                await _sessionResolver.RotateAsync(context, newHashedRefreshToken, refreshTokenExpiry, cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                if (identity != null)
+                {
+                    accessToken = _jwtProvider.GenerateAccessToken(identity, new DeviceSessionId(context.SessionId));
+                }
+                else
+                {
+                    accessToken = _jwtProvider.GenerateAccessTokenForUser(user!, new DeviceSessionId(context.SessionId));
+                }
+                break;
+            }
+            catch (AnSinhSo.Domain.Exceptions.ConcurrencyException)
+            {
+                if (retry == maxRetries)
+                {
+                    return Result.Failure<AuthenticationResult>(Error.Conflict("Auth.Concurrency", "Xung đột dữ liệu. Vui lòng thử lại."));
+                }
+
+                _unitOfWork.ClearChangeTracker();
+                // Loop continues and RotateAsync is called again to fetch fresh state and apply changes cleanly
+            }
+        }
 
         var result = new AuthenticationResult(
             accessToken,
             newRawRefreshToken,
             jwtExpiryMinutes * 60,
-            identity.Id.Value);
+            identity?.Id.Value ?? user!.Id.Value);
 
         return Result.Success(result);
     }

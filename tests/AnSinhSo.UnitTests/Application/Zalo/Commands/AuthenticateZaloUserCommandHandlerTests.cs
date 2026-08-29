@@ -22,7 +22,8 @@ public class AuthenticateZaloUserCommandHandlerTests
     private readonly Mock<IZaloUserRepository> _zaloUserRepositoryMock;
     private readonly Mock<ICitizenIdentityRepository> _citizenIdentityRepositoryMock;
     private readonly Mock<IZaloOAService> _zaloOAServiceMock;
-    private readonly Mock<IUserSessionRepository> _userSessionRepositoryMock;
+    private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<ISecurityRepository> _securityRepositoryMock;
     private readonly Mock<IHashProvider> _hashProviderMock;
     private readonly Mock<IJwtProvider> _jwtProviderMock;
     private readonly Mock<ITokenGenerator> _tokenGeneratorMock;
@@ -35,7 +36,8 @@ public class AuthenticateZaloUserCommandHandlerTests
         _zaloUserRepositoryMock = new Mock<IZaloUserRepository>();
         _citizenIdentityRepositoryMock = new Mock<ICitizenIdentityRepository>();
         _zaloOAServiceMock = new Mock<IZaloOAService>();
-        _userSessionRepositoryMock = new Mock<IUserSessionRepository>();
+        _userRepositoryMock = new Mock<IUserRepository>();
+        _securityRepositoryMock = new Mock<ISecurityRepository>();
         _hashProviderMock = new Mock<IHashProvider>();
         _jwtProviderMock = new Mock<IJwtProvider>();
         _tokenGeneratorMock = new Mock<ITokenGenerator>();
@@ -46,7 +48,8 @@ public class AuthenticateZaloUserCommandHandlerTests
             _zaloOAServiceMock.Object,
             _zaloUserRepositoryMock.Object,
             _citizenIdentityRepositoryMock.Object,
-            _userSessionRepositoryMock.Object,
+            _userRepositoryMock.Object,
+            _securityRepositoryMock.Object,
             _hashProviderMock.Object,
             _jwtProviderMock.Object,
             _tokenGeneratorMock.Object,

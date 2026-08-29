@@ -14,11 +14,13 @@ public sealed class DeviceSession : AggregateRoot<DeviceSessionId>
     public string IPAddress { get; private set; }
     public string Fingerprint { get; private set; }
     public Guid? RefreshTokenId { get; private set; }
-    public DateTime LastActivityAt { get; private set; }
+    public DateTime LastSeenAt { get; private set; }
     public DateTime? RevokedAt { get; private set; }
     public string? Reason { get; private set; }
     public bool IsTrusted { get; private set; }
     public string SecurityStamp { get; private set; } = string.Empty;
+    public byte[] RowVersion { get; private set; } = default!;
+    public bool IsArchived { get; private set; }
 
 #pragma warning disable CS8618
     private DeviceSession() { }
@@ -36,7 +38,7 @@ public sealed class DeviceSession : AggregateRoot<DeviceSessionId>
         Fingerprint = fingerprint;
         IsTrusted = isTrusted;
         SecurityStamp = securityStamp;
-        LastActivityAt = DateTime.UtcNow;
+        LastSeenAt = DateTime.UtcNow;
     }
 
     public static DeviceSession Create(Guid userId, string deviceName, string browser, string os, string platform, string ipAddress, string fingerprint, bool isTrusted, string securityStamp)
@@ -44,15 +46,20 @@ public sealed class DeviceSession : AggregateRoot<DeviceSessionId>
         return new DeviceSession(DeviceSessionId.New(), userId, deviceName, browser, os, platform, ipAddress, fingerprint, isTrusted, securityStamp);
     }
 
-    public void UpdateLastActivity(string ipAddress)
+    public void UpdateLastSeen(string ipAddress)
     {
         IPAddress = ipAddress;
-        LastActivityAt = DateTime.UtcNow;
+        LastSeenAt = DateTime.UtcNow;
     }
 
     public void LinkRefreshToken(Guid refreshTokenId)
     {
         RefreshTokenId = refreshTokenId;
+    }
+
+    public void UpdateLastSeen()
+    {
+        LastSeenAt = DateTime.UtcNow;
     }
 
     public void Revoke(string reason)
@@ -63,6 +70,11 @@ public sealed class DeviceSession : AggregateRoot<DeviceSessionId>
 
     public bool IsActive()
     {
-        return RevokedAt == null;
+        return RevokedAt == null && !IsArchived;
+    }
+
+    public void Archive()
+    {
+        IsArchived = true;
     }
 }

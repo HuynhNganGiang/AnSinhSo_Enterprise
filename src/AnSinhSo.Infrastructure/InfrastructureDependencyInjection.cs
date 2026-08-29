@@ -12,7 +12,6 @@ using System.Text;
 using AnSinhSo.Application.Abstractions.Authentication;
 using AnSinhSo.Application.Abstractions.Authentication.RateLimiting;
 using AnSinhSo.Infrastructure.Authentication;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
 using AnSinhSo.Application.Authorization.Abstractions;
 using AnSinhSo.Domain.Interfaces.Authorization;
 using AnSinhSo.Infrastructure.Authorization;
@@ -47,7 +46,6 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<AnSinhSo.Domain.Aggregates.WelfareProgramAggregate.IWelfareProgramRepository, WelfareProgramRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.WelfareCaseAggregate.IWelfareCaseRepository, WelfareCaseRepository>();
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUserRepository, UserRepository>();
-        services.AddScoped<AnSinhSo.Domain.Interfaces.IUserSessionRepository, UserSessionRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.RelationshipTypeAggregate.IRelationshipTypeRepository, RelationshipTypeRepository>();
         services.AddScoped<AnSinhSo.Domain.Aggregates.PaymentPointAggregate.IPaymentPointRepository, PaymentPointRepository>();
 
@@ -87,7 +85,6 @@ public static class InfrastructureDependencyInjection
                 {
                     OnTokenValidated = async context =>
                     {
-                        var sessionType = context.Principal?.FindFirst("SessionType")?.Value;
                         var sidClaim = context.Principal?.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sid)?.Value;
 
                         if (string.IsNullOrEmpty(sidClaim) || !Guid.TryParse(sidClaim, out var sessionId))
@@ -96,58 +93,60 @@ public static class InfrastructureDependencyInjection
                             return;
                         }
 
-                        if (sessionType == "BackOffice")
+                        var securityRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.ISecurityRepository>();
+                        var deviceSession = await securityRepository.GetDeviceSessionByIdAsync(new AnSinhSo.Domain.Aggregates.SecurityAggregate.ValueObjects.DeviceSessionId(sessionId), context.HttpContext.RequestAborted);
+
+                        if (deviceSession == null || !deviceSession.IsActive())
                         {
-                            var securityRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.ISecurityRepository>();
-                            var deviceSession = await securityRepository.GetDeviceSessionByIdAsync(new AnSinhSo.Domain.Aggregates.SecurityAggregate.ValueObjects.DeviceSessionId(sessionId));
-                            
-                            if (deviceSession == null || !deviceSession.IsActive())
+                            context.Fail("Device session is invalid or inactive.");
+                            return;
+                        }
+
+                        var userRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.IUserRepository>();
+                        var user = await userRepository.GetByIdAsync(new AnSinhSo.Domain.Aggregates.UserAggregate.UserId(deviceSession.UserId), context.HttpContext.RequestAborted);
+                        if (user == null || user.IsLocked)
+                        {
+                            context.Fail("User account is not active or locked.");
+                            return;
+                        }
+
+                        if (deviceSession.SecurityStamp != user.SecurityStamp)
+                        {
+                            context.Fail("Security stamp changed.");
+                            return;
+                        }
+                        if (!deviceSession.RefreshTokenId.HasValue)
+                        {
+                            context.Fail("Device session has no refresh token.");
+                            return;
+                        }
+
+                        var refreshToken = await securityRepository.GetRefreshTokenAsync(
+                            deviceSession.RefreshTokenId.Value,
+                            context.HttpContext.RequestAborted);
+
+                        if (refreshToken == null)
+                        {
+                            context.Fail("Refresh token associated with the session was not found.");
+                            return;
+                        }
+
+                        if (refreshToken.CitizenIdentityId.HasValue)
+                        {
+                            var identityRepository = context.HttpContext.RequestServices
+                                .GetRequiredService<AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ICitizenIdentityRepository>();
+
+                            var identity = await identityRepository.GetByIdAsync(
+                                new AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.CitizenIdentityId(
+                                    refreshToken.CitizenIdentityId.Value),
+                                context.HttpContext.RequestAborted);
+
+                            if (identity == null ||
+                                identity.Status != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Verified)
                             {
-                                context.Fail("Device session is invalid or inactive.");
+                                context.Fail("Citizen identity is not verified.");
                                 return;
                             }
-                            
-                            var userRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.IUserRepository>();
-                            var user = await userRepository.GetByIdAsync(new AnSinhSo.Domain.Aggregates.UserAggregate.UserId(deviceSession.UserId));
-                            if (user == null || user.IsLocked)
-                            {
-                                context.Fail("User account is not active or locked.");
-                                return;
-                            }
-                        }
-                        else if (sessionType == "Citizen")
-                        {
-                            var sessionRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Interfaces.IUserSessionRepository>();
-                            var session = await sessionRepository.GetByIdAsync(new UserSessionId(sessionId));
-                            if (session != null && session.IsActive())
-                            {
-                                // AD #100: CitizenIdentity Active check
-                                var identityRepository = context.HttpContext.RequestServices.GetRequiredService<AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ICitizenIdentityRepository>();
-                                // Use dynamic properties from Context instead of static Token Validation (Fix AI-44, SEC-902)
-                                var userStatus = context.Principal?.Claims.FirstOrDefault(c => c.Type == "citizen_status")?.Value;
-                                if (userStatus != null && userStatus != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Verified.ToString())
-                                {
-                                    context.Fail("User account is not active.");
-                                    return;
-                                }
-                                var identity = await identityRepository.GetByIdAsync(new AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.CitizenIdentityId(session.CitizenIdentityId));
-                                if (identity == null || identity.Status != AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.Enumerations.IdentityStatus.Verified)
-                                {
-                                    System.Console.WriteLine($"[JwtBearerEvents] Citizen Identity not active or null. IdentityId: {session.CitizenIdentityId}, Status: {identity?.Status}");
-                                    context.Fail("Citizen Identity is not active.");
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                System.Console.WriteLine($"[JwtBearerEvents] Invalid session. Session: {session?.Id}, IsActive: {session?.IsActive()}, IsRevoked: {session?.IsRevoked}, IsExpired: {session?.IsExpired()}");
-                                context.Fail("Invalid session ID in token.");
-                            }
-                        }
-                        else
-                        {
-                            // Missing or unknown session type
-                            context.Fail("Unknown session type.");
                         }
                     }
                 };

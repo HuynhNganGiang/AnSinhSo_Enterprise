@@ -43,6 +43,10 @@ public class DeviceSessionConfiguration : IEntityTypeConfiguration<DeviceSession
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasConversion(x => x.Value, v => DeviceSessionId.Create(v));
         builder.Property(x => x.Fingerprint).HasMaxLength(256).IsRequired(false);
+        builder.Property(x => x.RowVersion).IsRowVersion();
+
+        builder.HasIndex(x => x.UserId);
+        builder.HasIndex(x => new { x.Id, x.RevokedAt, x.IsArchived });
     }
 }
 
@@ -54,7 +58,11 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasConversion(x => x.Value, v => RefreshTokenId.Create(v));
         builder.Property(x => x.DeviceSessionId).HasConversion(x => x.Value, v => DeviceSessionId.Create(v));
+        builder.Property(x => x.CitizenIdentityId).IsRequired(false);
         builder.Property(x => x.FamilyId).IsRequired();
+
+        builder.HasIndex(x => x.TokenHash);
         builder.HasIndex(x => x.FamilyId);
+        builder.HasIndex(x => x.DeviceSessionId);
     }
 }

@@ -21,7 +21,7 @@ public sealed class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result
 
     public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
-        var session = await _securityRepository.GetDeviceSessionByIdAsync(new DeviceSessionId(request.UserSessionId), cancellationToken);
+        var session = await _securityRepository.GetDeviceSessionByIdAsync(new DeviceSessionId(request.SessionId), cancellationToken);
 
         if (session is null)
         {

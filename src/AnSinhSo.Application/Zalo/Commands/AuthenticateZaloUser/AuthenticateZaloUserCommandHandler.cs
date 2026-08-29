@@ -8,8 +8,8 @@ using AnSinhSo.Application.Abstractions.Security;
 using AnSinhSo.Application.Zalo;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate;
 using AnSinhSo.Domain.Aggregates.CitizenIdentityAggregate.ValueObjects;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate;
-using AnSinhSo.Domain.Aggregates.UserSessionAggregate.ValueObjects;
+
+
 using AnSinhSo.Domain.Aggregates.ZaloUserAggregate;
 using AnSinhSo.Domain.Errors;
 using AnSinhSo.Domain.Interfaces;
@@ -25,7 +25,8 @@ public sealed class AuthenticateZaloUserCommandHandler : IRequestHandler<Authent
     private readonly IZaloOAService _zaloOAService;
     private readonly IZaloUserRepository _zaloUserRepository;
     private readonly ICitizenIdentityRepository _citizenIdentityRepository;
-    private readonly IUserSessionRepository _userSessionRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly ISecurityRepository _securityRepository;
     private readonly IHashProvider _hashProvider;
     private readonly IJwtProvider _jwtProvider;
     private readonly ITokenGenerator _tokenGenerator;
@@ -36,7 +37,8 @@ public sealed class AuthenticateZaloUserCommandHandler : IRequestHandler<Authent
         IZaloOAService zaloOAService,
         IZaloUserRepository zaloUserRepository,
         ICitizenIdentityRepository citizenIdentityRepository,
-        IUserSessionRepository userSessionRepository,
+        IUserRepository userRepository,
+        ISecurityRepository securityRepository,
         IHashProvider hashProvider,
         IJwtProvider jwtProvider,
         ITokenGenerator tokenGenerator,
@@ -46,7 +48,8 @@ public sealed class AuthenticateZaloUserCommandHandler : IRequestHandler<Authent
         _zaloOAService = zaloOAService;
         _zaloUserRepository = zaloUserRepository;
         _citizenIdentityRepository = citizenIdentityRepository;
-        _userSessionRepository = userSessionRepository;
+        _userRepository = userRepository;
+        _securityRepository = securityRepository;
         _hashProvider = hashProvider;
         _jwtProvider = jwtProvider;
         _tokenGenerator = tokenGenerator;
@@ -100,41 +103,91 @@ public sealed class AuthenticateZaloUserCommandHandler : IRequestHandler<Authent
             return Result.Failure<AuthenticationResult>(Error.Validation("Zalo.IdentityInvalid", "Tài khoản AnSinhSo không hợp lệ hoặc đã bị khóa."));
         }
 
-        // 6. Device Limits
-        var activeSessions = await _userSessionRepository.GetActiveSessionsByCitizenAsync(identity.Id.Value, cancellationToken);
-        if (activeSessions.Count() >= 5)
+        if (identity.PrimaryPhone == null)
         {
-            var oldestSession = activeSessions.OrderBy(s => s.ExpiresAt).First();
-            oldestSession.Revoke("Device limit exceeded (Zalo)");
-            _userSessionRepository.Update(oldestSession);
+            return Result.Failure<AuthenticationResult>(Error.Validation("Identity.NoPhone", "Identity does not have a primary phone."));
         }
 
-        // 7. Generate Tokens
-        var rawRefreshToken = _tokenGenerator.GenerateRefreshToken();
-        var hashedRefreshToken = _hashProvider.Hash(rawRefreshToken);
-        var deviceInfo = DeviceInfo.Create(request.IpAddress, request.UserAgent, request.DeviceName);
-        var familyId = Guid.NewGuid();
-        var refreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenLifetimeDays);
+        var user = await _userRepository.GetByUsernameAsync(identity.PrimaryPhone.Value, cancellationToken);
+        if (user == null)
+        {
+            return Result.Failure<AuthenticationResult>(Error.NotFound("User.NotFound", "The verified identity does not have an associated active user account."));
+        }
 
-        var newSession = UserSession.Create(
-            identity.Id.Value,
-            familyId,
-            deviceInfo,
-            hashedRefreshToken,
-            refreshTokenExpiry);
+        // 6. Device Limits & Save Transaction
+        int maxRetries = 2;
+        string appAccessToken = string.Empty;
+        string finalRawRefreshToken = string.Empty;
 
-        _userSessionRepository.Add(newSession);
+        for (int retry = 0; retry <= maxRetries; retry++)
+        {
+            try
+            {
+                var activeSessions = await _securityRepository.GetActiveDeviceSessionsByUserIdAsync(user.Id.Value, cancellationToken);
+                if (activeSessions.Count >= 5)
+                {
+                    var sessionsToRevoke = activeSessions.OrderBy(s => s.LastSeenAt).Take(activeSessions.Count - 4);
+                    foreach (var s in sessionsToRevoke)
+                    {
+                        s.Revoke("Device limit exceeded (Zalo Login)");
+                        _securityRepository.UpdateDeviceSession(s);
+                    }
+                }
 
+                var deviceSession = AnSinhSo.Domain.Aggregates.SecurityAggregate.DeviceSession.Create(
+                    user.Id.Value,
+                    request.DeviceName,
+                    "Unknown", // Browser
+                    "Unknown", // OS
+                    "ZaloClient", // Platform
+                    request.IpAddress,
+                    "Unknown", // Fingerprint
+                    isTrusted: false,
+                    securityStamp: user.SecurityStamp
+                );
+
+                finalRawRefreshToken = _tokenGenerator.GenerateRefreshToken();
+                var hashedRefreshToken = _hashProvider.Hash(finalRawRefreshToken);
+                var familyId = Guid.NewGuid();
+                var refreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenLifetimeDays);
+
+                var securityRefreshToken = AnSinhSo.Domain.Aggregates.SecurityAggregate.RefreshToken.Create(
+                    user.Id.Value,
+                    identity.Id.Value,
+                    hashedRefreshToken,
+                    familyId,
+                    refreshTokenExpiry,
+                    deviceSession.Id);
+
+                deviceSession.LinkRefreshToken(securityRefreshToken.Id.Value);
+
+                _securityRepository.AddDeviceSession(deviceSession);
+                _securityRepository.AddRefreshToken(securityRefreshToken);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                appAccessToken = _jwtProvider.GenerateAccessToken(identity, deviceSession.Id);
+                break;
+            }
+            catch (AnSinhSo.Domain.Exceptions.ConcurrencyException)
+            {
+                if (retry == maxRetries)
+                {
+                    return Result.Failure<AuthenticationResult>(Error.Conflict("Auth.Concurrency", "Xung đột dữ liệu khi đăng nhập. Vui lòng thử lại."));
+                }
+
+                _unitOfWork.ClearChangeTracker();
+            }
+        }
+
+        // 7. Return Result
         var jwtExpiryMinutes = _options.AccessTokenLifetimeMinutes;
-        var appAccessToken = _jwtProvider.GenerateAccessToken(identity, newSession.Id);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var result = new AuthenticationResult(
             appAccessToken,
-            rawRefreshToken,
+            finalRawRefreshToken,
             jwtExpiryMinutes * 60,
-            Guid.Empty);
+            identity.Id.Value);
 
         return Result.Success(result);
     }

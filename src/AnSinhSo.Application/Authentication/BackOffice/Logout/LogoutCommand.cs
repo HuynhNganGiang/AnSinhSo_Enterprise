@@ -4,4 +4,4 @@ using MediatR;
 
 namespace AnSinhSo.Application.Authentication.BackOffice.Logout;
 
-public sealed record LogoutCommand(Guid UserSessionId) : IRequest<Result>;
+public sealed record LogoutCommand(Guid SessionId) : IRequest<Result>;

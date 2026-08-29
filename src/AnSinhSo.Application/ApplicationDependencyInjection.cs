@@ -26,6 +26,7 @@ public static class ApplicationDependencyInjection
         services.AddScoped<AnSinhSo.Application.Abstractions.Authentication.ITokenIssuingService, AnSinhSo.Application.Authentication.Services.TokenIssuingService>();
         services.AddScoped<AnSinhSo.Application.Abstractions.Authentication.ISecurityAuditService, AnSinhSo.Application.Authentication.Services.SecurityAuditService>();
 
+        services.AddScoped<AnSinhSo.Application.Authentication.BackOffice.RefreshToken.Resolvers.IRefreshSessionResolver, AnSinhSo.Application.Authentication.BackOffice.RefreshToken.Resolvers.SecurityRefreshResolver>();
         return services;
     }
 }
