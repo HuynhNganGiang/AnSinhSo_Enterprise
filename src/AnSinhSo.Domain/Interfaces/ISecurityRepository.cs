@@ -18,6 +18,10 @@ public interface ISecurityRepository
     Task<System.Collections.Generic.List<RefreshToken>> GetRefreshTokensByFamilyAsync(System.Guid familyId, CancellationToken cancellationToken = default);
     Task<System.Collections.Generic.List<DeviceSession>> GetActiveDeviceSessionsByUserIdAsync(System.Guid userId, CancellationToken cancellationToken = default);
     
+    Task<System.Collections.Generic.List<DeviceSession>> GetSessionsForArchivalAsync(
+        System.DateTime inactiveBefore,
+        CancellationToken cancellationToken = default);
+
     void UpdateDeviceSession(DeviceSession deviceSession);
     void UpdateRefreshToken(RefreshToken refreshToken);
 }

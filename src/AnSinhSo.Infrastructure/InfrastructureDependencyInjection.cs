@@ -36,6 +36,7 @@ public static class InfrastructureDependencyInjection
 
         // Domain UoW
         services.AddScoped<AnSinhSo.Domain.Interfaces.IUnitOfWork, UnitOfWork>();
+        services.AddScoped<AnSinhSo.Application.Abstractions.Security.ISessionCleanupService, SessionCleanupService>();
 
         // Specialized Repositories (Domain)
         services.AddScoped<AnSinhSo.Domain.Aggregates.CitizenAggregate.ICitizenRepository, CitizenRepository>();

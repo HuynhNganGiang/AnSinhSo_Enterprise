@@ -69,6 +69,16 @@ public class SecurityRepository : ISecurityRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<System.Collections.Generic.List<DeviceSession>> GetSessionsForArchivalAsync(
+        System.DateTime inactiveBefore,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Set<DeviceSession>()
+            .Where(x => !x.IsArchived &&
+                (x.RevokedAt != null || x.LastSeenAt < inactiveBefore))
+            .ToListAsync(cancellationToken);
+    }
+
     public void UpdateDeviceSession(DeviceSession deviceSession)
     {
         _dbContext.Set<DeviceSession>().Update(deviceSession);
