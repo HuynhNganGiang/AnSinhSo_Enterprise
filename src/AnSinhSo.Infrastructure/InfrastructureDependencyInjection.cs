@@ -1,4 +1,6 @@
 using AnSinhSo.Infrastructure.Persistence.Contexts;
+using AnSinhSo.Infrastructure.DataImport.Options;
+
 using AnSinhSo.Infrastructure.Persistence.Repositories;
 using AnSinhSo.Infrastructure.Security;
 using AnSinhSo.Infrastructure.Notifications;
@@ -56,6 +58,7 @@ public static class InfrastructureDependencyInjection
 
         // JWT Authentication (AD #86, AD #91, AD #95)
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.Configure<ImportOptions>(configuration.GetSection(ImportOptions.SectionName));
         services.AddSingleton<AnSinhSo.Application.Abstractions.Authentication.IJwtProvider, JwtProvider>();
         services.AddSingleton<AnSinhSo.Application.Abstractions.Authentication.ITokenGenerator, RefreshTokenGenerator>();
 

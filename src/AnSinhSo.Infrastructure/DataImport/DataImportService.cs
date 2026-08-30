@@ -87,15 +87,29 @@ public class DataImportService : IDataImportService
         var correlationId = Guid.NewGuid(); // To be replaced by proper distributed tracing ID in future
         var startedAt = DateTime.UtcNow;
 
-        string dataFolder = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "../../../../Data");
+        if (string.IsNullOrWhiteSpace(_options.DataPath))
+        {
+            _logger.LogError(
+                "CSV data path is not configured. Configure {Section}:{Property}.",
+                ImportOptions.SectionName,
+                nameof(ImportOptions.DataPath));
+
+            return;
+        }
+
+        string dataFolder = Path.GetFullPath(_options.DataPath);
+
+        _logger.LogInformation(
+            "CSV data folder: {DataFolder}",
+            dataFolder);
+
         if (!Directory.Exists(dataFolder))
         {
-            dataFolder = Path.Combine(Directory.GetCurrentDirectory(), "Data");
-            if (!Directory.Exists(dataFolder))
-            {
-                dataFolder = Path.Combine(Directory.GetCurrentDirectory(), "../../../../Data");
-                dataFolder = Path.GetFullPath(dataFolder);
-            }
+            _logger.LogError(
+                "CSV data folder not found: {DataFolder}",
+                dataFolder);
+
+            return;
         }
 
         // 1 & 2. Roles & Users are ALREADY IMPORTED per Architecture Decision #2
