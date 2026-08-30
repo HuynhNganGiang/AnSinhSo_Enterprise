@@ -1,12 +1,12 @@
 namespace AnSinhSo.Worker;
 
-public class Worker : BackgroundService
+public sealed class DataImportWorker : BackgroundService
 {
-    private readonly ILogger<Worker> _logger;
+    private readonly ILogger<DataImportWorker> _logger;
     private readonly IServiceProvider _serviceProvider;
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-    public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider, IHostApplicationLifetime hostApplicationLifetime)
+    public DataImportWorker(ILogger<DataImportWorker> logger, IServiceProvider serviceProvider, IHostApplicationLifetime hostApplicationLifetime)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
