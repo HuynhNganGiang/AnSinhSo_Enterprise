@@ -1,6 +1,5 @@
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using AnSinhSo.Application.Common.Security;
 using AnSinhSo.Infrastructure.Security.Authentication;
 using AnSinhSo.Infrastructure.Security.Identity;
@@ -15,7 +14,6 @@ public static class SecurityDependencyInjection
         // 1. Core Services
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
-        services.AddSingleton<IJwtProvider, JwtProvider>();
         services.AddSingleton<IRefreshTokenGenerator, RefreshTokenGenerator>();
         services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
         services.AddScoped<IClientInfoProvider, ClientInfoProvider>();
@@ -25,10 +23,6 @@ public static class SecurityDependencyInjection
         services.AddHttpContextAccessor();
 
         // 3. Options
-        services.ConfigureOptions<JwtOptionsSetup>();
-        services.AddOptions<JwtOptions>()
-                .ValidateDataAnnotations()
-                .ValidateOnStart();
 
         return services;
     }
