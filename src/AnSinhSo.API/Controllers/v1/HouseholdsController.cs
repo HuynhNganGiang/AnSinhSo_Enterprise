@@ -18,6 +18,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using AnSinhSo.Domain.Enumerations;
+using AnSinhSo.Domain.Aggregates.HouseholdAggregate.Enumerations;
 
 namespace AnSinhSo.API.Controllers.v1;
 
@@ -64,10 +67,47 @@ public class HouseholdsController : ApiControllerBase
     [HttpGet]
     [Authorize(Policy = Permissions.Households.Read)]
     [ProducesResponseType(typeof(ApiResult<PagedResult<HouseholdSummaryDto>>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Search([FromQuery] SearchHouseholdsQuery query)
+    public async Task<IActionResult> Search(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? keyword = null,
+        [FromQuery] int? status = null,
+        [FromQuery] string? sort = null)
     {
+        page = page < 1 ? 1 : page;
+        pageSize = pageSize < 1 ? 10 : Math.Min(pageSize, 100);
+
+        HouseholdStatus? householdStatus = null;
+
+        if (status.HasValue)
+        {
+            householdStatus = Enumeration
+                .GetAll<HouseholdStatus>()
+                .FirstOrDefault(x => x.Id == status.Value);
+
+            if (householdStatus is null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = $"Tr\u1EA1ng th\u00E1i h\u1ED9 gia \u0111\u00ECnh kh\u00F4ng h\u1EE3p l\u1EC7: {status.Value}.",
+                    statusCode = 400
+                });
+            }
+        }
+
+        var query = new SearchHouseholdsQuery(
+            page,
+            pageSize,
+            keyword,
+            householdStatus,
+            sort);
+
         var result = await _sender.Send(query);
-        return result.IsSuccess ? Ok(ApiResult<PagedResult<HouseholdSummaryDto>>.SuccessResult(result.Value)) : HandleFailure(result);
+
+        return result.IsSuccess
+            ? Ok(ApiResult<PagedResult<HouseholdSummaryDto>>.SuccessResult(result.Value))
+            : HandleFailure(result);
     }
 
     /// <summary>
