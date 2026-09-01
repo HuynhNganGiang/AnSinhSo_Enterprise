@@ -49,7 +49,7 @@ public class SecurityRepository : ISecurityRepository
 
     public async Task<RefreshToken?> GetRefreshTokenAsync(System.Guid id, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.Set<RefreshToken>().FirstOrDefaultAsync(x => x.Id.Value == id, cancellationToken);
+        return await _dbContext.Set<RefreshToken>().FindAsync(new object[] { RefreshTokenId.Create(id) }, cancellationToken);
     }
 
     public async Task<RefreshToken?> GetRefreshTokenByHashAsync(string hash, CancellationToken cancellationToken = default)
