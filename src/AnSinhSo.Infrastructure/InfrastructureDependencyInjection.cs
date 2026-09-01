@@ -256,6 +256,9 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.IDataSeeder, AnSinhSo.Infrastructure.Persistence.Seeding.UserSeeder>();
         services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.IDataSeeder, AnSinhSo.Infrastructure.Persistence.Seeding.UserRoleSeeder>();
 
+        // Demo Data Seeder
+        services.Configure<AnSinhSo.Infrastructure.Persistence.Seeding.Demo.DemoDataOptions>(configuration.GetSection(AnSinhSo.Infrastructure.Persistence.Seeding.Demo.DemoDataOptions.SectionName));
+        services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.IDataSeeder, AnSinhSo.Infrastructure.Persistence.Seeding.Demo.EnterpriseDemoSeeder>();
         services.AddScoped<AnSinhSo.Infrastructure.Persistence.Seeding.SeedRunner>();
 
         return services;
