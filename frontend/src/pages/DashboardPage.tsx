@@ -119,6 +119,7 @@ function DashboardPage() {
   const [householdCount, setHouseholdCount] = useState<number | null>(null)
   const [citizenCount, setCitizenCount] = useState<number | null>(null)
   const [welfareCaseCount, setWelfareCaseCount] = useState<number | null>(null)
+  const [paymentCount, setPaymentCount] = useState<number | null>(null)
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken')
@@ -193,10 +194,33 @@ function DashboardPage() {
         // Giữ trạng thái chưa có dữ liệu khi API không khả dụng.
       }
     }
+    const loadPaymentCount = async () => {
+      try {
+        const response = await fetch('/api/v1/payments?page=1&pageSize=1', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+
+        if (!response.ok) {
+          return
+        }
+
+        const body = (await response.json()) as HouseholdPagedResponse
+        const totalCount = body.data?.totalCount
+
+        if (typeof totalCount === 'number') {
+          setPaymentCount(totalCount)
+        }
+      } catch {
+        // Giữ trạng thái chưa có dữ liệu khi API không khả dụng.
+      }
+    }
 
     void loadHouseholdCount()
     void loadCitizenCount()
     void loadWelfareCaseCount()
+    void loadPaymentCount()
   }, [])
 
   return (
@@ -230,7 +254,9 @@ function DashboardPage() {
                       ? citizenCount?.toLocaleString('vi-VN') ?? '—'
                       : item.icon === 'welfare'
                         ? welfareCaseCount?.toLocaleString('vi-VN') ?? '—'
-                        : '—'}
+                        : item.icon === 'payment'
+                          ? paymentCount?.toLocaleString('vi-VN') ?? '—'
+                          : '—'}
                 </span>
                 <p>{item.description}</p>
               </div>
