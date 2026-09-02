@@ -117,6 +117,7 @@ const quickAccessItems = [
 
 function DashboardPage() {
   const [householdCount, setHouseholdCount] = useState<number | null>(null)
+  const [citizenCount, setCitizenCount] = useState<number | null>(null)
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken')
@@ -147,8 +148,31 @@ function DashboardPage() {
         // Giữ trạng thái chưa có dữ liệu khi API không khả dụng.
       }
     }
+    const loadCitizenCount = async () => {
+      try {
+        const response = await fetch('/api/v1/citizens?page=1&pageSize=1', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+
+        if (!response.ok) {
+          return
+        }
+
+        const body = (await response.json()) as HouseholdPagedResponse
+        const totalCount = body.data?.totalCount
+
+        if (typeof totalCount === 'number') {
+          setCitizenCount(totalCount)
+        }
+      } catch {
+        // Giữ trạng thái chưa có dữ liệu khi API không khả dụng.
+      }
+    }
 
     void loadHouseholdCount()
+    void loadCitizenCount()
   }, [])
 
   return (
@@ -178,7 +202,9 @@ function DashboardPage() {
                 <span>
                   {item.icon === 'household'
                     ? householdCount?.toLocaleString('vi-VN') ?? '—'
-                    : '—'}
+                    : item.icon === 'citizen'
+                      ? citizenCount?.toLocaleString('vi-VN') ?? '—'
+                      : '—'}
                 </span>
                 <p>{item.description}</p>
               </div>
