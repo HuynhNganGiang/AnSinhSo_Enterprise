@@ -102,7 +102,7 @@ type HouseholdPagedResponse = {
 const kpis: KpiCard[] = [
   { label: 'Hộ gia đình', description: 'Tổng số hộ', tone: 'blue', icon: 'household' },
   { label: 'Người dân', description: 'Tổng số nhân khẩu', tone: 'green', icon: 'citizen' },
-  { label: 'Đối tượng an sinh', description: 'Đang hưởng chính sách', tone: 'violet', icon: 'welfare' },
+  { label: 'Hồ sơ an sinh', description: 'Tổng số hồ sơ', tone: 'violet', icon: 'welfare' },
   { label: 'Chi trả trợ cấp', description: 'Lượt chi trả', tone: 'orange', icon: 'payment' },
 ]
 
@@ -118,6 +118,7 @@ const quickAccessItems = [
 function DashboardPage() {
   const [householdCount, setHouseholdCount] = useState<number | null>(null)
   const [citizenCount, setCitizenCount] = useState<number | null>(null)
+  const [welfareCaseCount, setWelfareCaseCount] = useState<number | null>(null)
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken')
@@ -170,9 +171,32 @@ function DashboardPage() {
         // Giữ trạng thái chưa có dữ liệu khi API không khả dụng.
       }
     }
+    const loadWelfareCaseCount = async () => {
+      try {
+        const response = await fetch('/api/v1/welfarecases?page=1&pageSize=1', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+
+        if (!response.ok) {
+          return
+        }
+
+        const body = (await response.json()) as HouseholdPagedResponse
+        const totalCount = body.data?.totalCount
+
+        if (typeof totalCount === 'number') {
+          setWelfareCaseCount(totalCount)
+        }
+      } catch {
+        // Giữ trạng thái chưa có dữ liệu khi API không khả dụng.
+      }
+    }
 
     void loadHouseholdCount()
     void loadCitizenCount()
+    void loadWelfareCaseCount()
   }, [])
 
   return (
@@ -204,7 +228,9 @@ function DashboardPage() {
                     ? householdCount?.toLocaleString('vi-VN') ?? '—'
                     : item.icon === 'citizen'
                       ? citizenCount?.toLocaleString('vi-VN') ?? '—'
-                      : '—'}
+                      : item.icon === 'welfare'
+                        ? welfareCaseCount?.toLocaleString('vi-VN') ?? '—'
+                        : '—'}
                 </span>
                 <p>{item.description}</p>
               </div>
