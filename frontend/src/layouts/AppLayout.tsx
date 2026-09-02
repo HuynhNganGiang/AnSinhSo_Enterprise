@@ -174,7 +174,7 @@ function AppLayout({ children }: AppLayoutProps) {
         <aside className="app-sidebar">
           <nav className="sidebar-nav" aria-label="Điều hướng chính">
             <a className="sidebar-link active" href="/dashboard"><Icon name="dashboard" /><span>Tổng quan</span></a>
-            <span className="sidebar-link"><Icon name="household" /><span>Hộ gia đình</span></span>
+            <a className="sidebar-link" href="/households"><Icon name="household" /><span>Hộ gia đình</span></a>
             <span className="sidebar-link"><Icon name="citizen" /><span>Người dân</span></span>
             <span className="sidebar-link"><Icon name="welfare" /><span>An sinh xã hội</span></span>
             <span className="sidebar-link"><Icon name="payment" /><span>Chi trả trợ cấp</span></span>

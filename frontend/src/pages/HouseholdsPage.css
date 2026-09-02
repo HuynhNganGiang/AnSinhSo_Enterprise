@@ -1,0 +1,260 @@
+.households-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.households-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.households-heading h1 {
+    margin: 0;
+    font-size: 36px;
+    line-height: 1.15;
+    color: #102452;
+}
+
+.households-heading p {
+    margin: 10px 0 0;
+    font-size: 16px;
+    color: #6b7a99;
+}
+
+.households-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 46px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+}
+
+.households-add-button span {
+    font-size: 24px;
+    line-height: 1;
+}
+
+@media (max-width: 760px) {
+    .households-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .households-add-button {
+        width: 100%;
+    }
+
+    .households-heading h1 {
+        font-size: 30px;
+    }
+}
+
+.households-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(203, 213, 225, 0.7);
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(30, 64, 175, 0.07);
+}
+
+.households-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    height: 46px;
+    padding: 0 14px;
+    background: #f8faff;
+    border: 1px solid #dbe5f4;
+    border-radius: 13px;
+    color: #64748b;
+}
+
+.households-search span {
+    font-size: 22px;
+    color: #2563eb;
+}
+
+.households-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #102452;
+    font: inherit;
+}
+
+.households-search input::placeholder {
+    color: #94a3b8;
+}
+
+.households-filter {
+    height: 46px;
+    min-width: 190px;
+    padding: 0 38px 0 14px;
+    border: 1px solid #dbe5f4;
+    border-radius: 13px;
+    outline: 0;
+    background: #f8faff;
+    color: #334155;
+    font: inherit;
+    cursor: pointer;
+}
+
+.households-search:focus-within,
+.households-filter:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+@media (max-width: 760px) {
+    .households-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .households-filter {
+        width: 100%;
+    }
+}
+
+.households-table-card {
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(203, 213, 225, 0.72);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(30, 64, 175, 0.08);
+}
+
+.households-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 22px;
+    border-bottom: 1px solid #e8eef7;
+}
+
+.households-table-header div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.households-table-header strong {
+    color: #102452;
+    font-size: 18px;
+}
+
+.households-table-header span {
+    color: #7b8aa5;
+    font-size: 14px;
+}
+
+.households-table-wrapper {
+    width: 100%;
+    max-height: 520px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.households-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #f7f9fd;
+}
+
+.households-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+}
+
+.households-table th,
+.households-table td {
+    padding: 16px 22px;
+    text-align: left;
+    border-bottom: 1px solid #edf2f8;
+}
+
+.households-table th {
+    background: #f7f9fd;
+    color: #66758f;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.households-table td {
+    color: #334155;
+    font-size: 15px;
+}
+
+.households-table tbody tr {
+    transition: background 0.18s ease;
+}
+
+.households-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.households-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.households-table td strong {
+    color: #163b7a;
+}
+
+.household-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 11px;
+    border-radius: 999px;
+    background: #ecfdf3;
+    color: #15803d;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.household-view-button {
+    min-height: 34px;
+    padding: 0 14px;
+    border: 1px solid #d6e2f3;
+    border-radius: 10px;
+    background: #f8fbff;
+    color: #2563eb;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.household-view-button:hover {
+    background: #eaf2ff;
+    border-color: #b8d0f5;
+}
+
+.households-sticky-top {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}

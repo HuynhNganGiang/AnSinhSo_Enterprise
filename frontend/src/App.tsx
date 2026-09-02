@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import DashboardPage from './pages/DashboardPage'
+import HouseholdsPage from './pages/HouseholdsPage'
 import LoginPage from './pages/LoginPage'
 
 function App() {
@@ -30,6 +31,15 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/households"
+          element={
+            <ProtectedRoute>
+              <HouseholdsPage />
             </ProtectedRoute>
           }
         />
