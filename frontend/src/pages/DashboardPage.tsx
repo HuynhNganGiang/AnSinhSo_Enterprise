@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import AppLayout from '../layouts/AppLayout'
 import './DashboardPage.css'
 
@@ -91,6 +92,13 @@ type KpiCard = {
   icon: Exclude<BusinessIcon, 'map' | 'report' | 'calendar'>
 }
 
+type HouseholdPagedResponse = {
+  data?: {
+    totalCount?: number
+  }
+  success?: boolean
+}
+
 const kpis: KpiCard[] = [
   { label: 'Hộ gia đình', description: 'Tổng số hộ', tone: 'blue', icon: 'household' },
   { label: 'Người dân', description: 'Tổng số nhân khẩu', tone: 'green', icon: 'citizen' },
@@ -108,6 +116,41 @@ const quickAccessItems = [
 ]
 
 function DashboardPage() {
+  const [householdCount, setHouseholdCount] = useState<number | null>(null)
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken')
+
+    if (!accessToken) {
+      return
+    }
+
+    const loadHouseholdCount = async () => {
+      try {
+        const response = await fetch('/api/v1/households?page=1&pageSize=1', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+
+        if (!response.ok) {
+          return
+        }
+
+        const body = (await response.json()) as HouseholdPagedResponse
+        const totalCount = body.data?.totalCount
+
+        if (typeof totalCount === 'number') {
+          setHouseholdCount(totalCount)
+        }
+      } catch {
+        // Giữ trạng thái chưa có dữ liệu khi API không khả dụng.
+      }
+    }
+
+    void loadHouseholdCount()
+  }, [])
+
   return (
     <AppLayout>
       <div className="dashboard-page">
@@ -132,7 +175,11 @@ function DashboardPage() {
               </div>
               <div className="kpi-main">
                 <strong>{item.label}</strong>
-                <span>—</span>
+                <span>
+                  {item.icon === 'household'
+                    ? householdCount?.toLocaleString('vi-VN') ?? '—'
+                    : '—'}
+                </span>
                 <p>{item.description}</p>
               </div>
               <div className={`kpi-change ${item.tone}`}>↗ —%</div>
