@@ -130,8 +130,8 @@ public class EnterpriseDemoSeeder : IDataSeeder
         var pp = await context.PaymentPoints.FirstOrDefaultAsync(ct);
         if (pp == null)
         {
-            var location = Location.Create(10.762622, 106.660172).Value; // HCM
-            var ppAddress = Address.Create("UBND xã Sông Lũy", "Xã Sông Lũy", "Bắc Bình", "Lâm Đồng", PostalCode.Create("77317").Value).Value;
+            var location = Location.Create(11.21011269694565, 108.32172004484949).Value; // UBND xa Song Luy - Thon 2
+            var ppAddress = Address.Create("Thôn 2", "Xã Sông Lũy", "", "Lâm Đồng", PostalCode.Create("77317").Value).Value;
             pp = PaymentPoint.Create(new PaymentPointId(Guid.NewGuid()), "PP01", "Điểm chi trả xã Sông Lũy", ppAddress, location).Value;
             await context.PaymentPoints.AddAsync(pp, ct);
             await context.SaveChangesAsync(ct);
