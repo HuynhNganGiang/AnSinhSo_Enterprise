@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage'
 import CitizensPage from './pages/CitizensPage'
 import HouseholdsPage from './pages/HouseholdsPage'
 import WelfareCasesPage from './pages/WelfareCasesPage'
+import PaymentsPage from './pages/PaymentsPage'
 import LoginPage from './pages/LoginPage'
 
 function App() {
@@ -60,6 +61,15 @@ function App() {
           element={
             <ProtectedRoute>
               <WelfareCasesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/payments"
+          element={
+            <ProtectedRoute>
+              <PaymentsPage />
             </ProtectedRoute>
           }
         />
