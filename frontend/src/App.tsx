@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import DashboardPage from './pages/DashboardPage'
 import CitizensPage from './pages/CitizensPage'
 import HouseholdsPage from './pages/HouseholdsPage'
+import WelfareCasesPage from './pages/WelfareCasesPage'
 import LoginPage from './pages/LoginPage'
 
 function App() {
@@ -50,6 +51,15 @@ function App() {
           element={
             <ProtectedRoute>
               <HouseholdsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/welfare"
+          element={
+            <ProtectedRoute>
+              <WelfareCasesPage />
             </ProtectedRoute>
           }
         />

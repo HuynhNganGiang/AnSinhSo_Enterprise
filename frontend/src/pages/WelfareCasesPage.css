@@ -1,0 +1,184 @@
+.welfare-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.welfare-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.welfare-heading h1 {
+    margin: 0;
+    font-size: 30px;
+    color: #0f172a;
+}
+
+.welfare-heading p {
+    margin: 8px 0 0;
+    color: #64748b;
+}
+
+.welfare-add-button {
+    border: 0;
+    border-radius: 12px;
+    padding: 11px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    background: #2563eb;
+    color: #fff;
+}
+
+.welfare-summary {
+    width: 220px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.welfare-summary span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.welfare-summary strong {
+    font-size: 28px;
+    color: #0f172a;
+}
+
+.welfare-table-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+.welfare-table-wrapper {
+    width: 100%;
+    max-height: 520px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.welfare-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 980px;
+}
+
+.welfare-table th,
+.welfare-table td {
+    padding: 15px 18px;
+    text-align: left;
+    border-bottom: 1px solid #eef2f7;
+    white-space: nowrap;
+}
+
+.welfare-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.welfare-table tbody td {
+    color: #334155;
+    font-size: 14px;
+}
+
+.welfare-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.welfare-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #4338ca;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.welfare-view-button {
+    border: 1px solid #dbe3ee;
+    background: #fff;
+    border-radius: 10px;
+    padding: 7px 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #334155;
+}
+
+.welfare-view-button:hover {
+    background: #f8fafc;
+}
+
+.welfare-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 22px 20px;
+}
+
+.welfare-pagination span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.welfare-pagination div {
+    display: flex;
+    gap: 8px;
+}
+
+.welfare-pagination button {
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #334155;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.welfare-pagination button:hover:not(:disabled) {
+    background: #f8fafc;
+}
+
+.welfare-pagination button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.welfare-state {
+    padding: 32px;
+    text-align: center;
+    color: #64748b;
+}
+
+.welfare-table-wrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.welfare-table-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+.welfare-table-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
