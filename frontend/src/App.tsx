@@ -11,6 +11,7 @@ import HouseholdsPage from './pages/HouseholdsPage'
 import WelfareCasesPage from './pages/WelfareCasesPage'
 import PaymentsPage from './pages/PaymentsPage'
 import MapPage from './pages/MapPage'
+import AiPage from './pages/AiPage'
 import LoginPage from './pages/LoginPage'
 
 function App() {
@@ -80,6 +81,15 @@ function App() {
           element={
             <ProtectedRoute>
               <MapPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/ai"
+          element={
+            <ProtectedRoute>
+              <AiPage />
             </ProtectedRoute>
           }
         />

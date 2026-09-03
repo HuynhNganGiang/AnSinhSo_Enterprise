@@ -13,6 +13,7 @@ type IconName =
   | 'welfare'
   | 'payment'
   | 'map'
+  | 'ai'
   | 'report'
   | 'category'
   | 'settings'
@@ -74,6 +75,16 @@ function Icon({ name, className = '' }: IconProps) {
         <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Z" />
         <path d="M9 3v15" />
         <path d="M15 6v15" />
+      </>
+    ),
+    ai: (
+      <>
+        <path d="M9 4h6" />
+        <path d="M12 2v4" />
+        <rect x="4" y="7" width="16" height="13" rx="3" />
+        <circle cx="9" cy="13" r="1" />
+        <circle cx="15" cy="13" r="1" />
+        <path d="M9 17h6" />
       </>
     ),
     report: (
@@ -179,6 +190,7 @@ function AppLayout({ children }: AppLayoutProps) {
             <a className="sidebar-link" href="/welfare"><Icon name="welfare" /><span>An sinh xã hội</span></a>
             <a className="sidebar-link" href="/payments"><Icon name="payment" /><span>Chi trả trợ cấp</span></a>
             <a className="sidebar-link" href="/map"><Icon name="map" /><span>Bản đồ số</span></a>
+            <a className="sidebar-link" href="/ai"><Icon name="ai" /><span>AI & Phân tích</span></a>
             <span className="sidebar-link"><Icon name="report" /><span>Báo cáo thống kê</span></span>
             <span className="sidebar-link"><Icon name="category" /><span>Danh mục</span></span>
             <span className="sidebar-link"><Icon name="settings" /><span>Hệ thống</span></span>
