@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import AppLayout from '../layouts/AppLayout'
 import './AdminManagementPages.css'
+import WelfareGroupsCategoryPanel from '../components/categories/WelfareGroupsCategoryPanel'
 
 type CategoryKey =
   | 'welfare-groups'
@@ -964,7 +965,9 @@ function CategoriesPage() {
             item => {
               const implemented =
                 item.key ===
-                'relationship-types'
+                  'relationship-types' ||
+                item.key ===
+                  'welfare-groups'
 
               const selected =
                 selectedCategory ===
@@ -1018,7 +1021,10 @@ function CategoriesPage() {
                   <div className="admin-feature-footer">
                     <span>
                       {implemented
-                        ? `${realCount || 14} REAL`
+                        ? item.key ===
+                            'relationship-types'
+                          ? `${realCount || 14} REAL`
+                          : 'DEMO FALLBACK'
                         : 'Triển khai lần lượt'}
                     </span>
 
@@ -1447,6 +1453,9 @@ function CategoriesPage() {
               </span>
             </div>
           </section>
+        ) : selectedCategory ===
+        'welfare-groups' ? (
+          <WelfareGroupsCategoryPanel />
         ) : (
           <section className="category-workbench category-next-panel">
             <span
