@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import AppLayout from '../layouts/AppLayout'
 import './AdminManagementPages.css'
 import WelfareGroupsCategoryPanel from '../components/categories/WelfareGroupsCategoryPanel'
+import PoliciesCategoryPanel from '../components/categories/PoliciesCategoryPanel'
 
 type CategoryKey =
   | 'welfare-groups'
@@ -967,7 +968,9 @@ function CategoriesPage() {
                 item.key ===
                   'relationship-types' ||
                 item.key ===
-                  'welfare-groups'
+                  'welfare-groups' ||
+                item.key ===
+                  'policies'
 
               const selected =
                 selectedCategory ===
@@ -1024,7 +1027,10 @@ function CategoriesPage() {
                         ? item.key ===
                             'relationship-types'
                           ? `${realCount || 14} REAL`
-                          : 'DEMO FALLBACK'
+                          : item.key ===
+                              'welfare-groups'
+                            ? 'DEMO FALLBACK'
+                            : 'REAL-FIRST / DEMO'
                         : 'Triển khai lần lượt'}
                     </span>
 
@@ -1456,6 +1462,9 @@ function CategoriesPage() {
         ) : selectedCategory ===
         'welfare-groups' ? (
           <WelfareGroupsCategoryPanel />
+        ) : selectedCategory ===
+        'policies' ? (
+          <PoliciesCategoryPanel />
         ) : (
           <section className="category-workbench category-next-panel">
             <span
