@@ -3,6 +3,7 @@ import AppLayout from '../layouts/AppLayout'
 import './AdminManagementPages.css'
 import WelfareGroupsCategoryPanel from '../components/categories/WelfareGroupsCategoryPanel'
 import PoliciesCategoryPanel from '../components/categories/PoliciesCategoryPanel'
+import AreasCategoryPanel from '../components/categories/AreasCategoryPanel'
 
 type CategoryKey =
   | 'welfare-groups'
@@ -970,7 +971,9 @@ function CategoriesPage() {
                 item.key ===
                   'welfare-groups' ||
                 item.key ===
-                  'policies'
+                  'policies' ||
+                item.key ===
+                  'areas'
 
               const selected =
                 selectedCategory ===
@@ -1465,6 +1468,9 @@ function CategoriesPage() {
         ) : selectedCategory ===
         'policies' ? (
           <PoliciesCategoryPanel />
+        ) : selectedCategory ===
+        'areas' ? (
+          <AreasCategoryPanel />
         ) : (
           <section className="category-workbench category-next-panel">
             <span
