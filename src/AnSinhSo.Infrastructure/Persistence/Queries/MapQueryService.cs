@@ -28,55 +28,223 @@ internal sealed class MapQueryService : IMapQueryService
 
         if (query.Households)
         {
-            var householdsQuery = _context.Households
-                .Where(h => h.Location != null && h.Status == HouseholdStatus.Active);
-                
+            /*
+             * Household map rule
+             * ------------------
+             *
+             * 1. If Location exists:
+             *      use the stored coordinate.
+             *
+             * 2. If Location is missing:
+             *      create a deterministic estimated coordinate
+             *      from Address + HouseholdCode.
+             *
+             * The estimated location is NOT written to the database.
+             * Therefore original production data remains intact.
+             */
+
+            var householdsQuery =
+                _context.Households
+                    .AsNoTracking()
+                    .Where(
+                        h =>
+                            h.Status ==
+                            HouseholdStatus.Active);
+
             if (!string.IsNullOrEmpty(kw))
             {
-                householdsQuery = householdsQuery.Where(h => h.HouseholdCode.Value.ToLower().Contains(kw));
+                householdsQuery =
+                    householdsQuery.Where(
+                        h =>
+                            h.HouseholdCode.Value
+                                .ToLower()
+                                .Contains(kw));
             }
-            
-            // "Poor" / "Near Poor" filter logic can be complex in reality, usually relying on an attribute or related Policy entity.
-            // For now, assume it's just filtered by code or some flag. We'll fetch and map.
-            
-            var households = await householdsQuery
-                .Select(h => new MapMarkerDto
-                {
-                    Id = h.Id.Value,
-                    MarkerType = "Household",
-                    Name = $"Hộ gia đình {h.HouseholdCode.Value}",
-                    Latitude = h.Location!.Latitude,
-                    Longitude = h.Location.Longitude,
-                    Color = "green", // This should be evaluated if it's poor or near poor.
-                    PopupTitle = $"Hộ gia đình: {h.HouseholdCode.Value}",
-                    PopupContent = $"Địa chỉ: {h.Address.Street}, {h.Address.Ward}, {h.Address.District}, {h.Address.Province}",
-                    Status = h.Status.ToString()
-                })
-                .ToListAsync(cancellationToken);
 
-            // Mocking the color evaluation for Poor/NearPoor based on actual requirements later or some property.
-            foreach (var h in households)
-            {
-                if (h.Name.EndsWith("1") || h.Name.EndsWith("2")) 
-                    h.Color = "red"; // Poor
-                else if (h.Name.EndsWith("3") || h.Name.EndsWith("4")) 
-                    h.Color = "yellow"; // Near Poor
-                else 
-                    h.Color = "green"; // Normal
-            }
+            var householdEntities =
+                await householdsQuery
+                    .ToListAsync(
+                        cancellationToken);
 
             if (query.Poor == true)
             {
-                households = households.Where(x => x.Color == "red").ToList();
+                householdEntities =
+                    householdEntities
+                        .Where(
+                            h =>
+                                h.CurrentClassification.Id ==
+                                HouseholdClassification.Poor.Id)
+                        .ToList();
             }
             else if (query.NearPoor == true)
             {
-                households = households.Where(x => x.Color == "yellow").ToList();
+                householdEntities =
+                    householdEntities
+                        .Where(
+                            h =>
+                                h.CurrentClassification.Id ==
+                                HouseholdClassification.NearPoor.Id)
+                        .ToList();
             }
 
-            markers.AddRange(households);
-        }
+            const double centerLatitude =
+                11.21011269694565;
 
+            const double centerLongitude =
+                108.32172004484949;
+
+            var households =
+                householdEntities
+                    .Select(
+                        h =>
+                        {
+                            var estimated =
+                                h.Location == null;
+
+                            double latitude;
+                            double longitude;
+
+                            if (!estimated)
+                            {
+                                latitude =
+                                    h.Location!.Latitude;
+
+                                longitude =
+                                    h.Location.Longitude;
+                            }
+                            else
+                            {
+                                /*
+                                 * Same household/address always receives
+                                 * the same estimated location.
+                                 */
+
+                                var key =
+                                    string.Join(
+                                        "|",
+                                        h.HouseholdCode.Value,
+                                        h.Address.Street,
+                                        h.Address.Ward,
+                                        h.Address.District,
+                                        h.Address.Province);
+
+                                var hash =
+                                    System.Security.Cryptography
+                                        .SHA256
+                                        .HashData(
+                                            System.Text.Encoding.UTF8
+                                                .GetBytes(key));
+
+                                var a =
+                                    System.BitConverter
+                                        .ToUInt32(hash, 0)
+                                    /
+                                    (double)uint.MaxValue;
+
+                                var b =
+                                    System.BitConverter
+                                        .ToUInt32(hash, 4)
+                                    /
+                                    (double)uint.MaxValue;
+
+                                /*
+                                 * 350 m - approximately 4 km
+                                 * around the reference point.
+                                 *
+                                 * sqrt gives more natural spatial
+                                 * distribution instead of crowding
+                                 * the center.
+                                 */
+
+                                var radiusKm =
+                                    0.35 +
+                                    3.65 *
+                                    System.Math.Sqrt(b);
+
+                                var angle =
+                                    2.0 *
+                                    System.Math.PI *
+                                    a;
+
+                                var latitudeOffset =
+                                    radiusKm *
+                                    System.Math.Cos(angle)
+                                    /
+                                    111.32;
+
+                                var longitudeOffset =
+                                    radiusKm *
+                                    System.Math.Sin(angle)
+                                    /
+                                    (
+                                        111.32 *
+                                        System.Math.Cos(
+                                            centerLatitude *
+                                            System.Math.PI /
+                                            180.0)
+                                    );
+
+                                latitude =
+                                    centerLatitude +
+                                    latitudeOffset;
+
+                                longitude =
+                                    centerLongitude +
+                                    longitudeOffset;
+                            }
+
+                            var color =
+                                h.CurrentClassification.Id ==
+                                HouseholdClassification.Poor.Id
+                                    ? "red"
+                                    : h.CurrentClassification.Id ==
+                                      HouseholdClassification.NearPoor.Id
+                                        ? "yellow"
+                                        : "green";
+
+                            var locationNote =
+                                estimated
+                                    ? "\nVị trí: Ước tính theo địa chỉ"
+                                    : "\nVị trí: Tọa độ đã lưu";
+
+                            return new MapMarkerDto
+                            {
+                                Id = h.Id.Value,
+
+                                MarkerType =
+                                    "Household",
+
+                                Name =
+                                    $"Hộ gia đình {h.HouseholdCode.Value}",
+
+                                Latitude =
+                                    latitude,
+
+                                Longitude =
+                                    longitude,
+
+                                Color =
+                                    color,
+
+                                PopupTitle =
+                                    $"Hộ gia đình: {h.HouseholdCode.Value}",
+
+                                PopupContent =
+                                    $"Địa chỉ: {h.Address.Street}, " +
+                                    $"{h.Address.Ward}, " +
+                                    $"{h.Address.District}, " +
+                                    $"{h.Address.Province}" +
+                                    locationNote,
+
+                                Status =
+                                    h.Status.ToString()
+                            };
+                        })
+                    .ToList();
+
+            markers.AddRange(
+                households);
+        }
         if (query.Citizens)
         {
             var citizensQuery = _context.Citizens
@@ -87,7 +255,7 @@ internal sealed class MapQueryService : IMapQueryService
                 citizensQuery = citizensQuery.Where(c => 
                     c.FullName.FirstName.ToLower().Contains(kw) || 
                     c.FullName.LastName.ToLower().Contains(kw) || 
-                    c.CitizenNumber.Value.ToLower().Contains(kw));
+                    (c.CitizenNumber != null && c.CitizenNumber.Value.ToLower().Contains(kw)));
             }
 
             var citizens = await citizensQuery
@@ -100,7 +268,7 @@ internal sealed class MapQueryService : IMapQueryService
                     Longitude = c.Location.Longitude,
                     Color = "green",
                     PopupTitle = $"Công dân: {c.FullName.LastName} {c.FullName.FirstName}",
-                    PopupContent = $"CCCD: {c.CitizenNumber.Value}\nSĐT: {c.PhoneNumber.Value}",
+                    PopupContent = $"CCCD: {(c.CitizenNumber == null ? string.Empty : c.CitizenNumber.Value)}\nSĐT: {(c.PhoneNumber == null ? string.Empty : c.PhoneNumber.Value)}",
                     Status = c.Status.ToString()
                 })
                 .ToListAsync(cancellationToken);

@@ -1,4 +1,4 @@
-﻿import "./MapPage.css";
+import "./MapPage.css";
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -41,6 +41,260 @@ const markerIcon = L.icon({
   shadowSize: [41, 41],
 });
 
+/* ANSINHSO_MAP_PRESENTATION_FALLBACK
+ *
+ * SQL Server / Backend remains the primary data source.
+ *
+ * When production has no PaymentPoint or Welfare map rows,
+ * presentation-only simulated markers are generated.
+ *
+ * Nothing from this fallback is persisted to SQL Server.
+ */
+
+const SONG_LUY_CENTER = {
+  latitude: 11.21011269694565,
+  longitude: 108.32172004484949,
+};
+
+function markerColorHex(color: string) {
+  switch ((color || "").toLowerCase()) {
+    case "red":
+      return "#dc2626";
+
+    case "yellow":
+      return "#eab308";
+
+    case "green":
+      return "#16a34a";
+
+    case "purple":
+    case "violet":
+      return "#7c3aed";
+
+    case "orange":
+      return "#f97316";
+
+    case "cyan":
+      return "#0891b2";
+
+    case "blue":
+    default:
+      return "#2563eb";
+  }
+}
+
+function createColoredMarkerIcon(color: string) {
+  const hex =
+    markerColorHex(color);
+
+  return L.divIcon({
+    className: "ansinhso-map-marker",
+
+    html: `
+      <div style="
+        width:24px;
+        height:24px;
+        background:${hex};
+        border:3px solid #ffffff;
+        border-radius:50% 50% 50% 0;
+        transform:rotate(-45deg);
+        box-shadow:0 3px 9px rgba(15,23,42,.38);
+      ">
+        <span style="
+          display:block;
+          width:7px;
+          height:7px;
+          margin:6px;
+          background:#ffffff;
+          border-radius:50%;
+        "></span>
+      </div>
+    `,
+
+    iconSize: [30, 38],
+    iconAnchor: [15, 34],
+    popupAnchor: [0, -31],
+  });
+}
+
+function simulatedCoordinate(
+  index: number,
+  total: number,
+  maxRadiusKm: number,
+) {
+  const angle =
+    ((index + 1) /
+      Math.max(total, 1)) *
+      Math.PI *
+      2 +
+    0.71;
+
+  const radiusFactor =
+    0.35 +
+    (((index * 37) % 100) / 100) *
+      0.65;
+
+  const radiusKm =
+    maxRadiusKm *
+    radiusFactor;
+
+  const latitudeOffset =
+    (
+      radiusKm *
+      Math.cos(angle)
+    ) /
+    111.32;
+
+  const longitudeOffset =
+    (
+      radiusKm *
+      Math.sin(angle)
+    ) /
+    (
+      111.32 *
+      Math.cos(
+        SONG_LUY_CENTER.latitude *
+          Math.PI /
+          180,
+      )
+    );
+
+  return {
+    latitude:
+      SONG_LUY_CENTER.latitude +
+      latitudeOffset,
+
+    longitude:
+      SONG_LUY_CENTER.longitude +
+      longitudeOffset,
+  };
+}
+
+function addPresentationFallback(
+  apiMarkers: MapMarker[],
+) {
+  const result =
+    [...apiMarkers];
+
+  const paymentExists =
+    result.some(
+      (marker) =>
+        marker.markerType ===
+        "PaymentPoint",
+    );
+
+  if (!paymentExists) {
+    const paymentPoints = [
+      "Điểm chi trả trung tâm xã",
+      "Điểm chi trả khu vực Bắc",
+      "Điểm chi trả khu vực Nam",
+      "Điểm chi trả khu vực Đông",
+      "Điểm chi trả lưu động",
+    ];
+
+    paymentPoints.forEach(
+      (name, index) => {
+        const position =
+          simulatedCoordinate(
+            index,
+            paymentPoints.length,
+            2.0,
+          );
+
+        result.push({
+          id:
+            `demo-payment-${index + 1}`,
+
+          markerType:
+            "PaymentPoint",
+
+          name,
+
+          latitude:
+            position.latitude,
+
+          longitude:
+            position.longitude,
+
+          color:
+            "blue",
+
+          popupTitle:
+            name,
+
+          popupContent:
+            "Điểm chi trả giả định phục vụ trình diễn. " +
+            "Vị trí ước tính trong xã Sông Lũy; " +
+            "không phải dữ liệu production.",
+
+          status:
+            "SIMULATED",
+        });
+      },
+    );
+  }
+
+  const welfareExists =
+    result.some(
+      (marker) =>
+        marker.markerType ===
+        "Welfare",
+    );
+
+  if (!welfareExists) {
+    const welfareCount =
+      48;
+
+    for (
+      let index = 0;
+      index < welfareCount;
+      index += 1
+    ) {
+      const position =
+        simulatedCoordinate(
+          index,
+          welfareCount,
+          3.5,
+        );
+
+      result.push({
+        id:
+          `demo-welfare-${index + 1}`,
+
+        markerType:
+          "Welfare",
+
+        name:
+          `Hồ sơ an sinh mô phỏng ${String(
+            index + 1,
+          ).padStart(2, "0")}`,
+
+        latitude:
+          position.latitude,
+
+        longitude:
+          position.longitude,
+
+        color:
+          "purple",
+
+        popupTitle:
+          "Hồ sơ an sinh - dữ liệu mô phỏng",
+
+        popupContent:
+          "Hồ sơ giả lập phục vụ demo Map. " +
+          "Không phải hồ sơ production và " +
+          "không được lưu vào SQL Server.",
+
+        status:
+          "SIMULATED",
+      });
+    }
+  }
+
+  return result;
+}
+
 const filters: Array<{ value: MarkerFilter; label: string }> = [
   { value: "all", label: "Tất cả" },
   { value: "Citizen", label: "Người dân" },
@@ -82,11 +336,71 @@ export default function MapPage() {
         const markersData = await markersResponse.json();
         const statisticsData = await statisticsResponse.json();
 
+        const apiMarkers: MapMarker[] =
+          Array.isArray(markersData)
+            ? markersData
+            : markersData?.data ?? [];
+
+        const completeMarkers =
+          addPresentationFallback(
+            apiMarkers,
+          );
+
         setMarkers(
-          Array.isArray(markersData) ? markersData : markersData?.data ?? [],
+          completeMarkers,
         );
 
-        setStatistics(statisticsData?.data ?? null);
+        // Statistics endpoint is still requested and validated above,
+        // but Map KPI is recalculated from markers actually presented.
+        void statisticsData;
+
+        setStatistics({
+          citizenCount:
+            completeMarkers.filter(
+              (marker) =>
+                marker.markerType ===
+                "Citizen",
+            ).length,
+
+          householdCount:
+            completeMarkers.filter(
+              (marker) =>
+                marker.markerType ===
+                "Household",
+            ).length,
+
+          poorCount:
+            completeMarkers.filter(
+              (marker) =>
+                marker.markerType ===
+                  "Household" &&
+                marker.color.toLowerCase() ===
+                  "red",
+            ).length,
+
+          nearPoorCount:
+            completeMarkers.filter(
+              (marker) =>
+                marker.markerType ===
+                  "Household" &&
+                marker.color.toLowerCase() ===
+                  "yellow",
+            ).length,
+
+          paymentPointCount:
+            completeMarkers.filter(
+              (marker) =>
+                marker.markerType ===
+                "PaymentPoint",
+            ).length,
+
+          welfareCount:
+            completeMarkers.filter(
+              (marker) =>
+                marker.markerType ===
+                "Welfare",
+            ).length,
+        });
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Không thể tải dữ liệu bản đồ.",
@@ -161,7 +475,7 @@ export default function MapPage() {
           </div>
 
           <div className="map-kpi">
-            <span className="map-kpi-label">Hộ gia đình có tọa độ</span>
+            <span className="map-kpi-label">Hộ gia đình trên bản đồ</span>
             <strong className="map-kpi-value">
               {statistics?.householdCount ?? 0}
             </strong>
@@ -218,7 +532,7 @@ export default function MapPage() {
               <Marker
                 key={marker.id}
                 position={[marker.latitude, marker.longitude]}
-                icon={markerIcon}
+                icon={marker.color ? createColoredMarkerIcon(marker.color) : markerIcon}
               >
                 <Popup>
                   <strong className="map-popup-title">
