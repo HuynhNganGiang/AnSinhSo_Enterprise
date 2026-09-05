@@ -1,6 +1,7 @@
 import UserAccountsPanel from '../components/system/UserAccountsPanel'
 import RolePermissionsPanel from '../components/system/RolePermissionsPanel'
 import AuditLogsPanel from '../components/system/AuditLogsPanel'
+import SystemConfigurationPanel from '../components/system/SystemConfigurationPanel'
 import { useState } from 'react'
 import AppLayout from '../layouts/AppLayout'
 import './AdminManagementPages.css'
@@ -121,7 +122,7 @@ function SystemPage() {
   const [
     selectedSystem,
     setSelectedSystem,
-  ] = useState<'users' | 'roles' | 'logs'>('users')
+  ] = useState<'users' | 'roles' | 'logs' | 'config'>('users')
 
   return (
     <AppLayout>
@@ -212,7 +213,8 @@ function SystemPage() {
                 <span>
                   {item.icon === 'users' ||
                 item.icon === 'shield' ||
-                item.icon === 'log'
+                item.icon === 'log' ||
+                item.icon === 'config'
                     ? 'Đang hoạt động'
                     : 'Chế độ an toàn'}
                 </span>
@@ -220,6 +222,14 @@ function SystemPage() {
                 <button
                   type="button"
                   onClick={() => {
+                    if (
+                      item.icon ===
+                      'config'
+                    ) {
+                      setSelectedSystem('config')
+                      return
+                    }
+
                     if (
                       item.icon ===
                       'log'
@@ -242,7 +252,8 @@ function SystemPage() {
                 >
                   {item.icon === 'users' ||
                 item.icon === 'shield' ||
-                item.icon === 'log'
+                item.icon === 'log' ||
+                item.icon === 'config'
                     ? 'Mở quản lý →'
                     : 'Chờ tích hợp →'}
                 </button>
@@ -264,6 +275,11 @@ function SystemPage() {
         {selectedSystem ===
         'logs' && (
           <AuditLogsPanel />
+        )}
+
+        {selectedSystem ===
+        'config' && (
+          <SystemConfigurationPanel />
         )}
 
         <section className="admin-panel">
