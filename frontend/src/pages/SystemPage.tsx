@@ -2,6 +2,7 @@ import UserAccountsPanel from '../components/system/UserAccountsPanel'
 import RolePermissionsPanel from '../components/system/RolePermissionsPanel'
 import AuditLogsPanel from '../components/system/AuditLogsPanel'
 import SystemConfigurationPanel from '../components/system/SystemConfigurationPanel'
+import BackupRestorePanel from '../components/system/BackupRestorePanel'
 import { useState } from 'react'
 import AppLayout from '../layouts/AppLayout'
 import './AdminManagementPages.css'
@@ -122,7 +123,7 @@ function SystemPage() {
   const [
     selectedSystem,
     setSelectedSystem,
-  ] = useState<'users' | 'roles' | 'logs' | 'config'>('users')
+  ] = useState<'users' | 'roles' | 'logs' | 'config' | 'backup'>('users')
 
   return (
     <AppLayout>
@@ -214,7 +215,8 @@ function SystemPage() {
                   {item.icon === 'users' ||
                 item.icon === 'shield' ||
                 item.icon === 'log' ||
-                item.icon === 'config'
+                item.icon === 'config' ||
+                item.icon === 'backup'
                     ? 'Đang hoạt động'
                     : 'Chế độ an toàn'}
                 </span>
@@ -222,6 +224,14 @@ function SystemPage() {
                 <button
                   type="button"
                   onClick={() => {
+                    if (
+                      item.icon ===
+                      'backup'
+                    ) {
+                      setSelectedSystem('backup')
+                      return
+                    }
+
                     if (
                       item.icon ===
                       'config'
@@ -253,7 +263,8 @@ function SystemPage() {
                   {item.icon === 'users' ||
                 item.icon === 'shield' ||
                 item.icon === 'log' ||
-                item.icon === 'config'
+                item.icon === 'config' ||
+                item.icon === 'backup'
                     ? 'Mở quản lý →'
                     : 'Chờ tích hợp →'}
                 </button>
@@ -280,6 +291,11 @@ function SystemPage() {
         {selectedSystem ===
         'config' && (
           <SystemConfigurationPanel />
+        )}
+
+        {selectedSystem ===
+        'backup' && (
+          <BackupRestorePanel />
         )}
 
         <section className="admin-panel">
