@@ -160,7 +160,7 @@ function formatDateTime(
     string | null,
 ) {
   if (!value) {
-    return 'Chưa cập nhật'
+    return 'Ch\u01B0a c\u1EADp nh\u1EADt'
   }
 
   const normalized =
@@ -172,7 +172,7 @@ function formatDateTime(
       '0001-01-01',
     )
   ) {
-    return 'Chưa cập nhật'
+    return 'Ch\u01B0a c\u1EADp nh\u1EADt'
   }
 
   const date =
@@ -184,7 +184,7 @@ function formatDateTime(
     ) ||
     date.getFullYear() <= 1
   ) {
-    return 'Chưa cập nhật'
+    return 'Ch\u01B0a c\u1EADp nh\u1EADt'
   }
 
   return date.toLocaleString(
