@@ -1,5 +1,6 @@
 import UserAccountsPanel from '../components/system/UserAccountsPanel'
 import RolePermissionsPanel from '../components/system/RolePermissionsPanel'
+import AuditLogsPanel from '../components/system/AuditLogsPanel'
 import { useState } from 'react'
 import AppLayout from '../layouts/AppLayout'
 import './AdminManagementPages.css'
@@ -120,7 +121,7 @@ function SystemPage() {
   const [
     selectedSystem,
     setSelectedSystem,
-  ] = useState<'users' | 'roles'>('users')
+  ] = useState<'users' | 'roles' | 'logs'>('users')
 
   return (
     <AppLayout>
@@ -209,10 +210,9 @@ function SystemPage() {
 
               <div className="admin-feature-footer">
                 <span>
-                  {item.name ===
-                  'Người dùng & tài khoản' ||
-                item.name ===
-                  'Vai trò & phân quyền'
+                  {item.icon === 'users' ||
+                item.icon === 'shield' ||
+                item.icon === 'log'
                     ? 'Đang hoạt động'
                     : 'Chế độ an toàn'}
                 </span>
@@ -220,6 +220,13 @@ function SystemPage() {
                 <button
                   type="button"
                   onClick={() => {
+                    if (
+                      item.icon ===
+                      'log'
+                    ) {
+                      setSelectedSystem('logs')
+                      return
+                    }
                     if (
                       item.name ===
                       'Người dùng & tài khoản'
@@ -233,10 +240,9 @@ function SystemPage() {
                     }
                   }}
                 >
-                  {item.name ===
-                  'Người dùng & tài khoản' ||
-                item.name ===
-                  'Vai trò & phân quyền'
+                  {item.icon === 'users' ||
+                item.icon === 'shield' ||
+                item.icon === 'log'
                     ? 'Mở quản lý →'
                     : 'Chờ tích hợp →'}
                 </button>
@@ -253,6 +259,11 @@ function SystemPage() {
         {selectedSystem ===
         'roles' && (
           <RolePermissionsPanel />
+        )}
+
+        {selectedSystem ===
+        'logs' && (
+          <AuditLogsPanel />
         )}
 
         <section className="admin-panel">
