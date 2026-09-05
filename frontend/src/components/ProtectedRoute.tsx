@@ -1,14 +1,16 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
+import { hasValidAccessToken } from '../utils/authSession'
 
 type ProtectedRouteProps = {
   children: ReactNode
 }
 
 function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const accessToken = localStorage.getItem('accessToken')
+  const isAuthenticated =
+    hasValidAccessToken()
 
-  if (!accessToken) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />
   }
 

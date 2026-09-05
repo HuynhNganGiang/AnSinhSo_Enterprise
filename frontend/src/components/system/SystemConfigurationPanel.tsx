@@ -62,7 +62,70 @@ type RuntimeConfig = {
 
 type RuntimeResponse = {
   success?: boolean
-  data?: RuntimeConfig
+  data?: unknown
+}
+
+
+function isRecord(
+  value: unknown,
+): value is Record<string, unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null
+  )
+}
+
+
+function isRuntimeConfig(
+  value: unknown,
+): value is RuntimeConfig {
+  if (!isRecord(value)) {
+    return false
+  }
+
+  return (
+    (
+      value.source === 'REAL RUNTIME' ||
+      value.source === 'DEMO LOCAL'
+    ) &&
+    typeof value.application === 'string' &&
+    typeof value.api === 'string' &&
+    typeof value.environment === 'string' &&
+    isRecord(value.database) &&
+    isRecord(value.demoData) &&
+    isRecord(value.jwt) &&
+    isRecord(value.zaloOA) &&
+    isRecord(value.sms) &&
+    typeof value.allowedHostsConfigured === 'boolean' &&
+    isRecord(value.security)
+  )
+}
+
+
+function extractRuntimeConfig(
+  payload: unknown,
+): RuntimeConfig | null {
+  let current: unknown = payload
+
+  for (let depth = 0; depth < 4; depth += 1) {
+    if (isRuntimeConfig(current)) {
+      return current
+    }
+
+    if (!isRecord(current)) {
+      return null
+    }
+
+    if (!('data' in current)) {
+      return null
+    }
+
+    current = current.data
+  }
+
+  return isRuntimeConfig(current)
+    ? current
+    : null
 }
 
 
@@ -502,16 +565,22 @@ function SystemConfigurationPanel() {
           ) as RuntimeResponse
 
 
-        if (!body.data) {
+        const runtimeData =
+          extractRuntimeConfig(
+            body,
+          )
+
+
+        if (!runtimeData) {
 
           throw new Error(
-            'Runtime response has no data.',
+            'Runtime response shape is invalid.',
           )
         }
 
 
         setRuntime(
-          body.data,
+          runtimeData,
         )
 
       } catch {

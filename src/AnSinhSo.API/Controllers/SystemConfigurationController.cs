@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using AnSinhSo.Domain.Constants;
 
 namespace AnSinhSo.API.Controllers;
 
 [ApiController]
 [Route("api/v1/system/configuration-status")]
-[Authorize(Roles = "Admin")]
+[Authorize(Policy = Permissions.PermissionsModule.View)]
 public sealed class SystemConfigurationController : ControllerBase
 {
     private readonly IConfiguration _configuration;
