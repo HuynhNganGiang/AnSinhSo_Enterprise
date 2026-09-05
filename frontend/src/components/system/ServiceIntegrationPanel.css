@@ -1,0 +1,288 @@
+.service-integration-panel {
+  margin-top: 28px;
+  padding: 26px;
+  border: 1px solid #dbe7f6;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .05);
+}
+
+.service-integration-header,
+.service-card > header,
+.production-integration-card > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.service-eyebrow {
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.service-integration-header h2 {
+  margin: 5px 0 8px;
+  color: #102b50;
+  font-size: 28px;
+}
+
+.service-integration-header p,
+.service-card header p,
+.production-integration-card header p {
+  margin: 0;
+  color: #71809d;
+  line-height: 1.5;
+}
+
+.service-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.service-actions button {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid #d7e2ef;
+  border-radius: 11px;
+  background: #fff;
+  color: #17345d;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.service-source,
+.tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 29px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.service-source,
+.tag.real,
+.tag.implemented {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.tag.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.tag.mock {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.tag.disabled {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.service-secret-banner {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 14px 16px;
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.service-error,
+.service-loading {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+}
+
+.service-error {
+  background: #fff1f2;
+  color: #9f1239;
+}
+
+.service-loading {
+  border: 1px dashed #cbd9ea;
+  color: #64748b;
+  text-align: center;
+}
+
+.service-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.service-summary article {
+  padding: 18px;
+  border: 1px solid #dce7f4;
+  border-radius: 16px;
+  background: #fbfdff;
+}
+
+.service-summary .service-warn {
+  background: #fff7ed;
+}
+
+.service-summary span {
+  display: block;
+  color: #71809d;
+  font-size: 12px;
+}
+
+.service-summary strong {
+  display: block;
+  margin-top: 7px;
+  color: #102b50;
+  font-size: 19px;
+}
+
+.service-summary small {
+  display: block;
+  margin-top: 6px;
+  color: #8896ad;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.service-card,
+.production-integration-card {
+  padding: 20px;
+  border: 1px solid #dce7f4;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.service-card h3,
+.production-integration-card h3 {
+  margin: 0 0 5px;
+  color: #102b50;
+}
+
+.service-card dl {
+  margin: 18px 0 0;
+}
+
+.service-card dl > div {
+  display: grid;
+  grid-template-columns: 155px minmax(0, 1fr);
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.service-card dt {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.service-card dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #172b4d;
+  font-weight: 700;
+}
+
+.mock-card {
+  background: #fffdf9;
+}
+
+.mock-warning {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.mock-warning p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.production-integration-card {
+  margin-top: 18px;
+}
+
+.production-counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 17px;
+}
+
+.production-counts > div {
+  padding: 16px;
+  border: 1px solid #e1eaf5;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+.production-counts span {
+  display: block;
+  color: #71809d;
+  font-size: 12px;
+}
+
+.production-counts strong {
+  display: block;
+  margin-top: 6px;
+  color: #102b50;
+  font-size: 23px;
+}
+
+.service-note {
+  margin: 15px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+@media (max-width: 1100px) {
+  .service-summary,
+  .service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .service-integration-panel {
+    padding: 18px;
+  }
+
+  .service-integration-header,
+  .service-card > header,
+  .production-integration-card > header {
+    flex-direction: column;
+  }
+
+  .service-summary,
+  .service-grid,
+  .production-counts {
+    grid-template-columns: 1fr;
+  }
+
+  .service-card dl > div {
+    grid-template-columns: 1fr;
+  }
+}

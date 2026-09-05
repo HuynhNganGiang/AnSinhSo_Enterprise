@@ -3,6 +3,7 @@ import RolePermissionsPanel from '../components/system/RolePermissionsPanel'
 import AuditLogsPanel from '../components/system/AuditLogsPanel'
 import SystemConfigurationPanel from '../components/system/SystemConfigurationPanel'
 import BackupRestorePanel from '../components/system/BackupRestorePanel'
+import ServiceIntegrationPanel from '../components/system/ServiceIntegrationPanel'
 import { useState } from 'react'
 import AppLayout from '../layouts/AppLayout'
 import './AdminManagementPages.css'
@@ -123,7 +124,7 @@ function SystemPage() {
   const [
     selectedSystem,
     setSelectedSystem,
-  ] = useState<'users' | 'roles' | 'logs' | 'config' | 'backup'>('users')
+  ] = useState<'users' | 'roles' | 'logs' | 'config' | 'backup' | 'integration'>('users')
 
   return (
     <AppLayout>
@@ -216,7 +217,8 @@ function SystemPage() {
                 item.icon === 'shield' ||
                 item.icon === 'log' ||
                 item.icon === 'config' ||
-                item.icon === 'backup'
+                item.icon === 'backup' ||
+                item.icon === 'integration'
                     ? 'Đang hoạt động'
                     : 'Chế độ an toàn'}
                 </span>
@@ -224,6 +226,14 @@ function SystemPage() {
                 <button
                   type="button"
                   onClick={() => {
+                    if (
+                      item.icon ===
+                      'integration'
+                    ) {
+                      setSelectedSystem('integration')
+                      return
+                    }
+
                     if (
                       item.icon ===
                       'backup'
@@ -264,7 +274,8 @@ function SystemPage() {
                 item.icon === 'shield' ||
                 item.icon === 'log' ||
                 item.icon === 'config' ||
-                item.icon === 'backup'
+                item.icon === 'backup' ||
+                item.icon === 'integration'
                     ? 'Mở quản lý →'
                     : 'Chờ tích hợp →'}
                 </button>
@@ -296,6 +307,11 @@ function SystemPage() {
         {selectedSystem ===
         'backup' && (
           <BackupRestorePanel />
+        )}
+
+        {selectedSystem ===
+        'integration' && (
+          <ServiceIntegrationPanel />
         )}
 
         <section className="admin-panel">
@@ -362,7 +378,7 @@ function SystemPage() {
                   <td><strong>Zalo OA</strong></td>
                   <td>
                     <span className="system-config-value">
-                      Adapter / MVP
+                      Core API thật / gửi mock
                     </span>
                   </td>
                   <td>Tích hợp ngoài</td>
