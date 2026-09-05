@@ -1,4 +1,5 @@
 import UserAccountsPanel from '../components/system/UserAccountsPanel'
+import RolePermissionsPanel from '../components/system/RolePermissionsPanel'
 import { useState } from 'react'
 import AppLayout from '../layouts/AppLayout'
 import './AdminManagementPages.css'
@@ -119,7 +120,7 @@ function SystemPage() {
   const [
     selectedSystem,
     setSelectedSystem,
-  ] = useState<'users'>('users')
+  ] = useState<'users' | 'roles'>('users')
 
   return (
     <AppLayout>
@@ -209,7 +210,9 @@ function SystemPage() {
               <div className="admin-feature-footer">
                 <span>
                   {item.name ===
-                  'Người dùng & tài khoản'
+                  'Người dùng & tài khoản' ||
+                item.name ===
+                  'Vai trò & phân quyền'
                     ? 'Đang hoạt động'
                     : 'Chế độ an toàn'}
                 </span>
@@ -222,11 +225,18 @@ function SystemPage() {
                       'Người dùng & tài khoản'
                     ) {
                       setSelectedSystem('users')
+                    } else if (
+                      item.name ===
+                      'Vai trò & phân quyền'
+                    ) {
+                      setSelectedSystem('roles')
                     }
                   }}
                 >
                   {item.name ===
-                  'Người dùng & tài khoản'
+                  'Người dùng & tài khoản' ||
+                item.name ===
+                  'Vai trò & phân quyền'
                     ? 'Mở quản lý →'
                     : 'Chờ tích hợp →'}
                 </button>
@@ -238,6 +248,11 @@ function SystemPage() {
         {selectedSystem ===
         'users' && (
           <UserAccountsPanel />
+        )}
+
+        {selectedSystem ===
+        'roles' && (
+          <RolePermissionsPanel />
         )}
 
         <section className="admin-panel">
