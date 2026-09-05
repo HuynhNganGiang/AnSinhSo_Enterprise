@@ -159,18 +159,32 @@ function formatDateTime(
   value:
     string | null,
 ) {
-  if (!value)
-    return '—'
+  if (!value) {
+    return 'Chưa cập nhật'
+  }
+
+  const normalized =
+    value.trim()
+
+  if (
+    !normalized ||
+    normalized.startsWith(
+      '0001-01-01',
+    )
+  ) {
+    return 'Chưa cập nhật'
+  }
 
   const date =
-    new Date(value)
+    new Date(normalized)
 
   if (
     Number.isNaN(
       date.getTime(),
-    )
+    ) ||
+    date.getFullYear() <= 1
   ) {
-    return value
+    return 'Chưa cập nhật'
   }
 
   return date.toLocaleString(
