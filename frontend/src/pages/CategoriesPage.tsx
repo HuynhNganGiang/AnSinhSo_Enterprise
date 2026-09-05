@@ -5,6 +5,7 @@ import WelfareGroupsCategoryPanel from '../components/categories/WelfareGroupsCa
 import PoliciesCategoryPanel from '../components/categories/PoliciesCategoryPanel'
 import AreasCategoryPanel from '../components/categories/AreasCategoryPanel'
 import PaymentPointsCategoryPanel from '../components/categories/PaymentPointsCategoryPanel'
+import HouseholdClassificationsCategoryPanel from '../components/categories/HouseholdClassificationsCategoryPanel'
 
 type CategoryKey =
   | 'welfare-groups'
@@ -976,7 +977,9 @@ function CategoriesPage() {
                 item.key ===
                   'areas' ||
                 item.key ===
-                  'payment-points'
+                  'payment-points' ||
+                item.key ===
+                  'household-classifications'
 
               const selected =
                 selectedCategory ===
@@ -1477,6 +1480,9 @@ function CategoriesPage() {
         ) : selectedCategory ===
         'payment-points' ? (
           <PaymentPointsCategoryPanel />
+        ) : selectedCategory ===
+        'household-classifications' ? (
+          <HouseholdClassificationsCategoryPanel />
         ) : (
           <section className="category-workbench category-next-panel">
             <span
