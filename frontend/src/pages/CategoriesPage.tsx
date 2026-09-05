@@ -4,6 +4,7 @@ import './AdminManagementPages.css'
 import WelfareGroupsCategoryPanel from '../components/categories/WelfareGroupsCategoryPanel'
 import PoliciesCategoryPanel from '../components/categories/PoliciesCategoryPanel'
 import AreasCategoryPanel from '../components/categories/AreasCategoryPanel'
+import PaymentPointsCategoryPanel from '../components/categories/PaymentPointsCategoryPanel'
 
 type CategoryKey =
   | 'welfare-groups'
@@ -973,7 +974,9 @@ function CategoriesPage() {
                 item.key ===
                   'policies' ||
                 item.key ===
-                  'areas'
+                  'areas' ||
+                item.key ===
+                  'payment-points'
 
               const selected =
                 selectedCategory ===
@@ -1471,6 +1474,9 @@ function CategoriesPage() {
         ) : selectedCategory ===
         'areas' ? (
           <AreasCategoryPanel />
+        ) : selectedCategory ===
+        'payment-points' ? (
+          <PaymentPointsCategoryPanel />
         ) : (
           <section className="category-workbench category-next-panel">
             <span
